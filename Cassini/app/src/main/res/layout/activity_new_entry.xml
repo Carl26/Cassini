@@ -69,11 +69,24 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/new_entry_buttons">
+        android:layout_below="@id/new_entry_buttons"
+        android:id="@+id/new_entry_bottom_scroll">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="This is the scroll view"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/new_entry_bottom_linear">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="300dp"
+                android:text="This is the text view inside scroll view"
+                android:id="@+id/new_entry_main_text"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dimension starts here"/>
+        </LinearLayout>
     </ScrollView>
 </RelativeLayout>
