@@ -82,7 +82,8 @@
                 android:layout_height="wrap_content"
                 android:minHeight="300dp"
                 android:text="This is the text view inside scroll view"
-                android:id="@+id/new_entry_main_text"/>
+                android:id="@+id/new_entry_main_text"
+                android:clickable="true" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
