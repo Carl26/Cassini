@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Cassini</string>
+    <string name="confirm_button">Confirm</string>
 </resources>
