@@ -1,5 +1,6 @@
 package org.x.cassini;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +58,9 @@ public class MainTextActivity extends AppCompatActivity {
             // send result back to parent activity
             String mainText = String.valueOf(mainBox.getText());
             Log.d(TAG, "onOptionsItemSelected: " + mainText);
+            Intent intent = new Intent();
+            intent.putExtra("mainText", mainText);
+            setResult(RESULT_OK, intent);
 
             finish();
         }
