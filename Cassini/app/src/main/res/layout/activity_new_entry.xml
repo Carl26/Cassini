@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/new_entry_relative_layout">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -78,16 +81,28 @@
             android:orientation="vertical"
             android:id="@+id/new_entry_bottom_linear">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="300dp"
-                android:text="This is the text view inside scroll view"
                 android:id="@+id/new_entry_main_text"
-                android:clickable="true" />
-            <Button
-                android:layout_width="wrap_content"
+                android:clickable="true"
+                android:layout_margin="10dp"
+                android:background="@drawable/border"
+                android:text="@string/main_text_prompt"/>
+
+            <org.x.cassini.Dimension
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dimension starts here"/>
+                android:id="@+id/new_entry_dimension_learn"
+                android:background="@drawable/border"
+                android:nextFocusDown="@+id/new_entry_dimension_problem"/>
+
+            <org.x.cassini.Dimension
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/new_entry_dimension_problem"
+                android:background="@drawable/border"
+                android:nextFocusDown="@+id/new_entry_relative_layout"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
