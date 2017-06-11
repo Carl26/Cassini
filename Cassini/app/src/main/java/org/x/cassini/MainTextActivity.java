@@ -63,7 +63,8 @@ public class MainTextActivity extends AppCompatActivity {
             setResult(RESULT_OK, intent);
 
             finish();
+            return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 }
