@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 /**
  * Created by Guo Mingxuan on 2017/6/7 0007.
  */
@@ -22,6 +24,8 @@ public class NewEntryActivity extends AppCompatActivity {
     private Button BWeather, BEmotion, BStar, BTag;
     private LinearLayout LBottom;
     private Dimension learn, problem;
+    private ArrayList<Dimension> dimensionList;
+    private ArrayList<String> dimensionInput;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -76,10 +80,15 @@ public class NewEntryActivity extends AppCompatActivity {
         });
         // for testing purpose only
 //        mainText.setText("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444ddddddddddddddddd");
+
+        // Dimensions related
+        dimensionList = new ArrayList<Dimension>();
         learn = (Dimension) findViewById(R.id.new_entry_dimension_learn);
         problem = (Dimension) findViewById(R.id.new_entry_dimension_problem);
         learn.setHeader("What did I learn today?");
         problem.setHeader("What problem did I face today?");
+        dimensionList.add(learn);
+        dimensionList.add(problem);
     }
 
     @Override
@@ -91,5 +100,30 @@ public class NewEntryActivity extends AppCompatActivity {
                 mainText.setText(modifiedText);
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // save edittext data
+        dimensionInput = new ArrayList<>();
+        if (dimensionList != null) {
+            for (Dimension d : dimensionList) {
+                dimensionInput.add(d.getInput());
+                Log.d(TAG, "onPause: edittext input is " + d.getInput());
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // restore data back to edittext
+        if (dimensionInput != null) {
+            for (int i = 0; i < dimensionInput.size(); i++) {
+                dimensionList.get(i).setInput(dimensionInput.get(i));
+            }
+        }
+        findViewById(R.id.new_entry_relative_layout).requestFocus();
     }
 }
