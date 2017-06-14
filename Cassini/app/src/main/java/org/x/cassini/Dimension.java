@@ -53,6 +53,10 @@ public class Dimension extends LinearLayout {
         return input;
     }
 
+    public String getHeader() {
+        return header.getText().toString();
+    }
+
     public void setInput(String savedInput) {
         textFiled.setText(savedInput);
     }

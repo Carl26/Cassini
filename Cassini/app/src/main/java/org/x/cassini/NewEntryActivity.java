@@ -2,15 +2,24 @@ package org.x.cassini;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOError;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Guo Mingxuan on 2017/6/7 0007.
@@ -20,12 +29,13 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private String TAG = "NewEntry";
-    private TextView time, location, mainText;
+    private TextView time; private TextView location; private TextView mainText;
     private Button BWeather, BEmotion, BStar, BTag;
     private LinearLayout LBottom;
     private Dimension learn, problem;
     private ArrayList<Dimension> dimensionList;
     private ArrayList<String> dimensionInput;
+    private Calendar calendar;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -54,8 +64,10 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void initTextView() {
+        calendar = Calendar.getInstance();
         time = (TextView) findViewById(R.id.new_entry_time);
         location = (TextView) findViewById(R.id.new_entry_location);
+        time.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
     }
 
     private void initButtons() {
@@ -125,5 +137,81 @@ public class NewEntryActivity extends AppCompatActivity {
             }
         }
         findViewById(R.id.new_entry_relative_layout).requestFocus();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_new_entry, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.new_entry_finish_button) {
+            // save entry to local dir
+            saveDiary();
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void saveDiary() {
+        String filename = time.getText().toString().replaceAll("\\/", "");
+//        File savedFile = new File(getApplication().getFilesDir(), filename);
+        File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File savedFile = new File(dir, filename + ".txt");
+        String toWrite = formDiary();
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(savedFile);
+            // if file does not exist
+            if (!savedFile.exists()) {
+                savedFile.createNewFile();
+            }
+            fos.write(toWrite.getBytes());
+            fos.flush();
+            fos.close();
+            Log.d(TAG, "saveDiary: Finished saving diary");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        finish();
+    }
+
+    private String formDiary() {
+        // each section is stored in a new line for easy reading afterwards
+        StringBuilder sb = new StringBuilder();
+        // date
+        sb.append(time.getText().toString());
+        sb.append(System.lineSeparator());
+        // location
+        sb.append(location.getText().toString());
+        sb.append(System.lineSeparator());
+        // main text
+        String mainDiary = mainText.getText().toString();
+        int textLen = mainDiary.length();
+        sb.append(textLen);
+        sb.append(System.lineSeparator());
+        sb.append(mainDiary);
+        sb.append(System.lineSeparator());
+        // dimensions
+        sb.append(learn.getHeader());
+        sb.append(System.lineSeparator());
+        sb.append(learn.getInput());
+
+        return sb.toString();
     }
 }

@@ -95,14 +95,16 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/new_entry_dimension_learn"
                 android:background="@drawable/border"
-                android:nextFocusDown="@+id/new_entry_dimension_problem"/>
+                android:nextFocusDown="@+id/new_entry_dimension_problem"
+                android:layout_margin="10dp"/>
 
             <org.x.cassini.Dimension
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/new_entry_dimension_problem"
                 android:background="@drawable/border"
-                android:nextFocusDown="@+id/new_entry_relative_layout"/>
+                android:nextFocusDown="@+id/new_entry_relative_layout"
+                android:layout_margin="10dp"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
