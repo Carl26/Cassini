@@ -1,6 +1,3 @@
 <resources>
     <string name="app_name">Cassini</string>
-    <string name="confirm_button">Confirm</string>
-    <string name="dimension_learn">What have I learnt today?</string>
-    <string name="main_text_prompt">Click here to enter...</string>
 </resources>
