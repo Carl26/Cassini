@@ -36,6 +36,10 @@ public class NewEntryActivity extends AppCompatActivity {
     private ArrayList<Dimension> dimensionList;
     private ArrayList<String> dimensionInput;
     private Calendar calendar;
+    private int intWeather = -1; // -1 - not selected, 0 -
+    private int intEmotion = -1;
+    private int intStar = 0; // 0 - false/ not starred, 1 - true/ starred
+    private String sTag = ""; // if sTag = null, tag is not set
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
