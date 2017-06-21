@@ -9,7 +9,7 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/new_entry_toolbar"></android.support.v7.widget.Toolbar>
+        android:id="@+id/new_entry_toolbar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,47 +32,63 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/new_entry_buttons"
-        android:layout_below="@+id/new_entry_info">
-        <Button
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:id="@+id/new_entry_weather"
-            android:text="weather"
-            android:textSize="5sp"/>
+        android:id="@+id/new_entry_options"
+        android:layout_below="@+id/new_entry_info"
+        android:orientation="vertical"
+        android:background="@drawable/border">
 
-        <Button
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:id="@+id/new_entry_emotion"
-            android:text="emotion"
-            android:textSize="5sp"
-            android:layout_below="@id/new_entry_weather"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/new_entry_buttons">
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:id="@+id/new_entry_weather"
+                android:text="weather"
+                android:textSize="5sp"/>
 
-        <Button
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:id="@+id/new_entry_star"
-            android:text="star"
-            android:textSize="5sp"
-            android:layout_below="@id/new_entry_emotion"/>
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:id="@+id/new_entry_emotion"
+                android:text="emotion"
+                android:textSize="5sp"/>
 
-        <Button
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:id="@+id/new_entry_tag"
-            android:text="tag"
-            android:textSize="5sp"
-            android:layout_below="@id/new_entry_star"/>
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:id="@+id/new_entry_star"
+                android:text="star"
+                android:textSize="5sp" />
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:id="@+id/new_entry_tag"
+                android:text="tag"
+                android:textSize="5sp" />
+
+    </LinearLayout>
+
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="auto_fit"
+            android:columnWidth="50dp"
+            android:gravity="center"
+            android:id="@+id/new_entry_grid"
+            android:stretchMode="columnWidth"/>
 
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/new_entry_buttons"
+        android:layout_below="@id/new_entry_options"
         android:id="@+id/new_entry_bottom_scroll">
 
         <LinearLayout

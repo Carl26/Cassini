@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,10 +37,14 @@ public class NewEntryActivity extends AppCompatActivity {
     private ArrayList<Dimension> dimensionList;
     private ArrayList<String> dimensionInput;
     private Calendar calendar;
-    private int intWeather = -1; // -1 - not selected, 0 -
+    private final int SUNNY = 0, CLOUDY = 1, RAINY = 2, HEAVYRAIN = 3, THUNDERSTORM = 4, SNOW = 5;
+    private int intWeather = -1; // -1 - not selected, 0 - sunny, 1 - cloudy, 2 - rainy, 3 - heavy rain, 4 - thunderstorm, 5 - snow
     private int intEmotion = -1;
     private int intStar = 0; // 0 - false/ not starred, 1 - true/ starred
     private String sTag = ""; // if sTag = null, tag is not set
+    private GridView grid;
+    private NewEntryGridAdapter weatherAdapter;
+    private int[] weatherIcons;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -49,6 +54,14 @@ public class NewEntryActivity extends AppCompatActivity {
         Log.d(TAG, "Entered onCreate");
 
         // initialize various components
+        weatherIcons = new int[6];
+        weatherIcons[0] = 0;
+        weatherIcons[1] = 1;
+        weatherIcons[2] = 2;
+        weatherIcons[3] = 3;
+        weatherIcons[4] = 4;
+        weatherIcons[5] = 5;
+
         initToolbar();
         initTextView();
         initButtons();
@@ -79,6 +92,26 @@ public class NewEntryActivity extends AppCompatActivity {
         BEmotion = (Button) findViewById(R.id.new_entry_emotion);
         BStar = (Button) findViewById(R.id.new_entry_star);
         BTag = (Button) findViewById(R.id.new_entry_tag);
+        grid = (GridView) findViewById(R.id.new_entry_grid);
+        weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
+        grid.setAdapter(weatherAdapter);
+        weatherAdapter.notifyDataSetChanged();
+//        grid.setVisibility(View.GONE);
+
+//        BWeather.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (grid.getVisibility() == View.VISIBLE) {
+//                    grid.setVisibility(View.GONE);
+//                    Log.d(TAG, "onClick: Grid is visible");
+//                    weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
+//                    grid.setAdapter(weatherAdapter);
+//                } else {
+//                    grid.setVisibility(View.VISIBLE);
+//                    Log.d(TAG, "onClick: Grid is gone");
+//                }
+//            }
+//        });
     }
 
     private void initBottomPart() {
