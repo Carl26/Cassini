@@ -54,8 +54,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/new_entry_emotion"
-                android:text="emotion"
-                android:textSize="5sp"/>
+                android:background="@drawable/ic_emoji"/>
 
             <Button
                 android:layout_width="50dp"
