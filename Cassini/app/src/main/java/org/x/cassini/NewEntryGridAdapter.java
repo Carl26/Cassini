@@ -74,6 +74,24 @@ class NewEntryGridAdapter extends BaseAdapter {
                 // snow
                 case 5: iconItem.setImageResource(R.drawable.ic_snow);
                     break;
+                // happy
+                case 6: iconItem.setImageResource(R.drawable.ic_happy);
+                    break;
+                // sad
+                case 7: iconItem.setImageResource(R.drawable.ic_sad);
+                    break;
+                // neutral
+                case 8: iconItem.setImageResource(R.drawable.ic_neutral);
+                    break;
+                // angry
+                case 9: iconItem.setImageResource(R.drawable.ic_angry);
+                    break;
+                // crying
+                case 10: iconItem.setImageResource(R.drawable.ic_crying);
+                    break;
+                // shocked
+                case 11: iconItem.setImageResource(R.drawable.ic_shocked);
+                    break;
             }
         } else {
             grid = convertView;

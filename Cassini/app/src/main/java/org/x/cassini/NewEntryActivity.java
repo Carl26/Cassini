@@ -44,8 +44,8 @@ public class NewEntryActivity extends AppCompatActivity {
     private int intStar = 0; // 0 - false/ not starred, 1 - true/ starred
     private String sTag = ""; // if sTag = null, tag is not set
     private GridView grid;
-    private NewEntryGridAdapter weatherAdapter;
-    private int[] weatherIcons;
+    private NewEntryGridAdapter weatherAdapter, emojiAdapter;
+    private int[] weatherIcons, emojiIcons;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -55,13 +55,7 @@ public class NewEntryActivity extends AppCompatActivity {
         Log.d(TAG, "Entered onCreate");
 
         // initialize various components
-        weatherIcons = new int[6];
-        weatherIcons[0] = 0;
-        weatherIcons[1] = 1;
-        weatherIcons[2] = 2;
-        weatherIcons[3] = 3;
-        weatherIcons[4] = 4;
-        weatherIcons[5] = 5;
+        initIntArrays();
 
         initToolbar();
         initTextView();
@@ -106,6 +100,21 @@ public class NewEntryActivity extends AppCompatActivity {
                     grid.setVisibility(View.VISIBLE);
                     Log.d(TAG, "onClick: Grid is visible");
                     initGrid(0);
+                } else {
+                    // TODO test click weather then click other buttons like exercise
+                    grid.setVisibility(View.GONE);
+                    Log.d(TAG, "onClick: Grid is gone");
+                }
+            }
+        });
+
+        BEmotion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (grid.getVisibility() == View.GONE) {
+                    grid.setVisibility(View.VISIBLE);
+                    Log.d(TAG, "onClick: Grid is visible");
+                    initGrid(1);
                 } else {
                     // TODO test click weather then click other buttons like exercise
                     grid.setVisibility(View.GONE);
@@ -253,6 +262,26 @@ public class NewEntryActivity extends AppCompatActivity {
         return sb.toString();
     }
 
+    private void initIntArrays() {
+        // weather array
+        weatherIcons = new int[6];
+        weatherIcons[0] = 0;
+        weatherIcons[1] = 1;
+        weatherIcons[2] = 2;
+        weatherIcons[3] = 3;
+        weatherIcons[4] = 4;
+        weatherIcons[5] = 5;
+
+        // emoji array
+        emojiIcons = new int[6];
+        emojiIcons[0] = 6;
+        emojiIcons[1] = 7;
+        emojiIcons[2] = 8;
+        emojiIcons[3] = 9;
+        emojiIcons[4] = 10;
+        emojiIcons[5] = 11;
+    }
+
     private void initGrid(int type) {
         if (type == 0) { // 0 for weather
             weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
@@ -279,6 +308,36 @@ public class NewEntryActivity extends AppCompatActivity {
                             grid.setVisibility(View.GONE);
                             break;
                         case 5: BWeather.setBackgroundResource(R.drawable.ic_snow);
+                            grid.setVisibility(View.GONE);
+                            break;
+                    }
+                }
+            });
+        } else if (type == 1) {
+            emojiAdapter = new NewEntryGridAdapter(getApplication(), emojiIcons);
+            grid.setAdapter(emojiAdapter);
+            emojiAdapter.notifyDataSetChanged();
+            grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // TODO save the selected weather profile to disk
+                    switch (position) {
+                        case 0: BEmotion.setBackgroundResource(R.drawable.ic_happy);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 1: BEmotion.setBackgroundResource(R.drawable.ic_sad);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 2: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 3: BEmotion.setBackgroundResource(R.drawable.ic_angry);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 4: BEmotion.setBackgroundResource(R.drawable.ic_crying);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 5: BEmotion.setBackgroundResource(R.drawable.ic_shocked);
                             grid.setVisibility(View.GONE);
                             break;
                     }
