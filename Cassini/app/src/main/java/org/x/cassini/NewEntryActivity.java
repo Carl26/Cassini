@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -93,25 +94,45 @@ public class NewEntryActivity extends AppCompatActivity {
         BStar = (Button) findViewById(R.id.new_entry_star);
         BTag = (Button) findViewById(R.id.new_entry_tag);
         grid = (GridView) findViewById(R.id.new_entry_grid);
-        weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
-        grid.setAdapter(weatherAdapter);
-        weatherAdapter.notifyDataSetChanged();
-//        grid.setVisibility(View.GONE);
+//        weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
+//        grid.setAdapter(weatherAdapter);
+//        weatherAdapter.notifyDataSetChanged();
+        grid.setVisibility(View.GONE);
 
-//        BWeather.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (grid.getVisibility() == View.VISIBLE) {
-//                    grid.setVisibility(View.GONE);
-//                    Log.d(TAG, "onClick: Grid is visible");
-//                    weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
-//                    grid.setAdapter(weatherAdapter);
-//                } else {
-//                    grid.setVisibility(View.VISIBLE);
-//                    Log.d(TAG, "onClick: Grid is gone");
-//                }
-//            }
-//        });
+        BWeather.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (grid.getVisibility() == View.GONE) {
+                    grid.setVisibility(View.VISIBLE);
+                    Log.d(TAG, "onClick: Grid is visible");
+                    weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
+                    grid.setAdapter(weatherAdapter);
+                    weatherAdapter.notifyDataSetChanged();
+                    grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            switch (position) {
+                                case 0: BWeather.setBackgroundResource(R.drawable.ic_sunny);
+                                    break;
+                                case 1: BWeather.setBackgroundResource(R.drawable.ic_cloudy);
+                                    break;
+                                case 2: BWeather.setBackgroundResource(R.drawable.ic_rainy);
+                                    break;
+                                case 3: BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
+                                    break;
+                                case 4: BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
+                                    break;
+                                case 5: BWeather.setBackgroundResource(R.drawable.ic_snow);
+                                    break;
+                            }
+                        }
+                    });
+                } else {
+                    grid.setVisibility(View.GONE);
+                    Log.d(TAG, "onClick: Grid is gone");
+                }
+            }
+        });
     }
 
     private void initBottomPart() {

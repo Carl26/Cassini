@@ -46,28 +46,27 @@
             android:id="@+id/new_entry_buttons">
             <Button
                 android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:id="@+id/new_entry_weather"
-                android:text="weather"
-                android:textSize="5sp"/>
+                android:background="@drawable/ic_weather"/>
 
             <Button
                 android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:id="@+id/new_entry_emotion"
                 android:text="emotion"
                 android:textSize="5sp"/>
 
             <Button
                 android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:id="@+id/new_entry_star"
                 android:text="star"
                 android:textSize="5sp" />
 
             <Button
                 android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_height="50dp"
                 android:id="@+id/new_entry_tag"
                 android:text="tag"
                 android:textSize="5sp" />
