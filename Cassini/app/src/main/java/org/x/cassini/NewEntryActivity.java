@@ -105,29 +105,9 @@ public class NewEntryActivity extends AppCompatActivity {
                 if (grid.getVisibility() == View.GONE) {
                     grid.setVisibility(View.VISIBLE);
                     Log.d(TAG, "onClick: Grid is visible");
-                    weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
-                    grid.setAdapter(weatherAdapter);
-                    weatherAdapter.notifyDataSetChanged();
-                    grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            switch (position) {
-                                case 0: BWeather.setBackgroundResource(R.drawable.ic_sunny);
-                                    break;
-                                case 1: BWeather.setBackgroundResource(R.drawable.ic_cloudy);
-                                    break;
-                                case 2: BWeather.setBackgroundResource(R.drawable.ic_rainy);
-                                    break;
-                                case 3: BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
-                                    break;
-                                case 4: BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
-                                    break;
-                                case 5: BWeather.setBackgroundResource(R.drawable.ic_snow);
-                                    break;
-                            }
-                        }
-                    });
+                    initGrid(0);
                 } else {
+                    // TODO test click weather then click other buttons like exercise
                     grid.setVisibility(View.GONE);
                     Log.d(TAG, "onClick: Grid is gone");
                 }
@@ -271,5 +251,39 @@ public class NewEntryActivity extends AppCompatActivity {
         sb.append(learn.getInput());
 
         return sb.toString();
+    }
+
+    private void initGrid(int type) {
+        if (type == 0) { // 0 for weather
+            weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
+            grid.setAdapter(weatherAdapter);
+            weatherAdapter.notifyDataSetChanged();
+            grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // TODO save the selected weather profile to disk
+                    switch (position) {
+                        case 0: BWeather.setBackgroundResource(R.drawable.ic_sunny);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 1: BWeather.setBackgroundResource(R.drawable.ic_cloudy);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 2: BWeather.setBackgroundResource(R.drawable.ic_rainy);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 3: BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 4: BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 5: BWeather.setBackgroundResource(R.drawable.ic_snow);
+                            grid.setVisibility(View.GONE);
+                            break;
+                    }
+                }
+            });
+        }
     }
 }
