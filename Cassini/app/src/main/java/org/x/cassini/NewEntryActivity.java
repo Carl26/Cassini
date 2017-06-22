@@ -201,21 +201,27 @@ public class NewEntryActivity extends AppCompatActivity {
         findViewById(R.id.new_entry_relative_layout).requestFocus();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_new_entry, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_new_entry, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == R.id.new_entry_finish_button) {
+//            // save entry to local dir
+//            saveDiary();
+//
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.new_entry_finish_button) {
-            // save entry to local dir
-            saveDiary();
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    protected void onDestroy() {
+        super.onDestroy();
+        saveDiary();
     }
 
     private void saveDiary() {
