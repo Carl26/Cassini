@@ -83,7 +83,16 @@
             android:columnWidth="50dp"
             android:gravity="center"
             android:id="@+id/new_entry_grid"
-            android:stretchMode="columnWidth"/>
+            android:stretchMode="columnWidth"
+            android:visibility="gone"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_entry_tag_field"
+            android:maxLines="1"
+            android:inputType="text"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
@@ -106,7 +115,9 @@
                 android:clickable="true"
                 android:layout_margin="10dp"
                 android:background="@drawable/border"
-                android:text="@string/main_text_prompt"/>
+                android:text="@string/main_text_prompt"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
 
             <org.x.cassini.Dimension
                 android:layout_width="match_parent"

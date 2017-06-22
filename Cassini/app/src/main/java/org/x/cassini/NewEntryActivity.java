@@ -6,11 +6,11 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +32,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private String TAG = "NewEntry";
     private TextView time; private TextView location; private TextView mainText;
     private Button BWeather, BEmotion, BExercise, BStar, BTag;
-    private LinearLayout LBottom;
+    private LinearLayout newEntryLayout;
     private Dimension learn, problem;
     private ArrayList<Dimension> dimensionList;
     private ArrayList<String> dimensionInput;
@@ -45,9 +45,11 @@ public class NewEntryActivity extends AppCompatActivity {
     private int intExercise = -1; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
     private int isStar = 0; // 0 - false/ not starred, 1 - true/ starred
     private String sTag = ""; // if sTag = null, tag is not set
+    private ArrayList<String> tagList;
     private GridView grid;
     private NewEntryGridAdapter weatherAdapter, emojiAdapter, exerciseAdapter;
     private int[] weatherIcons, emojiIcons, exerciseIcons;
+    private EditText tagField;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -94,7 +96,31 @@ public class NewEntryActivity extends AppCompatActivity {
 //        weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
 //        grid.setAdapter(weatherAdapter);
 //        weatherAdapter.notifyDataSetChanged();
-        grid.setVisibility(View.GONE);
+        tagField = (EditText) findViewById(R.id.new_entry_tag_field);
+        tagField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    sTag = tagField.getText().toString();
+                    if (!sTag.equals("")) { // user has entered something
+                        tagList.add(sTag);
+                        Log.d(TAG, "onFocusChange: added tag " + sTag);
+                        BTag.setBackgroundResource(R.drawable.ic_tag_full);
+                    } else {
+                        Log.d(TAG, "onFocusChange: nothing to be added");
+                    }
+                    tagField.setVisibility(View.GONE);
+
+                    // return to unfocused state
+                    mainText.requestFocus();
+                    InputMethodManager imm = (InputMethodManager)getSystemService(getApplication().INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mainText.getWindowToken(), 0);
+                } else {
+                    tagField.setText("");
+                    Log.d(TAG, "onFocusChange: focused");
+                }
+            }
+        });
 
         BWeather.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,10 +179,18 @@ public class NewEntryActivity extends AppCompatActivity {
                 }
             }
         });
+
+        BTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tagField.setVisibility(View.VISIBLE);
+                tagField.requestFocus();
+            }
+        });
     }
 
     private void initBottomPart() {
-        LBottom = (LinearLayout) findViewById(R.id.new_entry_bottom_linear);
+        newEntryLayout = (LinearLayout) findViewById(R.id.new_entry_bottom_linear);
         mainText = (TextView) findViewById(R.id.new_entry_main_text);
         mainText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -325,6 +359,9 @@ public class NewEntryActivity extends AppCompatActivity {
         exerciseIcons[2] = 14;
         exerciseIcons[3] = 15;
         exerciseIcons[4] = 16;
+
+        // tag list
+        tagList = new ArrayList<>();
     }
 
     private void initGrid(int type) {
