@@ -38,9 +38,12 @@ public class NewEntryActivity extends AppCompatActivity {
     private ArrayList<String> dimensionInput;
     private Calendar calendar;
     private final int SUNNY = 0, CLOUDY = 1, RAINY = 2, HEAVYRAIN = 3, THUNDERSTORM = 4, SNOW = 5;
+    private final int HAPPY = 0, SAD = 1, NEUTRAL = 2, ANGRY = 3, CRYING = 4, SHOCKED = 5;
+    private final int WALK = 0, RUN = 1, BALL = 2, CYCLING = 3, SWIN = 4;
     private int intWeather = -1; // -1 - not selected, 0 - sunny, 1 - cloudy, 2 - rainy, 3 - heavy rain, 4 - thunderstorm, 5 - snow
-    private int intEmotion = -1;
-    private int intStar = 0; // 0 - false/ not starred, 1 - true/ starred
+    private int intEmotion = -1; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
+    private int intExercise = -1; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
+    private int isStar = 0; // 0 - false/ not starred, 1 - true/ starred
     private String sTag = ""; // if sTag = null, tag is not set
     private GridView grid;
     private NewEntryGridAdapter weatherAdapter, emojiAdapter, exerciseAdapter;
@@ -134,6 +137,19 @@ public class NewEntryActivity extends AppCompatActivity {
                     // TODO test click weather then click other buttons like exercise
                     grid.setVisibility(View.GONE);
                     Log.d(TAG, "onClick: Grid is gone");
+                }
+            }
+        });
+
+        BStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isStar == 0) { // not starred
+                    BStar.setBackgroundResource(R.drawable.ic_star_full);
+                    isStar = 1;
+                } else {
+                    BStar.setBackgroundResource(R.drawable.ic_star_empty);
+                    isStar = 0;
                 }
             }
         });
@@ -323,21 +339,27 @@ public class NewEntryActivity extends AppCompatActivity {
                     switch (position) {
                         case 0: BWeather.setBackgroundResource(R.drawable.ic_sunny);
                             grid.setVisibility(View.GONE);
+                            intWeather = SUNNY;
                             break;
                         case 1: BWeather.setBackgroundResource(R.drawable.ic_cloudy);
                             grid.setVisibility(View.GONE);
+                            intWeather = CLOUDY;
                             break;
                         case 2: BWeather.setBackgroundResource(R.drawable.ic_rainy);
                             grid.setVisibility(View.GONE);
+                            intWeather = RAINY;
                             break;
                         case 3: BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
                             grid.setVisibility(View.GONE);
+                            intWeather = HEAVYRAIN;
                             break;
                         case 4: BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
                             grid.setVisibility(View.GONE);
+                            intWeather = THUNDERSTORM;
                             break;
                         case 5: BWeather.setBackgroundResource(R.drawable.ic_snow);
                             grid.setVisibility(View.GONE);
+                            intWeather = SNOW;
                             break;
                     }
                 }
@@ -353,21 +375,27 @@ public class NewEntryActivity extends AppCompatActivity {
                     switch (position) {
                         case 0: BEmotion.setBackgroundResource(R.drawable.ic_happy);
                             grid.setVisibility(View.GONE);
+                            intEmotion = HAPPY;
                             break;
                         case 1: BEmotion.setBackgroundResource(R.drawable.ic_sad);
                             grid.setVisibility(View.GONE);
+                            intEmotion = SAD;
                             break;
                         case 2: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
                             grid.setVisibility(View.GONE);
+                            intEmotion = NEUTRAL;
                             break;
                         case 3: BEmotion.setBackgroundResource(R.drawable.ic_angry);
                             grid.setVisibility(View.GONE);
+                            intEmotion = ANGRY;
                             break;
                         case 4: BEmotion.setBackgroundResource(R.drawable.ic_crying);
                             grid.setVisibility(View.GONE);
+                            intEmotion = CRYING;
                             break;
                         case 5: BEmotion.setBackgroundResource(R.drawable.ic_shocked);
                             grid.setVisibility(View.GONE);
+                            intEmotion = SHOCKED;
                             break;
                     }
                 }
@@ -384,22 +412,27 @@ public class NewEntryActivity extends AppCompatActivity {
                         case 0:
                             BExercise.setBackgroundResource(R.drawable.ic_walk);
                             grid.setVisibility(View.GONE);
+                            intExercise = WALK;
                             break;
                         case 1:
                             BExercise.setBackgroundResource(R.drawable.ic_run);
                             grid.setVisibility(View.GONE);
+                            intExercise = RUN;
                             break;
                         case 2:
                             BExercise.setBackgroundResource(R.drawable.ic_ball);
                             grid.setVisibility(View.GONE);
+                            intExercise = BALL;
                             break;
                         case 3:
                             BExercise.setBackgroundResource(R.drawable.ic_cycling);
                             grid.setVisibility(View.GONE);
+                            intExercise = CYCLING;
                             break;
                         case 4:
                             BExercise.setBackgroundResource(R.drawable.ic_swim);
                             grid.setVisibility(View.GONE);
+                            intExercise = SWIN;
                             break;
                     }
                 }

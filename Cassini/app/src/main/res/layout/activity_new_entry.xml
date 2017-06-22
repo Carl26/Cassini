@@ -60,21 +60,19 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/new_entry_exercise"
-                android:background="@drawable/ic_exercise"/>
+                android:background="@drawable/ic_flirting"/>
 
             <Button
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/new_entry_star"
-                android:text="star"
-                android:textSize="5sp" />
+                android:background="@drawable/ic_star_empty" />
 
             <Button
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/new_entry_tag"
-                android:text="tag"
-                android:textSize="5sp" />
+                android:background="@drawable/ic_tag_empty" />
 
     </LinearLayout>
 
