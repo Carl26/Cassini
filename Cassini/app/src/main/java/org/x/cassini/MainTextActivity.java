@@ -64,7 +64,19 @@ public class MainTextActivity extends AppCompatActivity {
 
             finish();
             return true;
+        } else if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // send result back to parent activity
+        Intent intent = new Intent();
+        intent.putExtra("mainText", receivedText);
+        setResult(RESULT_OK, intent);
     }
 }
