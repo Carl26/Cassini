@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOError;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String TAG = "NewEntry";
     private TextView time; private TextView location; private TextView mainText;
-    private Button BWeather, BEmotion, BStar, BTag;
+    private Button BWeather, BEmotion, BExercise, BStar, BTag;
     private LinearLayout LBottom;
     private Dimension learn, problem;
     private ArrayList<Dimension> dimensionList;
@@ -44,8 +43,8 @@ public class NewEntryActivity extends AppCompatActivity {
     private int intStar = 0; // 0 - false/ not starred, 1 - true/ starred
     private String sTag = ""; // if sTag = null, tag is not set
     private GridView grid;
-    private NewEntryGridAdapter weatherAdapter, emojiAdapter;
-    private int[] weatherIcons, emojiIcons;
+    private NewEntryGridAdapter weatherAdapter, emojiAdapter, exerciseAdapter;
+    private int[] weatherIcons, emojiIcons, exerciseIcons;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -85,6 +84,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private void initButtons() {
         BWeather = (Button) findViewById(R.id.new_entry_weather);
         BEmotion = (Button) findViewById(R.id.new_entry_emotion);
+        BExercise = (Button) findViewById(R.id.new_entry_exercise);
         BStar = (Button) findViewById(R.id.new_entry_star);
         BTag = (Button) findViewById(R.id.new_entry_tag);
         grid = (GridView) findViewById(R.id.new_entry_grid);
@@ -115,6 +115,21 @@ public class NewEntryActivity extends AppCompatActivity {
                     grid.setVisibility(View.VISIBLE);
                     Log.d(TAG, "onClick: Grid is visible");
                     initGrid(1);
+                } else {
+                    // TODO test click weather then click other buttons like exercise
+                    grid.setVisibility(View.GONE);
+                    Log.d(TAG, "onClick: Grid is gone");
+                }
+            }
+        });
+
+        BExercise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (grid.getVisibility() == View.GONE) {
+                    grid.setVisibility(View.VISIBLE);
+                    Log.d(TAG, "onClick: Grid is visible");
+                    initGrid(2);
                 } else {
                     // TODO test click weather then click other buttons like exercise
                     grid.setVisibility(View.GONE);
@@ -280,6 +295,14 @@ public class NewEntryActivity extends AppCompatActivity {
         emojiIcons[3] = 9;
         emojiIcons[4] = 10;
         emojiIcons[5] = 11;
+
+        // exercise array
+        exerciseIcons = new int[5];
+        exerciseIcons[0] = 12;
+        exerciseIcons[1] = 13;
+        exerciseIcons[2] = 14;
+        exerciseIcons[3] = 15;
+        exerciseIcons[4] = 16;
     }
 
     private void initGrid(int type) {
@@ -338,6 +361,38 @@ public class NewEntryActivity extends AppCompatActivity {
                             grid.setVisibility(View.GONE);
                             break;
                         case 5: BEmotion.setBackgroundResource(R.drawable.ic_shocked);
+                            grid.setVisibility(View.GONE);
+                            break;
+                    }
+                }
+            });
+        } else if (type == 2) {
+            exerciseAdapter = new NewEntryGridAdapter(getApplication(), exerciseIcons);
+            grid.setAdapter(exerciseAdapter);
+            exerciseAdapter.notifyDataSetChanged();
+            grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // TODO save the selected weather profile to disk
+                    switch (position) {
+                        case 0:
+                            BExercise.setBackgroundResource(R.drawable.ic_walk);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 1:
+                            BExercise.setBackgroundResource(R.drawable.ic_run);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 2:
+                            BExercise.setBackgroundResource(R.drawable.ic_ball);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 3:
+                            BExercise.setBackgroundResource(R.drawable.ic_cycling);
+                            grid.setVisibility(View.GONE);
+                            break;
+                        case 4:
+                            BExercise.setBackgroundResource(R.drawable.ic_swim);
                             grid.setVisibility(View.GONE);
                             break;
                     }

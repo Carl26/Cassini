@@ -59,6 +59,12 @@
             <Button
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:id="@+id/new_entry_exercise"
+                android:background="@drawable/ic_exercise"/>
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:id="@+id/new_entry_star"
                 android:text="star"
                 android:textSize="5sp" />
