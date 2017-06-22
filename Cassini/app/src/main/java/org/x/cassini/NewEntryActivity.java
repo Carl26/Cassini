@@ -1,11 +1,14 @@
 package org.x.cassini;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,6 +18,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -114,8 +118,7 @@ public class NewEntryActivity extends AppCompatActivity {
                     } else {
                         Log.d(TAG, "onFocusChange: nothing to be added");
                     }
-                    tagField.setVisibility(View.GONE);
-                    tagGrid.setVisibility(View.GONE);
+                    finishEditingTag();
                     // return to unfocused state
                     mainText.requestFocus();
                     InputMethodManager imm = (InputMethodManager)getSystemService(mContext.INPUT_METHOD_SERVICE);
@@ -194,9 +197,53 @@ public class NewEntryActivity extends AppCompatActivity {
                     tagGrid.setVisibility(View.VISIBLE);
                     tagAdapter = new NewEntryTagAdapter(mContext, tagList);
                     tagGrid.setAdapter(tagAdapter);
+                    tagGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                            AlertDialog.Builder alert = new AlertDialog.Builder(NewEntryActivity.this);
+                            String existingTag = tagList.get(position);
+                            alert.setTitle("Edit tag");
+                            final EditText input = new EditText(NewEntryActivity.this);
+                            input.setMaxLines(1);
+                            input.setInputType(InputType.TYPE_CLASS_TEXT);
+                            input.setText(existingTag);
+                            alert.setView(input);
+
+                            alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    tagList.remove(position);
+                                    Toast.makeText(mContext, "Tag deleted!", Toast.LENGTH_SHORT).show();
+                                    finishEditingTag();
+                                }
+                            });
+
+                            alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    String modifiedTag = input.getText().toString();
+                                    if (!modifiedTag.equals("")) {
+                                        tagList.set(position, modifiedTag);
+                                        Toast.makeText(mContext, "Tag updated!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        tagList.remove(position);
+                                        Toast.makeText(mContext, "Tag deleted!", Toast.LENGTH_SHORT).show();
+                                    }
+                                    finishEditingTag();
+                                }
+                            });
+                            alert.show();
+                        }
+                    });
                 }
             }
         });
+    }
+
+    private void finishEditingTag() {
+        if (tagList.isEmpty()) {
+            BTag.setBackgroundResource(R.drawable.ic_tag_empty);
+        }
+        tagGrid.setVisibility(View.GONE);
+        tagField.setVisibility(View.GONE);
     }
 
     private void initBottomPart() {
