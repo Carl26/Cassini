@@ -54,13 +54,13 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/new_entry_emotion"
-                android:background="@drawable/ic_emoji"/>
+                android:background="@drawable/ic_flirting"/>
 
             <Button
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/new_entry_exercise"
-                android:background="@drawable/ic_flirting"/>
+                android:background="@drawable/ic_exercise"/>
 
             <Button
                 android:layout_width="50dp"
