@@ -1,5 +1,6 @@
 package org.x.cassini;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,10 +47,12 @@ public class NewEntryActivity extends AppCompatActivity {
     private int isStar = 0; // 0 - false/ not starred, 1 - true/ starred
     private String sTag = ""; // if sTag = null, tag is not set
     private ArrayList<String> tagList;
-    private GridView grid;
+    private GridView grid, tagGrid;
     private NewEntryGridAdapter weatherAdapter, emojiAdapter, exerciseAdapter;
     private int[] weatherIcons, emojiIcons, exerciseIcons;
     private EditText tagField;
+    private NewEntryTagAdapter tagAdapter;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -57,6 +60,7 @@ public class NewEntryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_entry);
 
         Log.d(TAG, "Entered onCreate");
+        mContext = getApplication();
 
         // initialize various components
         initIntArrays();
@@ -93,9 +97,10 @@ public class NewEntryActivity extends AppCompatActivity {
         BStar = (Button) findViewById(R.id.new_entry_star);
         BTag = (Button) findViewById(R.id.new_entry_tag);
         grid = (GridView) findViewById(R.id.new_entry_grid);
-//        weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
+//        weatherAdapter = new NewEntryGridAdapter(mContext, weatherIcons);
 //        grid.setAdapter(weatherAdapter);
 //        weatherAdapter.notifyDataSetChanged();
+        tagGrid = (GridView) findViewById(R.id.new_entry_tag_grid);
         tagField = (EditText) findViewById(R.id.new_entry_tag_field);
         tagField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -110,10 +115,10 @@ public class NewEntryActivity extends AppCompatActivity {
                         Log.d(TAG, "onFocusChange: nothing to be added");
                     }
                     tagField.setVisibility(View.GONE);
-
+                    tagGrid.setVisibility(View.GONE);
                     // return to unfocused state
                     mainText.requestFocus();
-                    InputMethodManager imm = (InputMethodManager)getSystemService(getApplication().INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager)getSystemService(mContext.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mainText.getWindowToken(), 0);
                 } else {
                     tagField.setText("");
@@ -185,6 +190,11 @@ public class NewEntryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 tagField.setVisibility(View.VISIBLE);
                 tagField.requestFocus();
+                if (!tagList.isEmpty()) {
+                    tagGrid.setVisibility(View.VISIBLE);
+                    tagAdapter = new NewEntryTagAdapter(mContext, tagList);
+                    tagGrid.setAdapter(tagAdapter);
+                }
             }
         });
     }
@@ -197,7 +207,7 @@ public class NewEntryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("mainText", (String) mainText.getText());
-                Intent mainTextAct = new Intent(getApplication(), MainTextActivity.class);
+                Intent mainTextAct = new Intent(mContext, MainTextActivity.class);
                 mainTextAct.putExtras(bundle);
                 startActivityForResult(mainTextAct, 1);
             }
@@ -276,7 +286,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private void saveDiary() {
         String filename = time.getText().toString().replaceAll("\\/", "");
-//        File savedFile = new File(getApplication().getFilesDir(), filename);
+//        File savedFile = new File(mContext().getFilesDir(), filename);
         File sdCard = Environment.getExternalStorageDirectory();
         File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
         if (!dir.exists()) {
@@ -366,7 +376,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private void initGrid(int type) {
         if (type == 0) { // 0 for weather
-            weatherAdapter = new NewEntryGridAdapter(getApplication(), weatherIcons);
+            weatherAdapter = new NewEntryGridAdapter(mContext, weatherIcons);
             grid.setAdapter(weatherAdapter);
             weatherAdapter.notifyDataSetChanged();
             grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -402,7 +412,7 @@ public class NewEntryActivity extends AppCompatActivity {
                 }
             });
         } else if (type == 1) {
-            emojiAdapter = new NewEntryGridAdapter(getApplication(), emojiIcons);
+            emojiAdapter = new NewEntryGridAdapter(mContext, emojiIcons);
             grid.setAdapter(emojiAdapter);
             emojiAdapter.notifyDataSetChanged();
             grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -438,7 +448,7 @@ public class NewEntryActivity extends AppCompatActivity {
                 }
             });
         } else if (type == 2) {
-            exerciseAdapter = new NewEntryGridAdapter(getApplication(), exerciseIcons);
+            exerciseAdapter = new NewEntryGridAdapter(mContext, exerciseIcons);
             grid.setAdapter(exerciseAdapter);
             exerciseAdapter.notifyDataSetChanged();
             grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {

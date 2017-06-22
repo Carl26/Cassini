@@ -94,6 +94,16 @@
             android:inputType="text"
             android:visibility="gone"/>
 
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="auto_fit"
+            android:columnWidth="75dp"
+            android:gravity="center"
+            android:id="@+id/new_entry_tag_grid"
+            android:stretchMode="columnWidth"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
     <ScrollView
