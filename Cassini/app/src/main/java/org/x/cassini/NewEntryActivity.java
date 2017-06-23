@@ -64,6 +64,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private NewEntryTagAdapter tagAdapter;
     private Context mContext;
     private String sDate;
+    private boolean isResult = false;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -287,6 +288,7 @@ public class NewEntryActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String modifiedText = data.getStringExtra("mainText");
                 mainText.setText(modifiedText);
+                isResult = true;
             }
         }
     }
@@ -689,8 +691,8 @@ public class NewEntryActivity extends AppCompatActivity {
                     br.read(buffer, 0, count);
                     String formText = new String(buffer);
                     Log.d(TAG, "loadDiary: " + formText);
-                    if (mainText.getText().equals("Click here to enter...")) {
-                        // only load text when its empty
+                    if (!isResult) {
+                        // only load text when it has not been overwritten by result
                         mainText.setText(formText);
                     }
                 }
