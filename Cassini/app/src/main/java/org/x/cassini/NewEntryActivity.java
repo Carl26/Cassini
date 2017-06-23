@@ -332,7 +332,8 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void saveDiary() {
-        String filename = time.getText().toString().replaceAll("\\/", "");
+        String filename = time.getText().toString().replaceAll("\\/", "").substring(0, 8);
+        Log.d(TAG, "saveDiary: " + filename);
 //        File savedFile = new File(mContext().getFilesDir(), filename);
         File sdCard = Environment.getExternalStorageDirectory();
         File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
@@ -375,17 +376,44 @@ public class NewEntryActivity extends AppCompatActivity {
         // location
         sb.append(location.getText().toString());
         sb.append(System.lineSeparator());
+        // weather
+        sb.append(intWeather);
+        sb.append(System.lineSeparator());
+        // emotion
+        sb.append(intEmotion);
+        sb.append(System.lineSeparator());
+        // exercise
+        sb.append(intExercise);
+        sb.append(System.lineSeparator());
+        // star
+        sb.append(isStar);
+        sb.append(System.lineSeparator());
+        // tag
+        for (String tagItem : tagList) {
+            sb.append(tagItem);
+            sb.append(System.lineSeparator());
+        }
         // main text
         String mainDiary = mainText.getText().toString();
-        int textLen = mainDiary.length();
-        sb.append(textLen);
-        sb.append(System.lineSeparator());
-        sb.append(mainDiary);
-        sb.append(System.lineSeparator());
+        if (mainDiary.equals("Click here to enter...")) {
+            // empty input -> length of main diary is 0
+            sb.append(0);
+            sb.append(System.lineSeparator());
+        } else {
+            int textLen = mainDiary.length();
+            sb.append(textLen);
+            sb.append(System.lineSeparator());
+            sb.append(mainDiary);
+            sb.append(System.lineSeparator());
+        }
         // dimensions
-        sb.append(learn.getHeader());
+        sb.append("??" + learn.getHeader());
         sb.append(System.lineSeparator());
-        sb.append(learn.getInput());
+        sb.append("!!" + learn.getInput());
+        sb.append(System.lineSeparator());
+        sb.append("??" + problem.getHeader());
+        sb.append(System.lineSeparator());
+        sb.append("!!" + problem.getInput());
 
         return sb.toString();
     }
