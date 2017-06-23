@@ -29,7 +29,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".NewEntryActivity" />
         </activity>
-        <activity android:name=".AllEntriesActivity"/>
+        <activity android:name=".AllEntriesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
