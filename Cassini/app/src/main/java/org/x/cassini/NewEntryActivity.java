@@ -91,7 +91,7 @@ public class NewEntryActivity extends AppCompatActivity {
         calendar = Calendar.getInstance();
         time = (TextView) findViewById(R.id.new_entry_time);
         location = (TextView) findViewById(R.id.new_entry_location);
-        time.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
+        time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(calendar.getTime()));
     }
 
     private void initButtons() {
