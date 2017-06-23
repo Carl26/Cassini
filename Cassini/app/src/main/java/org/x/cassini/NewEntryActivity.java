@@ -676,6 +676,7 @@ public class NewEntryActivity extends AppCompatActivity {
                 if (count != 0) {
                     // at least one tag
                     BTag.setBackgroundResource(R.drawable.ic_tag_full);
+                    tagList = new ArrayList<>();
                     for (int i = 0; i < count; i++) {
                         line = br.readLine();
                         tagList.add(line);
