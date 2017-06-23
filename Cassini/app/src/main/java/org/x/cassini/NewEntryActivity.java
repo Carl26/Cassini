@@ -418,6 +418,8 @@ public class NewEntryActivity extends AppCompatActivity {
             sb.append(textLen);
             sb.append(System.lineSeparator());
             sb.append(mainDiary);
+            Log.d(TAG, "formDiary: len " + textLen);
+            Log.d(TAG, "formDiary: maindiary " + mainDiary);
 //            sb.append(System.lineSeparator());
         }
         // dimensions
@@ -687,7 +689,10 @@ public class NewEntryActivity extends AppCompatActivity {
                     br.read(buffer, 0, count);
                     String formText = new String(buffer);
                     Log.d(TAG, "loadDiary: " + formText);
-                    mainText.setText(formText);
+                    if (mainText.getText().equals("Click here to enter...")) {
+                        // only load text when its empty
+                        mainText.setText(formText);
+                    }
                 }
                 // dimensions
                 // TODO now only reads answer to dimensions -> can be used to read title too
