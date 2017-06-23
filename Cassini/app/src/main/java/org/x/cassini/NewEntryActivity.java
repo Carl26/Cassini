@@ -74,6 +74,8 @@ public class NewEntryActivity extends AppCompatActivity {
         Log.d(TAG, "Entered onCreate");
         mContext = getApplication();
 
+
+
         // initialize various components
         initIntArrays();
 
@@ -82,7 +84,14 @@ public class NewEntryActivity extends AppCompatActivity {
         initButtons();
         initBottomPart();
         mainText.requestFocus();
-        sDate = time.getText().toString().replaceAll("\\/", "").substring(0, 8);
+        // load other dates if needed
+        if (getIntent() != null) {
+            sDate = getIntent().getStringExtra("date");
+            Log.d(TAG, "onCreate: requested date is " + sDate);
+        } else {
+            sDate = time.getText().toString().replaceAll("\\/", "").substring(0, 8);
+            Log.d(TAG, "onCreate: Today is " + sDate);
+        }
     }
 
     private void initToolbar() {

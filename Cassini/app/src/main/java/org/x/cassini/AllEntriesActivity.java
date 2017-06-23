@@ -1,11 +1,14 @@
 package org.x.cassini;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ public class AllEntriesActivity extends AppCompatActivity {
     private String TAG = "AllEntries";
     private ArrayList<Storie> stories;
     private ListView list;
+    private File dir;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -33,11 +37,15 @@ public class AllEntriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_all_entries);
         mContext = getApplication();
 
-        formStoriesArray();
         initToolbar();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        formStoriesArray();
         initList();
-
     }
 
     private void initToolbar() {
@@ -52,7 +60,7 @@ public class AllEntriesActivity extends AppCompatActivity {
 
     private void formStoriesArray() {
         File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
+        dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -105,5 +113,15 @@ public class AllEntriesActivity extends AppCompatActivity {
     private void initList() {
         list = (ListView) findViewById(R.id.all_entries_list);
         list.setAdapter(new AllEntriesListAdapter(mContext, stories));
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Storie selected = stories.get(position);
+                String filename = selected.getmDateTime().substring(0, 10).replaceAll("\\/", "");
+                Intent intent = new Intent(mContext, NewEntryActivity.class);
+                intent.putExtra("date", filename);
+                startActivity(intent);
+            }
+        });
     }
 }
