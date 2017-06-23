@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -20,9 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,19 +40,20 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private String TAG = "NewEntry";
-    private TextView time; private TextView location; private TextView mainText;
+    private TextView time, location, mainText;
     private Button BWeather, BEmotion, BExercise, BStar, BTag;
     private LinearLayout newEntryLayout;
     private Dimension learn, problem;
     private ArrayList<Dimension> dimensionList;
     private ArrayList<String> dimensionInput;
     private Calendar calendar;
+    private final int UNSET = -1;
     private final int SUNNY = 0, CLOUDY = 1, RAINY = 2, HEAVYRAIN = 3, THUNDERSTORM = 4, SNOW = 5;
     private final int HAPPY = 0, SAD = 1, NEUTRAL = 2, ANGRY = 3, CRYING = 4, SHOCKED = 5;
     private final int WALK = 0, RUN = 1, BALL = 2, CYCLING = 3, SWIN = 4;
-    private int intWeather = -1; // -1 - not selected, 0 - sunny, 1 - cloudy, 2 - rainy, 3 - heavy rain, 4 - thunderstorm, 5 - snow
-    private int intEmotion = -1; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
-    private int intExercise = -1; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
+    private int intWeather = UNSET; // -1 - not selected, 0 - sunny, 1 - cloudy, 2 - rainy, 3 - heavy rain, 4 - thunderstorm, 5 - snow
+    private int intEmotion = UNSET; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
+    private int intExercise = UNSET; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
     private int isStar = 0; // 0 - false/ not starred, 1 - true/ starred
     private String sTag = ""; // if sTag = null, tag is not set
     private ArrayList<String> tagList;
@@ -57,6 +63,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private EditText tagField;
     private NewEntryTagAdapter tagAdapter;
     private Context mContext;
+    private String sDate;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -73,8 +80,8 @@ public class NewEntryActivity extends AppCompatActivity {
         initTextView();
         initButtons();
         initBottomPart();
-        findViewById(R.id.new_entry_relative_layout).requestFocus();
-
+        mainText.requestFocus();
+        sDate = time.getText().toString().replaceAll("\\/", "").substring(0, 8);
     }
 
     private void initToolbar() {
@@ -247,7 +254,7 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void initBottomPart() {
-        newEntryLayout = (LinearLayout) findViewById(R.id.new_entry_bottom_linear);
+//        newEntryLayout = (LinearLayout) findViewById(R.id.new_entry_bottom_linear);
         mainText = (TextView) findViewById(R.id.new_entry_main_text);
         mainText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,6 +282,7 @@ public class NewEntryActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+//        Log.e(TAG, "onActivityResult: result here");
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 String modifiedText = data.getStringExtra("mainText");
@@ -286,55 +294,54 @@ public class NewEntryActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        // save edittext data
-        dimensionInput = new ArrayList<>();
-        if (dimensionList != null) {
-            for (Dimension d : dimensionList) {
-                dimensionInput.add(d.getInput());
-                Log.d(TAG, "onPause: edittext input is " + d.getInput());
-            }
-        }
+        // save new entry data
+//        dimensionInput = new ArrayList<>();
+//        if (dimensionList != null) {
+//            for (Dimension d : dimensionList) {
+//                dimensionInput.add(d.getInput());
+//                Log.d(TAG, "onPause: edittext input is " + d.getInput());
+//            }
+//        }
+        saveDiary();
+        Log.d(TAG, "onPause: saved diary");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // restore data back to edittext
-        if (dimensionInput != null) {
-            for (int i = 0; i < dimensionInput.size(); i++) {
-                dimensionList.get(i).setInput(dimensionInput.get(i));
-            }
-        }
-        findViewById(R.id.new_entry_relative_layout).requestFocus();
+        Log.d(TAG, "onResume: onResume");
+        // restore data back to new entry activity
+//        if (dimensionInput != null) {
+//            for (int i = 0; i < dimensionInput.size(); i++) {
+//                dimensionList.get(i).setInput(dimensionInput.get(i));
+//            }
+//        }
+        loadDiary();
+        mainText.requestFocus();
     }
 
-//    @Override
+    //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.menu_new_entry, menu);
 //        return true;
 //    }
 //
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == R.id.new_entry_finish_button) {
-//            // save entry to local dir
-//            saveDiary();
-//
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        onBackPressed();
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        saveDiary();
+        Log.e(TAG, "onDestroy: exiting activity");
+//        saveDiary();
     }
 
     private void saveDiary() {
-        String filename = time.getText().toString().replaceAll("\\/", "").substring(0, 8);
+        String filename = sDate;
         Log.d(TAG, "saveDiary: " + filename);
-//        File savedFile = new File(mContext().getFilesDir(), filename);
         File sdCard = Environment.getExternalStorageDirectory();
         File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
         if (!dir.exists()) {
@@ -364,7 +371,6 @@ public class NewEntryActivity extends AppCompatActivity {
                 }
             }
         }
-        finish();
     }
 
     private String formDiary() {
@@ -389,9 +395,17 @@ public class NewEntryActivity extends AppCompatActivity {
         sb.append(isStar);
         sb.append(System.lineSeparator());
         // tag
-        for (String tagItem : tagList) {
-            sb.append(tagItem);
+        if (tagList.isEmpty()) {
+            // no tag entered
+            sb.append(0);
             sb.append(System.lineSeparator());
+        } else {
+            sb.append(tagList.size());
+            sb.append(System.lineSeparator());
+            for (String tagItem : tagList) {
+                sb.append(tagItem);
+                sb.append(System.lineSeparator());
+            }
         }
         // main text
         String mainDiary = mainText.getText().toString();
@@ -404,7 +418,7 @@ public class NewEntryActivity extends AppCompatActivity {
             sb.append(textLen);
             sb.append(System.lineSeparator());
             sb.append(mainDiary);
-            sb.append(System.lineSeparator());
+//            sb.append(System.lineSeparator());
         }
         // dimensions
         sb.append("??" + learn.getHeader());
@@ -559,6 +573,141 @@ public class NewEntryActivity extends AppCompatActivity {
                     }
                 }
             });
+        }
+    }
+
+    private void loadDiary() {
+        Log.d(TAG, "loadDiary: load diary");
+        File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File savedFile = new File(dir, sDate + ".txt");
+        if (savedFile.exists()) {
+            FileInputStream fis;
+            BufferedReader br;
+            String line;
+            int count;
+            char[] buffer;
+            try {
+                fis = new FileInputStream(savedFile);
+                br = new BufferedReader(new InputStreamReader(fis));
+                // start reading
+                // date and time
+                line = br.readLine();
+                Log.d(TAG, "loadDiary: " + line);
+                time.setText(line);
+                // location
+                line = br.readLine();
+                Log.d(TAG, "loadDiary: " + line);
+                location.setText(line);
+                // weather
+                line = br.readLine();
+                count = Integer.valueOf(line);
+                Log.d(TAG, "loadDiary: " + count);
+                switch (count) {
+                    case UNSET: break;
+                    case SUNNY: BWeather.setBackgroundResource(R.drawable.ic_sunny);
+                        break;
+                    case CLOUDY: BWeather.setBackgroundResource(R.drawable.ic_cloudy);
+                        break;
+                    case RAINY: BWeather.setBackgroundResource(R.drawable.ic_rainy);
+                        break;
+                    case HEAVYRAIN: BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
+                        break;
+                    case THUNDERSTORM: BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
+                        break;
+                    case SNOW: BWeather.setBackgroundResource(R.drawable.ic_snow);
+                        break;
+                }
+                // emotion
+                line = br.readLine();
+                count = Integer.valueOf(line);
+                Log.d(TAG, "loadDiary: " + count);
+                switch (count) {
+                    case UNSET: break;
+                    case HAPPY: BEmotion.setBackgroundResource(R.drawable.ic_happy);
+                        break;
+                    case SAD: BEmotion.setBackgroundResource(R.drawable.ic_sad);
+                        break;
+                    case NEUTRAL: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
+                        break;
+                    case ANGRY: BEmotion.setBackgroundResource(R.drawable.ic_angry);
+                        break;
+                    case CRYING: BEmotion.setBackgroundResource(R.drawable.ic_crying);
+                        break;
+                    case SHOCKED: BEmotion.setBackgroundResource(R.drawable.ic_shocked);
+                        break;
+                }
+                // exercise
+                line = br.readLine();
+                count = Integer.valueOf(line);
+                Log.d(TAG, "loadDiary: " + count);
+                switch (count) {
+                    case UNSET: break;
+                    case WALK: BExercise.setBackgroundResource(R.drawable.ic_walk);
+                        break;
+                    case RUN: BExercise.setBackgroundResource(R.drawable.ic_run);
+                        break;
+                    case BALL: BExercise.setBackgroundResource(R.drawable.ic_ball);
+                        break;
+                    case CYCLING: BExercise.setBackgroundResource(R.drawable.ic_cycling);
+                        break;
+                    case SWIN: BExercise.setBackgroundResource(R.drawable.ic_swim);
+                        break;
+                }
+                // star
+                line = br.readLine();
+                count = Integer.valueOf(line);
+                Log.d(TAG, "loadDiary: " + count);
+                if (count == 1) {
+                    BStar.setBackgroundResource(R.drawable.ic_star_full);
+                }
+                // tag
+                line = br.readLine();
+                Log.d(TAG, "loadDiary: number of tags" + line);
+                count = Integer.valueOf(line);
+                Log.d(TAG, "loadDiary: " + count);
+                if (count != 0) {
+                    // at least one tag
+                    BTag.setBackgroundResource(R.drawable.ic_tag_full);
+                    for (int i = 0; i < count; i++) {
+                        line = br.readLine();
+                        tagList.add(line);
+                    }
+                }
+//                Log.e(TAG, "loadDiary: here");
+                // main text
+                line = br.readLine();
+                count = Integer.valueOf(line);
+                Log.d(TAG, "loadDiary: " + count);
+                if (count != 0) {
+                    buffer = new char[count];
+                    br.read(buffer, 0, count);
+                    String formText = new String(buffer);
+                    Log.d(TAG, "loadDiary: " + formText);
+                    mainText.setText(formText);
+                }
+                // dimensions
+                // TODO now only reads answer to dimensions -> can be used to read title too
+                line = br.readLine();
+                Log.d(TAG, "loadDiary: dh1 " + line);
+                line = br.readLine().substring(2);
+                Log.d(TAG, "loadDiary: di1 " + line);
+                learn.setInput(line);
+                line = br.readLine();
+                Log.d(TAG, "loadDiary: dh2 " + line);
+                line = br.readLine().substring(2);
+                Log.d(TAG, "loadDiary: di2 " + line);
+                problem.setInput(line);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e(TAG, "loadDiary: no file found");
         }
     }
 }

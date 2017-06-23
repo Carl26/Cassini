@@ -61,7 +61,7 @@ public class MainTextActivity extends AppCompatActivity {
             Intent intent = new Intent();
             intent.putExtra("mainText", mainText);
             setResult(RESULT_OK, intent);
-
+            Log.d(TAG, "onOptionsItemSelected: sent result");
             finish();
             return true;
         } else if (item.getItemId() == android.R.id.home) {
