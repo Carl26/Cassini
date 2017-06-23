@@ -64,6 +64,7 @@ class AllEntriesListAdapter extends BaseAdapter {
                 TextView tagView = new TextView(mContext);
                 tagView.setTextColor(view.getResources().getColor(R.color.black));
                 tagView.setText(tag);
+                tagView.setPadding(5, 5, 5, 5);
                 tags.addView(tagView);
             }
         } else {
