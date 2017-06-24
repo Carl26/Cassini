@@ -85,7 +85,7 @@ public class NewEntryActivity extends AppCompatActivity {
         initBottomPart();
         mainText.requestFocus();
         // load other dates if needed
-        if (getIntent() != null) {
+        if (getIntent().getStringExtra("date") != null) {
             sDate = getIntent().getStringExtra("date");
             Log.d(TAG, "onCreate: requested date is " + sDate);
         } else {
