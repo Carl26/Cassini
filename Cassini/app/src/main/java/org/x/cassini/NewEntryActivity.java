@@ -49,11 +49,11 @@ public class NewEntryActivity extends AppCompatActivity {
     private Calendar calendar;
     private final int UNSET = -1;
     private final int SUNNY = 0, CLOUDY = 1, RAINY = 2, HEAVYRAIN = 3, THUNDERSTORM = 4, SNOW = 5;
-    private final int HAPPY = 0, SAD = 1, NEUTRAL = 2, ANGRY = 3, CRYING = 4, SHOCKED = 5;
+    private final int HAPPY = 0, SAD = 1, NEUTRAL = 2, ANGRY = 3, EMBARRASSED = 4, KISS = 5;
     private final int WALK = 0, RUN = 1, BALL = 2, CYCLING = 3, SWIN = 4;
     private int intWeather = UNSET; // -1 - not selected, 0 - sunny, 1 - cloudy, 2 - rainy, 3 - heavy rain, 4 - thunderstorm, 5 - snow
-    private int intEmotion = UNSET; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
-    private int intExercise = UNSET; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - crying, 5 - shocked
+    private int intEmotion = UNSET; // -1 - not selected, 0 - happy, 1 - sad, 2 - neutral, 3 - angry, 4 - embarrassed, 5 - kiss
+    private int intExercise = UNSET; // -1 - not selected, 0 - walk, 1 - run, 2 - ball, 3 - cycling, 4 - swim
     private int isStar = 0; // 0 - false/ not starred, 1 - true/ starred
     private String sTag = ""; // if sTag = null, tag is not set
     private ArrayList<String> tagList;
@@ -538,13 +538,13 @@ public class NewEntryActivity extends AppCompatActivity {
                             grid.setVisibility(View.GONE);
                             intEmotion = ANGRY;
                             break;
-                        case 4: BEmotion.setBackgroundResource(R.drawable.ic_crying);
+                        case 4: BEmotion.setBackgroundResource(R.drawable.ic_embarrassed);
                             grid.setVisibility(View.GONE);
-                            intEmotion = CRYING;
+                            intEmotion = EMBARRASSED;
                             break;
-                        case 5: BEmotion.setBackgroundResource(R.drawable.ic_shocked);
+                        case 5: BEmotion.setBackgroundResource(R.drawable.ic_kiss);
                             grid.setVisibility(View.GONE);
-                            intEmotion = SHOCKED;
+                            intEmotion = KISS;
                             break;
                     }
                 }
@@ -648,9 +648,9 @@ public class NewEntryActivity extends AppCompatActivity {
                         break;
                     case ANGRY: BEmotion.setBackgroundResource(R.drawable.ic_angry);
                         break;
-                    case CRYING: BEmotion.setBackgroundResource(R.drawable.ic_crying);
+                    case EMBARRASSED: BEmotion.setBackgroundResource(R.drawable.ic_embarrassed);
                         break;
-                    case SHOCKED: BEmotion.setBackgroundResource(R.drawable.ic_shocked);
+                    case KISS: BEmotion.setBackgroundResource(R.drawable.ic_kiss);
                         break;
                 }
                 // exercise

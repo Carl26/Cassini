@@ -86,11 +86,11 @@ class NewEntryGridAdapter extends BaseAdapter {
                 // angry
                 case 9: iconItem.setImageResource(R.drawable.ic_angry);
                     break;
-                // crying
-                case 10: iconItem.setImageResource(R.drawable.ic_crying);
+                // embarrassed
+                case 10: iconItem.setImageResource(R.drawable.ic_embarrassed);
                     break;
-                // shocked
-                case 11: iconItem.setImageResource(R.drawable.ic_shocked);
+                // kiss
+                case 11: iconItem.setImageResource(R.drawable.ic_kiss);
                     break;
                 // walk
                 case 12: iconItem.setImageResource(R.drawable.ic_walk);
