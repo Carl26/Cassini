@@ -1,28 +1,258 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_alignParentBottom="false"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/mainpage_relative_layout"
     tools:context="org.x.cassini.MainActivity">
 
     <TextView
-        android:id="@+id/sample_text"
+        android:id="@+id/main_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Stories"
+        android:gravity="center"
+        android:fontFamily="cursive"
+        android:textSize="24dp"
+        android:layout_alignParentEnd="true"/>
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="147dp"
-        tools:layout_editor_absoluteY="173dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:layout_below="@id/main_title"
+        android:id="@+id/main_layout_all_entries">
 
-</android.support.constraint.ConstraintLayout>
+        <ImageView
+            android:id="@+id/main_all_entries_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="15dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/listview" />
+
+        <TextView
+            android:id="@+id/main_all_entries"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="0dp"
+            android:text="All Entries"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:id="@+id/main_goTo2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="14dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/go_to" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/main_layout_all_entries"
+        android:orientation="horizontal"
+        android:id="@+id/main_layout_timeline_view">
+
+        <ImageView
+            android:id="@+id/main_timeline_view_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="15dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/timelineview" />
+
+        <TextView
+            android:id="@+id/main_timeline_view"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="0dp"
+            android:text="Timeline View"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:id="@+id/main_goTo1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="14dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/go_to" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_layout_tags"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/main_layout_timeline_view"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:id="@+id/main_tags_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="15dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/tag" />
+
+        <TextView
+            android:id="@+id/main_tags"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="0dp"
+            android:text="Tags"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:id="@+id/main_goTo3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="14dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/go_to" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_layout_starred"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/main_layout_tags"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/main_starred_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="15dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/star_empty" />
+
+        <TextView
+            android:id="@+id/main_starred"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="0dp"
+            android:text="Starred"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:id="@+id/main_goTo4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="14dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/go_to" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_layout_stories"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/main_layout_starred"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/main_stories_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="15dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/story" />
+
+        <TextView
+            android:id="@+id/main_stories"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="0dp"
+            android:text="Stories"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:id="@+id/main_goTo5"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="14dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/go_to" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_layout_settings"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/main_layout_stories"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/main_settings_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="15dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/setting" />
+
+        <TextView
+            android:id="@+id/main_settings"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="0dp"
+            android:text="Settings"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:id="@+id/main_goTo6"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="14dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/go_to" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/main_new_entry"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="+"
+        android:textSize="100sp"
+        android:gravity="center"
+        android:background="#edf0f4"
+        android:layout_below="@id/main_layout_settings"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
+
+
+</RelativeLayout>
