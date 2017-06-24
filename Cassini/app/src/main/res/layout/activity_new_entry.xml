@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/new_entry_relative_layout">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_entry_toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/new_entry_toolbar"
+        android:id="@+id/new_entry_info">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_entry_time"
+            android:gravity="start"
+            android:text="time"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_entry_location"
+            android:layout_gravity="end"
+            android:text="location"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_entry_options"
+        android:layout_below="@+id/new_entry_info"
+        android:orientation="vertical"
+        android:background="@drawable/border">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/new_entry_buttons">
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/new_entry_weather"
+                android:background="@drawable/ic_weather"/>
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/new_entry_emotion"
+                android:background="@drawable/ic_flirting"/>
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/new_entry_exercise"
+                android:background="@drawable/ic_exercise"/>
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/new_entry_star"
+                android:background="@drawable/ic_star_empty" />
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/new_entry_tag"
+                android:background="@drawable/ic_tag_empty" />
+
+    </LinearLayout>
+
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="auto_fit"
+            android:columnWidth="50dp"
+            android:gravity="center"
+            android:id="@+id/new_entry_grid"
+            android:stretchMode="columnWidth"
+            android:visibility="gone"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_entry_tag_field"
+            android:maxLines="1"
+            android:inputType="text"
+            android:visibility="gone"/>
+
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="auto_fit"
+            android:columnWidth="75dp"
+            android:gravity="center"
+            android:id="@+id/new_entry_tag_grid"
+            android:stretchMode="columnWidth"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/new_entry_options"
+        android:id="@+id/new_entry_bottom_scroll">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/new_entry_bottom_linear">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="300dp"
+                android:id="@+id/new_entry_main_text"
+                android:clickable="true"
+                android:layout_margin="10dp"
+                android:background="@drawable/border"
+                android:text="@string/main_text_prompt"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
+
+            <org.x.cassini.Dimension
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/new_entry_dimension_learn"
+                android:background="@drawable/border"
+                android:nextFocusDown="@+id/new_entry_dimension_problem"
+                android:layout_margin="10dp"/>
+
+            <org.x.cassini.Dimension
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/new_entry_dimension_problem"
+                android:background="@drawable/border"
+                android:nextFocusDown="@+id/new_entry_relative_layout"
+                android:layout_margin="10dp"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
