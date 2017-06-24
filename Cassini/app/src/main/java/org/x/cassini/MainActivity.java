@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 Intent allEntriesAct = new Intent(getApplication(),AllEntriesActivity.class);
+                startActivity(allEntriesAct);
             }
         });
 
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //tags
-        tags = (LinearLayout) findViewById(R.id.main_tags);
+        tags = (LinearLayout) findViewById(R.id.main_layout_tags);
         tags.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //starred
-        starred = (LinearLayout) findViewById(R.id.main_starred);
+        starred = (LinearLayout) findViewById(R.id.main_layout_starred);
         starred.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //stories
-        stories = (LinearLayout) findViewById(R.id.main_stories);
+        stories = (LinearLayout) findViewById(R.id.main_layout_stories);
         stories.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //settings
-        settings = (LinearLayout) findViewById(R.id.main_all_entries);
+        settings = (LinearLayout) findViewById(R.id.main_layout_settings);
         settings.setOnClickListener(new View.OnClickListener(){
 
 
@@ -118,11 +119,12 @@ public class MainActivity extends AppCompatActivity {
     private void initTextView(){
 
         //new Entry
-        newEntry = (TextView) findViewById(R.id.main_all_entries);
+        newEntry = (TextView) findViewById(R.id.main_new_entry);
         newEntry.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 Intent newEntryAct = new Intent(getApplication(),NewEntryActivity.class);
+                startActivity(newEntryAct);
             }
         });
     }
