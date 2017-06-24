@@ -7,7 +7,11 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -30,6 +34,7 @@ public class AllEntriesActivity extends AppCompatActivity {
     private ArrayList<Storie> stories;
     private ListView list;
     private File dir;
+    private AllEntriesListAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -112,7 +117,8 @@ public class AllEntriesActivity extends AppCompatActivity {
 
     private void initList() {
         list = (ListView) findViewById(R.id.all_entries_list);
-        list.setAdapter(new AllEntriesListAdapter(mContext, stories));
+        listAdapter = new AllEntriesListAdapter(mContext, stories);
+        list.setAdapter(listAdapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -121,6 +127,43 @@ public class AllEntriesActivity extends AppCompatActivity {
                 Intent intent = new Intent(mContext, NewEntryActivity.class);
                 intent.putExtra("date", filename);
                 startActivity(intent);
+            }
+        });
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemLongClick: long click received");
+                list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+                list.setItemsCanFocus(false);
+                list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+                    @Override
+                    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                        final int count = list.getCheckedItemCount();
+                        getSupportActionBar().setTitle(count + " selected");
+                        listAdapter.toggleSelection(position);
+                    }
+
+                    @Override
+                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onDestroyActionMode(ActionMode mode) {
+
+                    }
+                });
+                return true;
             }
         });
     }

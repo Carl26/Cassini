@@ -47,4 +47,9 @@ class Storie {
     public void setmTagList(ArrayList<String> mTagList) {
         this.mTagList = mTagList;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Storie && mDateTime.equals(((Storie) o).getmDateTime());
+    }
 }
