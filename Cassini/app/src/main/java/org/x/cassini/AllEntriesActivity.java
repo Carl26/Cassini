@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
->>>>>>> refs/remotes/origin/development
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
