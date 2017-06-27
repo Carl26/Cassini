@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -151,7 +152,8 @@ public class AllEntriesActivity extends AppCompatActivity {
 
                     @Override
                     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        return false;
+                        mode.getMenuInflater().inflate(R.menu.menu_all_entries, menu);
+                        return true;
                     }
 
                     @Override
@@ -161,12 +163,24 @@ public class AllEntriesActivity extends AppCompatActivity {
 
                     @Override
                     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        return false;
+                        if (item.getItemId() == R.id.menu_delete) {
+                            SparseBooleanArray selection = listAdapter.getmSelectedItems();
+                            for (int i = 0; i < selection.size(); i++) {
+                                if (selection.get(i)) {
+                                    Storie toRemove = listAdapter.getItem(i);
+                                    listAdapter.remove(toRemove);
+                                }
+                            }
+                            mode.finish();
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
 
                     @Override
                     public void onDestroyActionMode(ActionMode mode) {
-
+                        listAdapter.clearSelection();
                     }
                 });
                 return true;

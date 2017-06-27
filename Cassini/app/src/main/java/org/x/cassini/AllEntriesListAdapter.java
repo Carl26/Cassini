@@ -34,8 +34,8 @@ class AllEntriesListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public Storie getItem(int position) {
+        return stories.get(position);
     }
 
     @Override
