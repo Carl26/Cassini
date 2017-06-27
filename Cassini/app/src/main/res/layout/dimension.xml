@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/border">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:layout_width="380dp"
+        android:layout_height="1px"
+        android:layout_gravity="center"
+        android:background="@android:color/darker_gray"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#292929"
+        android:gravity="center"
+        android:fontFamily="roboto-light"
+        android:textStyle="italic"
+        android:textSize="12sp"
+        android:padding="5dp"
         android:id="@+id/dimension_header"/>
 
     <EditText
@@ -14,5 +26,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/dimension_edittext"
         android:maxLines="1"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="3dp"
+        android:padding="5dp"
+        android:textSize="14sp"
         android:inputType="text"/>
+
+    <View
+        android:layout_width="380dp"
+        android:layout_height="1px"
+        android:layout_gravity="center"
+        android:background="@android:color/darker_gray"/>
+
 </LinearLayout>

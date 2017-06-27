@@ -283,8 +283,8 @@ public class NewEntryActivity extends AppCompatActivity {
         dimensionList = new ArrayList<Dimension>();
         learn = (Dimension) findViewById(R.id.new_entry_dimension_learn);
         problem = (Dimension) findViewById(R.id.new_entry_dimension_problem);
-        learn.setHeader("What did I learn today?");
-        problem.setHeader("What problem did I face today?");
+        learn.setHeader("What's the one thing I learned today?");
+        problem.setHeader("What's the biggest challenge I overcame today?");
         dimensionList.add(learn);
         dimensionList.add(problem);
     }
