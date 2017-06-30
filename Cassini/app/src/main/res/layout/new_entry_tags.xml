@@ -12,7 +12,7 @@
         android:backgroundTint="#AAAAAA"
         android:textColor="#ffffff"
         android:padding="3dp"
-        android:layout_margin="2dp"
+        android:layout_margin="1px"
         android:ellipsize="end"
         android:maxLines="1"/>
 </LinearLayout>

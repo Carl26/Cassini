@@ -97,7 +97,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.new_entry_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("New Entry");
+        getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

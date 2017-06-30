@@ -11,7 +11,19 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/new_entry_toolbar"/>
+        android:background="@color/colorPrimaryDark"
+        android:id="@+id/new_entry_toolbar">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Entry"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:id="@+id/new_entry_toolbar_title" />
+    </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,6 +31,8 @@
         android:orientation="horizontal"
         android:background="#ffffff"
         android:layout_below="@id/new_entry_toolbar"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:id="@+id/new_entry_info">
         <TextView
             android:layout_width="0dp"
@@ -26,7 +40,9 @@
             android:layout_weight="1"
             android:paddingTop="5dp"
             android:paddingLeft="38dp"
-            android:textSize="12sp"
+            android:textStyle="italic"
+            android:textSize="10sp"
+            android:ellipsize="end"
             android:id="@+id/new_entry_time"
             android:gravity="start"
             android:text="time"/>
@@ -34,10 +50,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textStyle="italic"
             android:padding="5dp"
             android:id="@+id/new_entry_location"
             android:layout_gravity="end"
-            android:textSize="12sp"
+            android:textSize="10sp"
+            android:ellipsize="end"
             android:paddingLeft="10dp"
             android:text="Singapore"/>
     </LinearLayout>
@@ -114,7 +132,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/new_entry_tag_field"
+            android:background="@android:color/transparent"
             android:maxLines="1"
+            android:paddingLeft="3dp"
+            android:layout_margin="3dp"
             android:inputType="text"
             android:visibility="gone"/>
 
@@ -122,7 +143,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:numColumns="auto_fit"
-            android:columnWidth="75dp"
+            android:columnWidth="50dp"
             android:gravity="center"
             android:id="@+id/new_entry_tag_grid"
             android:stretchMode="columnWidth"
@@ -155,7 +176,7 @@
                 android:layout_margin="10dp"
                 android:padding="20dp"
                 android:backgroundTint="#ffffff"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textColor="@color/black"
                 android:focusable="true"
                 android:focusableInTouchMode="true"/>

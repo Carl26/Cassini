@@ -36,7 +36,7 @@ public class MainTextActivity extends AppCompatActivity {
     private void initComponents() {
         toolbar = (Toolbar) findViewById(R.id.main_text_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Edit mode");
+        getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

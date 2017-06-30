@@ -18,6 +18,8 @@
         android:layout_alignParentTop="true"
         android:text="Stories"
         android:gravity="center"
+        android:background="#434343"
+        android:textColor="#ffffff"
         android:fontFamily="cursive"
         android:textSize="24dp"
         android:layout_alignParentEnd="true"/>
@@ -25,6 +27,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_gravity="center"
         android:layout_below="@id/main_title"
         android:background="@android:color/darker_gray"/>
@@ -70,6 +74,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_gravity="center"
         android:layout_below="@id/main_layout_all_entries"
         android:background="@android:color/darker_gray"/>
@@ -114,6 +120,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_gravity="center"
         android:layout_below="@id/main_layout_timeline_view"
         android:background="@android:color/darker_gray"/>
@@ -157,6 +165,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_gravity="center"
         android:layout_below="@id/main_layout_tags"
         android:background="@android:color/darker_gray"/>
@@ -200,6 +210,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_gravity="center"
         android:layout_below="@id/main_layout_starred"
         android:background="@android:color/darker_gray"/>
@@ -244,6 +256,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_gravity="center"
         android:layout_below="@id/main_layout_stories"
         android:background="@android:color/darker_gray"/>
@@ -288,8 +302,11 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_below="@id/main_layout_settings"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/darker_gray"
+        android:id="@+id/view" />
 
     <TextView
         android:id="@+id/main_new_entry"
@@ -297,6 +314,7 @@
         android:layout_height="100dp"
         android:text="+"
         android:textSize="100sp"
+        android:textColor="#434343"
         android:gravity="center"
         android:layout_below="@id/main_layout_settings"
         android:layout_alignParentStart="true"
