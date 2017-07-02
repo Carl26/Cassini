@@ -8,8 +8,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:id="@+id/new_entry_tag_adapter_field"
-        android:textColor="@color/black"
-        android:layout_margin="5dp"
+        android:background="@drawable/background_tag"
+        android:backgroundTint="#AAAAAA"
+        android:textColor="#ffffff"
+        android:padding="3dp"
+        android:layout_margin="1px"
         android:ellipsize="end"
         android:maxLines="1"/>
 </LinearLayout>
