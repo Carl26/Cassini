@@ -57,7 +57,7 @@ public class AllEntriesActivity extends AppCompatActivity {
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.all_entries_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("All Entries");
+        getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
