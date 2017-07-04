@@ -98,6 +98,7 @@ public class NewEntryActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.new_entry_toolbar);
         setSupportActionBar(toolbar);
         toolbarTitle = (TextView) findViewById(R.id.new_entry_toolbar_title);
+        toolbarTitle.setText(new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime()));
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
