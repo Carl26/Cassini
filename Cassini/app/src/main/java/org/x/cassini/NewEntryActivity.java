@@ -40,7 +40,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private String TAG = "NewEntry";
-    private TextView time, location, mainText;
+    private TextView time, location, mainText, toolbarTitle;
     private Button BWeather, BEmotion, BExercise, BStar, BTag;
     private LinearLayout newEntryLayout;
     private Dimension learn, problem;
@@ -74,16 +74,14 @@ public class NewEntryActivity extends AppCompatActivity {
         Log.d(TAG, "Entered onCreate");
         mContext = getApplication();
 
-
-
         // initialize various components
         initIntArrays();
 
-        initToolbar();
         initTextView();
         initButtons();
         initBottomPart();
         mainText.requestFocus();
+
         // load other dates if needed
         if (getIntent().getStringExtra("date") != null) {
             sDate = getIntent().getStringExtra("date");
@@ -92,12 +90,15 @@ public class NewEntryActivity extends AppCompatActivity {
             sDate = time.getText().toString().replaceAll("\\/", "").substring(0, 8);
             Log.d(TAG, "onCreate: Today is " + sDate);
         }
+
+        initToolbar();
     }
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.new_entry_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("New Entry");
+        toolbarTitle = (TextView) findViewById(R.id.new_entry_toolbar_title);
+        getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

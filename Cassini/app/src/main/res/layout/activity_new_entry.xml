@@ -9,7 +9,14 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/new_entry_toolbar"/>
+        android:id="@+id/new_entry_toolbar">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/new_entry_toolbar_title"/>
+        </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
