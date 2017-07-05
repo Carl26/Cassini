@@ -87,7 +87,7 @@ public class NewEntryActivity extends AppCompatActivity {
             sDate = getIntent().getStringExtra("date");
             Log.d(TAG, "onCreate: requested date is " + sDate);
         } else {
-            sDate = time.getText().toString().replaceAll("\\/", "").substring(0, 8);
+            sDate = time.getText().toString().replaceAll("[\\s\\/:]", "");
             Log.d(TAG, "onCreate: Today is " + sDate);
         }
 
@@ -353,36 +353,51 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void saveDiary() {
-        String filename = sDate;
-        Log.d(TAG, "saveDiary: " + filename);
-        File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        File savedFile = new File(dir, filename + ".txt");
-        String toWrite = formDiary();
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(savedFile);
-            // if file does not exist
-            if (!savedFile.exists()) {
-                savedFile.createNewFile();
+        // save diary only if there is any input
+        if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
+                !tagList.isEmpty() || !mainText.getText().toString().equals("") ||
+                !learn.getInput().equals("") || !problem.getInput().equals("")) {
+
+//            Log.e(TAG, "saveDiary: weather " + (intWeather!= UNSET));
+//            Log.e(TAG, "saveDiary: emotion " + (intEmotion!= UNSET));
+//            Log.e(TAG, "saveDiary: exercise " + (intExercise!= UNSET));
+//            Log.e(TAG, "saveDiary: taglist " + (!tagList.isEmpty()));
+//            Log.e(TAG, "saveDiary: maintext " + (!mainText.getText().toString().equals("")));
+//            Log.e(TAG, "saveDiary: learn " + (!learn.getInput().equals("")));
+//            Log.e(TAG, "saveDiary: problem " + (!problem.getInput().equals("")));
+            String filename = sDate;
+            Log.d(TAG, "saveDiary: " + filename);
+            File sdCard = Environment.getExternalStorageDirectory();
+            File dir = new File(sdCard.getAbsolutePath() + "/Cassini/");
+            if (!dir.exists()) {
+                dir.mkdirs();
             }
-            fos.write(toWrite.getBytes());
-            fos.flush();
-            fos.close();
-            Log.d(TAG, "saveDiary: Finished saving diary");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            File savedFile = new File(dir, filename + ".txt");
+            String toWrite = formDiary();
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(savedFile);
+                // if file does not exist
+                if (!savedFile.exists()) {
+                    savedFile.createNewFile();
+                }
+                fos.write(toWrite.getBytes());
+                fos.flush();
+                fos.close();
+                Log.d(TAG, "saveDiary: Finished saving diary");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+        } else {
+            Log.e(TAG, "saveDiary: no input, diary not saved " + sDate);
         }
     }
 
@@ -422,7 +437,7 @@ public class NewEntryActivity extends AppCompatActivity {
         }
         // main text
         String mainDiary = mainText.getText().toString();
-        if (mainDiary.equals("Click here to enter...")) {
+        if (mainDiary.equals("")) {
             // empty input -> length of main diary is 0
             sb.append(0);
             sb.append(System.lineSeparator());

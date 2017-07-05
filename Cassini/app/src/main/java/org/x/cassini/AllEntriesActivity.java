@@ -130,7 +130,7 @@ public class AllEntriesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Storie selected = stories.get(position);
-                String filename = selected.getmDateTime().substring(0, 10).replaceAll("\\/", "");
+                String filename = selected.getmDateTime().replaceAll("[\\s\\/:]", "");
                 Intent intent = new Intent(mContext, NewEntryActivity.class);
                 intent.putExtra("date", filename);
                 startActivity(intent);
