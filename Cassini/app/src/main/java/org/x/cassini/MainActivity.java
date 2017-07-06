@@ -47,12 +47,14 @@ public class MainActivity extends AppCompatActivity {
         timelineView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast myToast = Toast.makeText(
-                        getApplicationContext(),
-                        "The best things are yet to come.",
-                        Toast.LENGTH_LONG
-                );
-                myToast.show();
+//                Toast myToast = Toast.makeText(
+//                        getApplicationContext(),
+//                        "The best things are yet to come.",
+//                        Toast.LENGTH_LONG
+//                );
+//                myToast.show();
+                Intent timelineAct = new Intent(getApplication(),TimelineActivity.class);
+                startActivity(timelineAct);
             }
         });
 
