@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Guo Mingxuan on 2017/6/7 0007.
@@ -65,6 +66,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private Context mContext;
     private String sDate;
     private boolean isResult = false;
+    private Date currentDateInfo;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -87,7 +89,7 @@ public class NewEntryActivity extends AppCompatActivity {
             sDate = getIntent().getStringExtra("date");
             Log.d(TAG, "onCreate: requested date is " + sDate);
         } else {
-            sDate = time.getText().toString().replaceAll("[\\s\\/:]", "");
+            sDate = new SimpleDateFormat("yyyyMMddHHmmss").format(currentDateInfo);
             Log.d(TAG, "onCreate: Today is " + sDate);
         }
 
@@ -98,7 +100,7 @@ public class NewEntryActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.new_entry_toolbar);
         setSupportActionBar(toolbar);
         toolbarTitle = (TextView) findViewById(R.id.new_entry_toolbar_title);
-        toolbarTitle.setText(new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime()));
+        toolbarTitle.setText(new SimpleDateFormat("MMMM dd, yyyy").format(currentDateInfo));
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -110,7 +112,8 @@ public class NewEntryActivity extends AppCompatActivity {
         calendar = Calendar.getInstance();
         time = (TextView) findViewById(R.id.new_entry_time);
         location = (TextView) findViewById(R.id.new_entry_location);
-        time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(calendar.getTime()));
+        currentDateInfo = calendar.getTime();
+        time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
     }
 
     private void initButtons() {

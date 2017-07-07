@@ -23,6 +23,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Guo Mingxuan on 2017/6/15 0015.
@@ -80,8 +83,19 @@ public class AllEntriesActivity extends AppCompatActivity {
         if (files == null) {
             Toast.makeText(mContext, "No record found!", Toast.LENGTH_SHORT).show();
         } else {
+            ArrayList<File> fileList = new ArrayList<>();
+            fileList.addAll(Arrays.asList(files));
             stories = new ArrayList<>();
-            for (File file : files) {
+            Collections.sort(fileList, new Comparator<File>() {
+                @Override
+                public int compare(File f1, File f2) {
+                    long f1Date = Long.parseLong(f1.getName().substring(0, 14));
+                    long f2Date = Long.parseLong(f2.getName().substring(0, 14));
+                    return f1Date>f2Date?-1:
+                            f1Date<f2Date?1:0;
+                }
+            });
+            for (File file : fileList) {
                 String dateTime, mainText, location;
                 ArrayList<String> tagList = new ArrayList<>();
                 int count;
@@ -114,10 +128,12 @@ public class AllEntriesActivity extends AppCompatActivity {
                     Storie temp = new Storie(mainText, location, dateTime, tagList);
                     stories.add(temp);
                     Log.d(TAG, "formStoriesArray: storie added");
+                    // close streams
+                    br.close();
+                    fis.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                // TODO close streams
             }
         }
     }
