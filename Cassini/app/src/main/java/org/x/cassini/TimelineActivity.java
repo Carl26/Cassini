@@ -1,5 +1,6 @@
 package org.x.cassini;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by Guo Mingxuan on 2017/7/5 0005.
@@ -23,10 +25,13 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
     private final int STARTDATEFRAGMENT = 0, ENDDATEFRAGMENT = 1;
     private boolean isStartDateSet = false, isEndDateSet = false;
     private String TAG = "Timeline";
+    private int startYear, startMonth, startDay, endYear, endMonth, endDay;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
+        mContext = getApplication();
 
         setContentView(R.layout.activity_timeline);
 
@@ -69,6 +74,21 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
                 startFragment(ENDDATEFRAGMENT);
             }
         });
+
+        toolbarConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // check time range
+                if (!isStartDateSet) {
+                    Toast.makeText(mContext, "Please select starting date!", Toast.LENGTH_SHORT).show();
+                } else if (!isEndDateSet) {
+                    Toast.makeText(mContext, "Please select ending date!", Toast.LENGTH_SHORT).show();
+                } else {
+                    // get time range
+                    
+                }
+            }
+        });
     }
 
     @Override
@@ -80,9 +100,15 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
         temp.setText(selectedDate);
         if (textViewId == R.id.timeline_from_date) {
             isStartDateSet = true;
+            startYear = year;
+            startMonth = month;
+            startDay = dayOfMonth;
             Log.d(TAG, "onDateSelected: start date set");
         } else if (textViewId == R.id.timeline_to_date) {
             isEndDateSet = true;
+            endYear = year;
+            endMonth = month;
+            endDay = dayOfMonth;
             Log.d(TAG, "onDateSelected: end date set");
         }
     }
