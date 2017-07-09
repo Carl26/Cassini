@@ -4,6 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.x.cassini.TagviewActivity">
+    tools:context="org.x.cassini.TagsviewActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/tagsview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>

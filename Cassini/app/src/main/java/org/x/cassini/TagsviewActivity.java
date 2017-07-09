@@ -3,11 +3,11 @@ package org.x.cassini;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class TagviewActivity extends AppCompatActivity {
+public class TagsviewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tagview);
+        setContentView(R.layout.activity_tagsview);
     }
 }
