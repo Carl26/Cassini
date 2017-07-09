@@ -2,6 +2,7 @@ package org.x.cassini;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,8 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
     private String TAG = "Timeline";
     private int startYear, startMonth, startDay, endYear, endMonth, endDay;
     private Context mContext;
+    private RadioGroup rgHorizontal, rgVertical;
+    private int checkedButtonHorizontal = -1, checkedButtonVertical = -1;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
@@ -85,7 +89,56 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
                     Toast.makeText(mContext, "Please select ending date!", Toast.LENGTH_SHORT).show();
                 } else {
                     // get time range
-                    
+
+                }
+            }
+        });
+
+        rgHorizontal = (RadioGroup) findViewById(R.id.timeline_radio_group_horizontal);
+        rgVertical = (RadioGroup) findViewById(R.id.timeline_radio_group_vertical);
+
+        // only allow one selection from both radiogroups
+        rgHorizontal.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                Log.d(TAG, "onCheckedChanged: checked button id is " + checkedId);
+                if (checkedButtonVertical != -1) {
+                    rgVertical.clearCheck();
+                    checkedButtonVertical = -1;
+                }
+                switch (checkedId) {
+                    case R.id.timeline_rb_weather: checkedButtonHorizontal = 0;
+                        Log.d(TAG, "onCheckedChanged: weather button clicked");
+                        break;
+                    case R.id.timeline_rb_emotion: checkedButtonHorizontal = 1;
+                        Log.d(TAG, "onCheckedChanged: emotion button clicked");
+                        break;
+                    case R.id.timeline_rb_exercise: checkedButtonHorizontal = 2;
+                        Log.d(TAG, "onCheckedChanged: exercise button clicked");
+                        break;
+                    case R.id.timeline_rb_tag: checkedButtonHorizontal = 3;
+                        Log.d(TAG, "onCheckedChanged: tag button clicked");
+                        break;
+                }
+            }
+        });
+
+        rgVertical.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                Log.d(TAG, "onCheckedChanged: checked button id is " + checkedId);
+                if (checkedButtonHorizontal != -1) {
+                    rgHorizontal.clearCheck();
+                    checkedButtonHorizontal = -1;
+                }
+                // TODO need to find out how many dimensions are there
+                switch (checkedId) {
+                    case R.id.timeline_rb_learnt: checkedButtonVertical = 0;
+                        Log.d(TAG, "onCheckedChanged: learn button clicked");
+                        break;
+                    case R.id.timeline_rb_problem: checkedButtonVertical = 1;
+                        Log.d(TAG, "onCheckedChanged: problem button clicked");
+                        break;
                 }
             }
         });
