@@ -36,6 +36,7 @@
             <!--</intent-filter>-->
         </activity>
         <activity android:name=".TimelineActivity"/>
+        <activity android:name=".TimelinePreviewActivity"/>
     </application>
 
 </manifest>
