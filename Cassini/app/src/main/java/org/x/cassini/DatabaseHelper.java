@@ -153,6 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     contentValuesForTags.put(COL_TAG, newTagName);
                     contentValuesForTags.put(COL_ENTRY_ID, newEntryId);
                 }
+                cursor.close();
                 long tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
                 isSuccessful = isSuccessful && (tagRes != -1);
             }
