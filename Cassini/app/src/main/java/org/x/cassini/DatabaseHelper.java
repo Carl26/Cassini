@@ -85,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean insertData(String date, String location, int weather, int emotion, int exercise, int star,
                         ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {
         SQLiteDatabase db = this.getWritableDatabase();
-        boolean isSuccessful;
+        boolean isSuccessful, isTagEmpty;
         Gson gson = new Gson();
         // insert data into entry table
         ContentValues contentValues = new ContentValues();
@@ -95,8 +95,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_EMOTION, emotion);
         contentValues.put(COL_EXERCISE, exercise);
         contentValues.put(COL_STAR, star);
-        String tag = gson.toJson(tagList);
-        contentValues.put(COL_TAG, tag);
+        if (tagList.isEmpty()) {
+            isTagEmpty = true;
+            contentValues.put(COL_TAG, "");
+        } else {
+            isTagEmpty = false;
+            String tag = gson.toJson(tagList);
+            contentValues.put(COL_TAG, tag);
+        }
         contentValues.put(COL_MAIN_TEXT, mainText);
         ArrayList<String> dimensionPointer = new ArrayList<>();
         for (ArrayList<String> pair : dimensionData) {
@@ -112,7 +118,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         isSuccessful = (id!=-1);
 
         // only modify tag table if data is inserted
-        if (isSuccessful) {
+        if (isSuccessful && !isTagEmpty) {
             Type type = new TypeToken<ArrayList<String>>(){}.getType();
             // insert data into tag table
             String entryId = Long.toString(id);
