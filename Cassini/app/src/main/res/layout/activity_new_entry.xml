@@ -180,22 +180,6 @@
                 android:textColor="@color/black"
                 android:focusable="true"
                 android:focusableInTouchMode="true"/>
-
-            <org.x.cassini.Dimension
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/new_entry_dimension_learn"
-                android:background="#ffffff"
-                android:nextFocusDown="@+id/new_entry_dimension_problem"
-                android:layout_margin="10dp"/>
-
-            <org.x.cassini.Dimension
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/new_entry_dimension_problem"
-                android:background="#ffffff"
-                android:nextFocusDown="@+id/new_entry_relative_layout"
-                android:layout_margin="10dp"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String COL_TAG = "TAG";
     private static String COL_MAIN_TEXT = "MAINTEXT";
     private static String COL_DIMENSION_POINTER = "DIMENSION POINTER";
-    private static String COL_DIMENSION_1 = "What have I learnt today?";
+    private static String COL_DIMENSION_1 = "What's the one thing I learned today?";
 
     // for tag table
     private static String TABLE_TAG_NAME = "entry_table";

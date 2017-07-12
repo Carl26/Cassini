@@ -3,6 +3,7 @@ package org.x.cassini;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.AlertDialog;
@@ -27,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,6 +69,9 @@ public class NewEntryActivity extends AppCompatActivity {
     private String sDate;
     private boolean isResult = false;
     private Date currentDateInfo;
+    private Storie holder;
+    private DatabaseHelper db;
+    private ArrayList<Integer> dimensionIdList;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -75,10 +80,8 @@ public class NewEntryActivity extends AppCompatActivity {
 
         Log.d(TAG, "Entered onCreate");
         mContext = getApplication();
-
         // initialize various components
         initIntArrays();
-
         initTextView();
         initButtons();
         initBottomPart();
@@ -94,6 +97,51 @@ public class NewEntryActivity extends AppCompatActivity {
         }
 
         initToolbar();
+        // establish database and read dimensions
+        loadResources();
+    }
+
+    private void loadResources() {
+        // preset layoutparams for dimensions
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(10, 10, 10, 10);
+        dimensionList = new ArrayList<Dimension>();
+        dimensionIdList = new ArrayList<>();
+        try {
+            File file = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config.txt");
+            FileInputStream inputStream = new FileInputStream(file);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                receiveString = bufferedReader.readLine();
+                inputStream.close();
+                int version = Integer.valueOf(receiveString);
+                db = new DatabaseHelper(this, version);
+                Log.d(TAG, "loadConfig: db version is " + version);
+                while ((receiveString=bufferedReader.readLine()) != null) {
+                    Log.d(TAG, "loadResources: read dimension: " + receiveString);
+                    Dimension temp = new Dimension(mContext);
+//                    temp.inflate(this, R.layout.dimension, null);
+                    temp.setHeader(receiveString);
+                    temp.setBackgroundColor(Color.WHITE);
+                    temp.setLayoutParams(params);
+                    int tempId = View.generateViewId();
+                    temp.setId(tempId);
+                    // add view into linear layout
+                    newEntryLayout.addView(temp);
+                    // store dimension info into lists
+                    dimensionList.add(temp);
+                    dimensionIdList.add(tempId);
+                }
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("main activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("main activity", "Can not read file: " + e.toString());
+        }
     }
 
     private void initToolbar() {
@@ -269,7 +317,7 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void initBottomPart() {
-//        newEntryLayout = (LinearLayout) findViewById(R.id.new_entry_bottom_linear);
+        newEntryLayout = (LinearLayout) findViewById(R.id.new_entry_bottom_linear);
         mainText = (TextView) findViewById(R.id.new_entry_main_text);
         mainText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,17 +329,6 @@ public class NewEntryActivity extends AppCompatActivity {
                 startActivityForResult(mainTextAct, 1);
             }
         });
-        // for testing purpose only
-//        mainText.setText("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444ddddddddddddddddd");
-
-        // Dimensions related
-        dimensionList = new ArrayList<Dimension>();
-        learn = (Dimension) findViewById(R.id.new_entry_dimension_learn);
-        problem = (Dimension) findViewById(R.id.new_entry_dimension_problem);
-        learn.setHeader("What's the one thing I learned today?");
-        problem.setHeader("What's the biggest challenge I overcame today?");
-        dimensionList.add(learn);
-        dimensionList.add(problem);
     }
 
     @Override
@@ -357,9 +394,9 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private void saveDiary() {
         // save diary only if there is any input
-        if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
-                !tagList.isEmpty() || !mainText.getText().toString().equals("") ||
-                !learn.getInput().equals("") || !problem.getInput().equals("")) {
+//        if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
+//                !tagList.isEmpty() || !mainText.getText().toString().equals("") ||
+//                !learn.getInput().equals("") || !problem.getInput().equals("")) {
 
 //            Log.e(TAG, "saveDiary: weather " + (intWeather!= UNSET));
 //            Log.e(TAG, "saveDiary: emotion " + (intEmotion!= UNSET));
@@ -368,40 +405,17 @@ public class NewEntryActivity extends AppCompatActivity {
 //            Log.e(TAG, "saveDiary: maintext " + (!mainText.getText().toString().equals("")));
 //            Log.e(TAG, "saveDiary: learn " + (!learn.getInput().equals("")));
 //            Log.e(TAG, "saveDiary: problem " + (!problem.getInput().equals("")));
-            String filename = sDate;
-            Log.d(TAG, "saveDiary: " + filename);
-            File sdCard = Environment.getExternalStorageDirectory();
-            File dir = new File(sdCard.getAbsolutePath() + "/Cassini/");
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            File savedFile = new File(dir, filename + ".txt");
-            String toWrite = formDiary();
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(savedFile);
-                // if file does not exist
-                if (!savedFile.exists()) {
-                    savedFile.createNewFile();
-                }
-                fos.write(toWrite.getBytes());
-                fos.flush();
-                fos.close();
-                Log.d(TAG, "saveDiary: Finished saving diary");
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (fos != null) {
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } else {
-            Log.e(TAG, "saveDiary: no input, diary not saved " + sDate);
-        }
+        Log.d(TAG, "saveDiary: should save diary here");
+
+//            if (holder == null) {
+//                // fill in details into holder
+//                holder = new Storie(time.getText().toString(), location.getText().toString(),
+//                        intWeather, intEmotion, intExercise, isStar, tagList,
+//                        mainText.getText().toString(), )
+////            }
+//        } else {
+//            Log.e(TAG, "saveDiary: no input, diary not saved " + sDate);
+//        }
     }
 
     private String formDiary() {

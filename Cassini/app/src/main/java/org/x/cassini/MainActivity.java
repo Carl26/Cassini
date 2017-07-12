@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,13 +35,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Log.d(TAG, "Entered onCreate");
-
+        loadConfig();
         // initialize various components
         initLinearLayout();
         initTextView();
         findViewById(R.id.mainpage_relative_layout).requestFocus();
-
-        loadConfig();
     }
 
     private void loadConfig() {
@@ -49,19 +48,22 @@ public class MainActivity extends AppCompatActivity {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+        Log.d(TAG, "loadConfig: folder created/ found");
         File savedFile = new File(dir, "config.txt");
+        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
         if (!savedFile.exists()) {
-            OutputStreamWriter outputStreamWriter;
+            Log.d(TAG, "loadConfig: create a new config file");
+            FileOutputStream fos;
             try {
-                outputStreamWriter = new OutputStreamWriter(this.openFileOutput("config.txt", Context.MODE_PRIVATE));
+                fos = new FileOutputStream(savedFile);
                 StringBuilder builder = new StringBuilder();
                 // database version
                 builder.append("1");
                 builder.append(System.lineSeparator());
                 // default dimension
-                builder.append("What have I learnt today?");
+                builder.append("What's the one thing I learnt today?");
                 builder.append(System.lineSeparator());
-                outputStreamWriter.write(builder.toString());
+                fos.write(builder.toString().getBytes());
                 db = new DatabaseHelper(this, 1);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -69,8 +71,9 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
+            Log.d(TAG, "loadConfig: read config file");
             try {
-                InputStream inputStream = this.openFileInput("config.txt");
+                InputStream inputStream = new FileInputStream(savedFile);
 
                 if ( inputStream != null ) {
                     InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -81,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
                     int version = Integer.valueOf(receiveString);
                     db = new DatabaseHelper(this, version);
                     Log.d(TAG, "loadConfig: db version is " + version);
+                    bufferedReader.close();
+                    inputStreamReader.close();
                 }
             }
             catch (FileNotFoundException e) {

@@ -23,8 +23,12 @@ public class Dimension extends LinearLayout {
     private EditText textFiled;
     private TextView header;
 
-    public Dimension(Context context, AttributeSet attrs) {
-        super(context, attrs);
+//    public Dimension(Context context) {
+//        super(context);
+//    }
+
+    public Dimension(Context context) {
+        super(context);
         inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.dimension, this);
         textFiled = (EditText) findViewById(R.id.dimension_edittext);
