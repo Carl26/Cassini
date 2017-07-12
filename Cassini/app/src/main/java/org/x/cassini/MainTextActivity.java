@@ -41,7 +41,7 @@ public class MainTextActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mainBox = (EditText) findViewById(R.id.main_text_box);
-        if (!receivedText.equals("Click here to enter...")) {
+        if (!receivedText.equals("")) {
             mainBox.setText(receivedText);
         }
     }

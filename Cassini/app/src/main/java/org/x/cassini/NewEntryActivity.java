@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Guo Mingxuan on 2017/6/7 0007.
@@ -40,7 +41,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private String TAG = "NewEntry";
-    private TextView time, location, mainText;
+    private TextView time, location, mainText, toolbarTitle;
     private Button BWeather, BEmotion, BExercise, BStar, BTag;
     private LinearLayout newEntryLayout;
     private Dimension learn, problem;
@@ -65,6 +66,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private Context mContext;
     private String sDate;
     private boolean isResult = false;
+    private Date currentDateInfo;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -74,29 +76,31 @@ public class NewEntryActivity extends AppCompatActivity {
         Log.d(TAG, "Entered onCreate");
         mContext = getApplication();
 
-
-
         // initialize various components
         initIntArrays();
 
-        initToolbar();
         initTextView();
         initButtons();
         initBottomPart();
         mainText.requestFocus();
+
         // load other dates if needed
         if (getIntent().getStringExtra("date") != null) {
             sDate = getIntent().getStringExtra("date");
             Log.d(TAG, "onCreate: requested date is " + sDate);
         } else {
-            sDate = time.getText().toString().replaceAll("\\/", "").substring(0, 8);
+            sDate = new SimpleDateFormat("yyyyMMddHHmmss").format(currentDateInfo);
             Log.d(TAG, "onCreate: Today is " + sDate);
         }
+
+        initToolbar();
     }
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.new_entry_toolbar);
         setSupportActionBar(toolbar);
+        toolbarTitle = (TextView) findViewById(R.id.new_entry_toolbar_title);
+        toolbarTitle.setText(new SimpleDateFormat("MMMM dd, yyyy").format(currentDateInfo));
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -108,7 +112,8 @@ public class NewEntryActivity extends AppCompatActivity {
         calendar = Calendar.getInstance();
         time = (TextView) findViewById(R.id.new_entry_time);
         location = (TextView) findViewById(R.id.new_entry_location);
-        time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(calendar.getTime()));
+        currentDateInfo = calendar.getTime();
+        time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
     }
 
     private void initButtons() {
@@ -351,36 +356,51 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void saveDiary() {
-        String filename = sDate;
-        Log.d(TAG, "saveDiary: " + filename);
-        File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        File savedFile = new File(dir, filename + ".txt");
-        String toWrite = formDiary();
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(savedFile);
-            // if file does not exist
-            if (!savedFile.exists()) {
-                savedFile.createNewFile();
+        // save diary only if there is any input
+        if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
+                !tagList.isEmpty() || !mainText.getText().toString().equals("") ||
+                !learn.getInput().equals("") || !problem.getInput().equals("")) {
+
+//            Log.e(TAG, "saveDiary: weather " + (intWeather!= UNSET));
+//            Log.e(TAG, "saveDiary: emotion " + (intEmotion!= UNSET));
+//            Log.e(TAG, "saveDiary: exercise " + (intExercise!= UNSET));
+//            Log.e(TAG, "saveDiary: taglist " + (!tagList.isEmpty()));
+//            Log.e(TAG, "saveDiary: maintext " + (!mainText.getText().toString().equals("")));
+//            Log.e(TAG, "saveDiary: learn " + (!learn.getInput().equals("")));
+//            Log.e(TAG, "saveDiary: problem " + (!problem.getInput().equals("")));
+            String filename = sDate;
+            Log.d(TAG, "saveDiary: " + filename);
+            File sdCard = Environment.getExternalStorageDirectory();
+            File dir = new File(sdCard.getAbsolutePath() + "/Cassini/");
+            if (!dir.exists()) {
+                dir.mkdirs();
             }
-            fos.write(toWrite.getBytes());
-            fos.flush();
-            fos.close();
-            Log.d(TAG, "saveDiary: Finished saving diary");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            File savedFile = new File(dir, filename + ".txt");
+            String toWrite = formDiary();
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(savedFile);
+                // if file does not exist
+                if (!savedFile.exists()) {
+                    savedFile.createNewFile();
+                }
+                fos.write(toWrite.getBytes());
+                fos.flush();
+                fos.close();
+                Log.d(TAG, "saveDiary: Finished saving diary");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+        } else {
+            Log.e(TAG, "saveDiary: no input, diary not saved " + sDate);
         }
     }
 
@@ -420,7 +440,7 @@ public class NewEntryActivity extends AppCompatActivity {
         }
         // main text
         String mainDiary = mainText.getText().toString();
-        if (mainDiary.equals("Click here to enter...")) {
+        if (mainDiary.equals("")) {
             // empty input -> length of main diary is 0
             sb.append(0);
             sb.append(System.lineSeparator());

@@ -2,6 +2,7 @@ package org.x.cassini;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +20,12 @@ class AllEntriesListAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Storie> stories;
     private String TAG = "AEListAdapter";
+    private SparseBooleanArray mSelectedItems;
 
     public AllEntriesListAdapter(Context context, ArrayList<Storie> stories) {
         mContext = context;
         this.stories = stories;
+        mSelectedItems = new SparseBooleanArray();
     }
 
     @Override
@@ -31,8 +34,8 @@ class AllEntriesListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public Storie getItem(int position) {
+        return stories.get(position);
     }
 
     @Override
@@ -72,5 +75,31 @@ class AllEntriesListAdapter extends BaseAdapter {
             Log.e(TAG, "getView: convertView is not null");
         }
         return view;
+    }
+
+    public void remove(Storie item) {
+        stories.remove(item);
+    }
+
+    public void toggleSelection(int position) {
+        if (!mSelectedItems.get(position)) { // not selected before
+            mSelectedItems.put(position, true);
+        } else {
+            mSelectedItems.delete(position);
+        }
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedCount() {
+        return mSelectedItems.size();
+    }
+
+    public SparseBooleanArray getmSelectedItems() {
+        return mSelectedItems;
+    }
+
+    public void clearSelection() {
+        mSelectedItems = new SparseBooleanArray();
+        notifyDataSetChanged();
     }
 }

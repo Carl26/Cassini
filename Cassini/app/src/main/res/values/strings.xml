@@ -4,5 +4,10 @@
     <string name="dimension_learn">What have I learnt today?</string>
     <string name="main_text_prompt">Click here to enter...</string>
     <string name="finish_button">Finish</string>
+    <string name="delete">delete</string>
     <string name="entry_button_margin">2dp</string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
+    <string name="timeline_view">Timeline View</string>
+    <string name="select_date">Select a date...</string>
 </resources>

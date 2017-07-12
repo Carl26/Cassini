@@ -7,8 +7,12 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -19,6 +23,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Guo Mingxuan on 2017/6/15 0015.
@@ -31,6 +38,7 @@ public class AllEntriesActivity extends AppCompatActivity {
     private ArrayList<Storie> stories;
     private ListView list;
     private File dir;
+    private AllEntriesListAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -75,8 +83,19 @@ public class AllEntriesActivity extends AppCompatActivity {
         if (files == null) {
             Toast.makeText(mContext, "No record found!", Toast.LENGTH_SHORT).show();
         } else {
+            ArrayList<File> fileList = new ArrayList<>();
+            fileList.addAll(Arrays.asList(files));
             stories = new ArrayList<>();
-            for (File file : files) {
+            Collections.sort(fileList, new Comparator<File>() {
+                @Override
+                public int compare(File f1, File f2) {
+                    long f1Date = Long.parseLong(f1.getName().substring(0, 14));
+                    long f2Date = Long.parseLong(f2.getName().substring(0, 14));
+                    return f1Date>f2Date?-1:
+                            f1Date<f2Date?1:0;
+                }
+            });
+            for (File file : fileList) {
                 String dateTime, mainText, location;
                 ArrayList<String> tagList = new ArrayList<>();
                 int count;
@@ -109,25 +128,78 @@ public class AllEntriesActivity extends AppCompatActivity {
                     Storie temp = new Storie(mainText, location, dateTime, tagList);
                     stories.add(temp);
                     Log.d(TAG, "formStoriesArray: storie added");
+                    // close streams
+                    br.close();
+                    fis.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                // TODO close streams
             }
         }
     }
 
     private void initList() {
         list = (ListView) findViewById(R.id.all_entries_list);
-        list.setAdapter(new AllEntriesListAdapter(mContext, stories));
+        listAdapter = new AllEntriesListAdapter(mContext, stories);
+        list.setAdapter(listAdapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Storie selected = stories.get(position);
-                String filename = selected.getmDateTime().substring(0, 10).replaceAll("\\/", "");
+                String filename = selected.getmDateTime().replaceAll("[\\s\\/:]", "");
                 Intent intent = new Intent(mContext, NewEntryActivity.class);
                 intent.putExtra("date", filename);
                 startActivity(intent);
+            }
+        });
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemLongClick: long click received");
+                list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+                list.setItemsCanFocus(false);
+                list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+                    @Override
+                    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                        final int count = list.getCheckedItemCount();
+                        getSupportActionBar().setTitle(count + " selected");
+                        listAdapter.toggleSelection(position);
+                    }
+
+                    @Override
+                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                        mode.getMenuInflater().inflate(R.menu.menu_all_entries, menu);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                        if (item.getItemId() == R.id.menu_delete) {
+                            SparseBooleanArray selection = listAdapter.getmSelectedItems();
+                            for (int i = 0; i < selection.size(); i++) {
+                                if (selection.get(i)) {
+                                    Storie toRemove = listAdapter.getItem(i);
+                                    listAdapter.remove(toRemove);
+                                }
+                            }
+                            mode.finish();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void onDestroyActionMode(ActionMode mode) {
+                        listAdapter.clearSelection();
+                    }
+                });
+                return true;
             }
         });
     }
