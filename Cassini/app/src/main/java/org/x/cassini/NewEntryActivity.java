@@ -355,21 +355,21 @@ public class NewEntryActivity extends AppCompatActivity {
 //                Log.d(TAG, "onPause: edittext input is " + d.getInput());
 //            }
 //        }
-        saveDiary();
-        Log.d(TAG, "onPause: saved diary");
+//        saveDiary();
+        Log.d(TAG, "onPause");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: onResume");
+        Log.d(TAG, "onResume");
         // restore data back to new entry activity
 //        if (dimensionInput != null) {
 //            for (int i = 0; i < dimensionInput.size(); i++) {
 //                dimensionList.get(i).setInput(dimensionInput.get(i));
 //            }
 //        }
-        loadDiary();
+//        loadDiary();
         mainText.requestFocus();
     }
 
@@ -389,14 +389,26 @@ public class NewEntryActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy: exiting activity");
-//        saveDiary();
+        // save diary here
+        saveDiary();
     }
 
     private void saveDiary() {
+        // grab dimension input if any
+        dimensionInput = new ArrayList<>();
+        if (!dimensionIdList.isEmpty()) {
+            for (int id : dimensionIdList) {
+                Dimension tempDimension = (Dimension) findViewById(id);
+                String tempInput = tempDimension.getInput();
+                if (!tempInput.equals("")) {
+                    dimensionInput.add(tempInput);
+                    Log.d(TAG, "saveDiary: added input " + tempInput + " to " + tempDimension.getHeader());
+                }
+            }
+        }
         // save diary only if there is any input
-//        if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
-//                !tagList.isEmpty() || !mainText.getText().toString().equals("") ||
-//                !learn.getInput().equals("") || !problem.getInput().equals("")) {
+        if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
+                !tagList.isEmpty() || !mainText.getText().toString().equals("") || !dimensionInput.isEmpty()) {
 
 //            Log.e(TAG, "saveDiary: weather " + (intWeather!= UNSET));
 //            Log.e(TAG, "saveDiary: emotion " + (intEmotion!= UNSET));
@@ -415,7 +427,7 @@ public class NewEntryActivity extends AppCompatActivity {
 ////            }
 //        } else {
 //            Log.e(TAG, "saveDiary: no input, diary not saved " + sDate);
-//        }
+        }
     }
 
     private String formDiary() {
