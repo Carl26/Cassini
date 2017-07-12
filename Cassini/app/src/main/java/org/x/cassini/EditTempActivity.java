@@ -3,11 +3,11 @@ package org.x.cassini;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class TagsviewActivity extends AppCompatActivity {
+public class EditTempActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tagsview);
+        setContentView(R.layout.activity_edit_temp);
     }
 }
