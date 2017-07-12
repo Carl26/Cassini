@@ -30,7 +30,8 @@
         android:layout_marginTop="3dp"
         android:padding="5dp"
         android:textSize="13sp"
-        android:inputType="text"/>
+        android:inputType="text"
+        android:textColor="@color/black"/>
 
     <View
         android:layout_width="380dp"
