@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        // used for deleting/ downgrading db
+//        Log.d(TAG, "onCreate: " + this.deleteDatabase("Storie.db"));
 
         Log.d(TAG, "Entered onCreate");
         loadConfig();
@@ -61,10 +63,11 @@ public class MainActivity extends AppCompatActivity {
                 builder.append("1");
                 builder.append(System.lineSeparator());
                 // default dimension
-                builder.append("What's the one thing I learnt today?");
+                builder.append("T1:What is the one thing I learnt today?");
                 builder.append(System.lineSeparator());
                 fos.write(builder.toString().getBytes());
                 db = new DatabaseHelper(this, 1);
+                fos.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     bufferedReader.close();
                     inputStreamReader.close();
                 }
+                inputStream.close();
             }
             catch (FileNotFoundException e) {
                 Log.e("main activity", "File not found: " + e.toString());

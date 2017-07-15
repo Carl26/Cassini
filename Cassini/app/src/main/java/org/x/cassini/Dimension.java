@@ -19,7 +19,7 @@ import android.widget.TextView;
 public class Dimension extends LinearLayout {
     private LayoutInflater inflater;
     private String TAG = "Dimension";
-    private String input;
+    private String input, id;
     private EditText textFiled;
     private TextView header;
 
@@ -67,5 +67,13 @@ public class Dimension extends LinearLayout {
 
     public void setHeader(String newHeader) {
         header.setText(newHeader);
+    }
+
+    public void setDimensionId(String id) {
+        this.id = id;
+    }
+
+    public String getDimensionId() {
+        return id;
     }
 }

@@ -29,12 +29,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String COL_STAR = "STAR";
     private static String COL_TAG = "TAG";
     private static String COL_MAIN_TEXT = "MAINTEXT";
-    private static String COL_DIMENSION_POINTER = "DIMENSION POINTER";
-    private static String COL_DIMENSION_1 = "What's the one thing I learned today?";
+    private static String COL_DIMENSION_POINTER = "DIMENSION_POINTER";
+    private static String COL_DIMENSION_1 = "D1";
 
     // for tag table
-    private static String TABLE_TAG_NAME = "entry_table";
-    private static String COL_ENTRY_ID = "ENTRY ID";
+    private static String TABLE_TAG_NAME = "tag_table";
+    private static String COL_ENTRY_ID = "ENTRY_ID";
 
     private String dimensionHolder = "";
 
@@ -81,7 +81,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         dimensionHolder = newDimension;
     }
 
-    // String tag is a String formed from gson
     public boolean insertData(String date, String location, int weather, int emotion, int exercise, int star,
                         ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -123,7 +122,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // insert data into tag table
             String entryId = Long.toString(id);
             for (String tagItem : tagList) {
-                String query = "Select * from " + TABLE_TAG_NAME + " where " + COL_TAG + " = " + tagItem;
+                String query = "Select * from " + TABLE_TAG_NAME + " where " + COL_TAG + " = '" + tagItem + "'";
                 ContentValues contentValuesForTags = new ContentValues();
                 Cursor cursor = db.rawQuery(query, null);
                 if (cursor.getCount() <= 0) {
@@ -135,18 +134,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     String tagId = cursor.getString(0);
                     // adding new tag into existing filed
                     String tagName = cursor.getString(1);
-                    Type typeTagName = new TypeToken<ArrayList<String>>() {
-                    }.getType();
                     ArrayList<String> tagNameArray = gson.fromJson(tagName, type);
                     tagNameArray.add(tagItem);
                     String newTagName = gson.toJson(tagNameArray);
 
                     // adding new entry into existing field
                     String tagEntryId = cursor.getString(2) + ", " + entryId;
-                    Type typeEntryId = new TypeToken<ArrayList<String>>() {
-                    }.getType();
                     ArrayList<String> entryIdArray = gson.fromJson(tagEntryId, type);
-                    tagNameArray.add(entryId);
+                    entryIdArray.add(entryId);
                     String newEntryId = gson.toJson(tagNameArray);
 
                     contentValuesForTags.put(COL_ID, tagId);
