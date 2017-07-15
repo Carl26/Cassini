@@ -10,4 +10,14 @@
     <string name="to">To:</string>
     <string name="timeline_view">Timeline View</string>
     <string name="select_date">Select a date...</string>
+    <string name="new_entry">New Entry</string>
+    <string name="save_button">Save</string>
+    <string name="title">Title</string>
+    <string name="placehold_text">Please enter text here</string>
+    <string name="description">Description</string>
+    <string name="type">Type</string>
+    <string name="text">Text</string>
+    <string name="number">Number</string>
+    <string name="deactivate">Deactivate</string>
+    <string name="activate">Activate</string>
 </resources>

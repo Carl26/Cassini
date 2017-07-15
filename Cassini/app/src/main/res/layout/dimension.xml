@@ -1,41 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <View
-        android:layout_width="380dp"
-        android:layout_height="1px"
-        android:layout_gravity="center"
-        android:background="@android:color/darker_gray"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/dimension_text_layout">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center"
+            android:background="@android:color/darker_gray"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray"
+            android:gravity="center"
+            android:fontFamily="roboto-thin"
+            android:textSize="13sp"
+            android:paddingTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:id="@+id/dimension_header"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dimension_edittext"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:inputType="text"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center"
+            android:background="@android:color/darker_gray"/>
+
+    </LinearLayout>
+
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryDark"
-        android:gravity="center"
-        android:fontFamily="roboto-thin"
-        android:textStyle="italic"
-        android:textSize="13sp"
-        android:padding="5dp"
-        android:id="@+id/dimension_header"/>
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/dimension_number"
+        android:background="@drawable/circle"
+        android:layout_toStartOf="@id/dimension_text_layout"
+        android:text="1"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:gravity="center"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/dimension_edittext"
-        android:maxLines="1"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="3dp"
-        android:padding="5dp"
-        android:textSize="13sp"
-        android:inputType="text"/>
-
-    <View
-        android:layout_width="380dp"
-        android:layout_height="1px"
-        android:layout_gravity="center"
-        android:background="@android:color/darker_gray"/>
-
-</LinearLayout>
+</RelativeLayout>
