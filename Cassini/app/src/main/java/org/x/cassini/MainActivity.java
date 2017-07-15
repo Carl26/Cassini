@@ -2,11 +2,14 @@ package org.x.cassini;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,8 +36,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        // used for deleting/ downgrading db
-//        Log.d(TAG, "onCreate: " + this.deleteDatabase("Storie.db"));
+//        clearDb();
 
         Log.d(TAG, "Entered onCreate");
         loadConfig();
@@ -42,6 +44,74 @@ public class MainActivity extends AppCompatActivity {
         initLinearLayout();
         initTextView();
         findViewById(R.id.mainpage_relative_layout).requestFocus();
+        testing();
+    }
+
+    private void clearDb() {
+        // used for deleting/ downgrading db
+        Log.d(TAG, "onCreate: " + this.deleteDatabase("Storie.db"));
+    }
+
+    private void testing() {
+        Button viewAll = (Button) findViewById(R.id.button_view_db);
+        viewAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Cursor res = db.getAllEntryData();
+                if (res.getCount() == 0) {
+                    showMessage("Error", "No data found!");
+                    return ;
+                }
+
+                StringBuffer buffer = new StringBuffer();
+                while (res.moveToNext()) {
+                    buffer.append("ID: " + res.getString(0) + "\n");
+                    buffer.append("Date: " + res.getString(1) + "\n");
+                    buffer.append("location: " + res.getString(2) + "\n");
+                    buffer.append("weather: " + res.getString(3) + "\n");
+                    buffer.append("emotion: " + res.getString(4) + "\n");
+                    buffer.append("exercise: " + res.getString(5) + "\n");
+                    buffer.append("star: " + res.getString(6) + "\n");
+                    buffer.append("tag: " + res.getString(7) + "\n");
+                    buffer.append("maintext: " + res.getString(8) + "\n");
+                    buffer.append("dimensionIndicator: " + res.getString(9) + "\n");
+                    buffer.append("d1: " + res.getString(10) + "\n\n");
+                }
+
+                // show all data
+                showMessage("Data", buffer.toString());
+            }
+        });
+
+        Button viewTags = (Button) findViewById(R.id.button_tag);
+        viewTags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Cursor res = db.getAllTagData();
+                if (res.getCount() == 0) {
+                    showMessage("Error", "No data found!");
+                    return ;
+                }
+
+                StringBuffer buffer = new StringBuffer();
+                while (res.moveToNext()) {
+                    buffer.append("ID: " + res.getString(0) + "\n");
+                    buffer.append("Tag: " + res.getString(1) + "\n");
+                    buffer.append("Entry ID: " + res.getString(2) + "\n\n");
+                }
+
+                // show all data
+                showMessage("Data", buffer.toString());
+            }
+        });
+    }
+
+    public void showMessage(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.show();
     }
 
     private void loadConfig() {
