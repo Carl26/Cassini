@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -118,6 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // only modify tag table if data is inserted
         if (isSuccessful && !isTagEmpty) {
+            long tagRes;
             Type type = new TypeToken<ArrayList<String>>(){}.getType();
             // insert data into tag table
             String entryId = Long.toString(id);
@@ -127,32 +129,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Cursor cursor = db.rawQuery(query, null);
                 if (cursor.getCount() <= 0) {
                     // no record found, add tag
+//                    String tagJson = gson.toJson(tagItem);
+                    ArrayList<String> tempIdArray = new ArrayList<>();
+                    tempIdArray.add(entryId);
+                    String entryIdJson = gson.toJson(tempIdArray);
                     contentValuesForTags.put(COL_TAG, tagItem);
-                    contentValuesForTags.put(COL_ENTRY_ID, entryId);
+                    contentValuesForTags.put(COL_ENTRY_ID, entryIdJson);
+                    Log.d("DB", "insertData: added a new tag");
+                    tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
                 } else {
+                    Log.d("DB", "insertData: tag found");
                     cursor.moveToNext();
                     String tagId = cursor.getString(0);
-                    // adding new tag into existing filed
+                    Log.d("DB", "insertData: tag id " + tagId);
+//                    // adding new tag into existing filed
                     String tagName = cursor.getString(1);
-                    ArrayList<String> tagNameArray = gson.fromJson(tagName, type);
-                    tagNameArray.add(tagItem);
-                    String newTagName = gson.toJson(tagNameArray);
+                    Log.d("DB", "insertData: tag name " + tagName);
+//                    ArrayList<String> tagNameArray = gson.fromJson(tagName, type);
+//                    tagNameArray.add(tagItem);
+//                    String newTagName = gson.toJson(tagNameArray);
+
 
                     // adding new entry into existing field
-                    String tagEntryId = cursor.getString(2) + ", " + entryId;
+                    String tagEntryId = cursor.getString(2);
+                    Log.d("DB", "insertData: tag entry id " + tagEntryId);
                     ArrayList<String> entryIdArray = gson.fromJson(tagEntryId, type);
                     entryIdArray.add(entryId);
-                    String newEntryId = gson.toJson(tagNameArray);
+                    String newEntryId = gson.toJson(entryIdArray);
+                    Log.d("DB", "insertData: new entry id " + newEntryId);
 
                     contentValuesForTags.put(COL_ID, tagId);
-                    contentValuesForTags.put(COL_TAG, newTagName);
+                    contentValuesForTags.put(COL_TAG, tagName);
                     contentValuesForTags.put(COL_ENTRY_ID, newEntryId);
+                    int numberOfRows = db.update(TABLE_TAG_NAME, contentValuesForTags, COL_ID + " = ?", new String[] { tagId });
+                    tagRes = numberOfRows;
                 }
                 cursor.close();
-                long tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
+
                 isSuccessful = isSuccessful && (tagRes != -1);
             }
         }
         return isSuccessful;
+    }
+
+    public Cursor getAllEntryData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME, null);
+        return res;
+    }
+
+    public Cursor getAllTagData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_TAG_NAME, null);
+        return res;
     }
 }
