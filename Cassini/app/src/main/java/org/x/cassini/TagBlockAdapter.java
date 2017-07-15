@@ -28,10 +28,10 @@ class TagBlockAdapter extends RecyclerView.Adapter<TagBlockAdapter.ViewHolder> {
         TextView tagName;
         ImageView goTo;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
-            tagName = (TextView) view.findViewById(R.id.tagNames);
-            goTo = (ImageView) view.findViewById(R.id.tagBlock_goTo);
+            tagName = (TextView) view.findViewById(R.id.tag_name);
+            goTo = (ImageView) view.findViewById(R.id.tag_goTo);
         }
 
     }

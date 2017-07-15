@@ -320,5 +320,23 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true" />
 
+    <Button
+        android:id="@+id/button_view_db"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/view"
+        android:layout_below="@+id/view"
+        android:layout_marginTop="11dp"
+        android:text="View DB" />
+
+    <Button
+        android:id="@+id/button_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/button_view_db"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@+id/button_view_db"
+        android:text="tags" />
+
 
 </RelativeLayout>

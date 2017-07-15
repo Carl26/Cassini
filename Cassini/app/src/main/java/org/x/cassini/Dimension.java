@@ -19,12 +19,16 @@ import android.widget.TextView;
 public class Dimension extends LinearLayout {
     private LayoutInflater inflater;
     private String TAG = "Dimension";
-    private String input;
+    private String input, id;
     private EditText textFiled;
     private TextView header;
 
-    public Dimension(Context context, AttributeSet attrs) {
-        super(context, attrs);
+//    public Dimension(Context context) {
+//        super(context);
+//    }
+
+    public Dimension(Context context) {
+        super(context);
         inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.dimension, this);
         textFiled = (EditText) findViewById(R.id.dimension_edittext);
@@ -63,5 +67,13 @@ public class Dimension extends LinearLayout {
 
     public void setHeader(String newHeader) {
         header.setText(newHeader);
+    }
+
+    public void setDimensionId(String id) {
+        this.id = id;
+    }
+
+    public String getDimensionId() {
+        return id;
     }
 }

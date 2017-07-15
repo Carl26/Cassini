@@ -61,7 +61,6 @@
         android:id="@+id/dimension_number"
         android:background="@drawable/circle"
         android:layout_toStartOf="@id/dimension_text_layout"
-        android:text="1"
         android:textColor="@color/colorPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
