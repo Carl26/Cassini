@@ -24,7 +24,7 @@ public class TagBlock {
 
     public int getTagCount() {return this.mTagNames.size();}
 
-    public boolean isEmpty(Object o) {
-        return (o instanceof TagBlock) && (getTagCount() == 0);
+    public boolean isEmpty() {
+        return getTagCount() == 0;
     }
 }

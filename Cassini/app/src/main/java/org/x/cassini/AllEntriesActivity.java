@@ -81,40 +81,41 @@ public class AllEntriesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadConfig() {
-        File sdCard = Environment.getExternalStorageDirectory();
-        File savedFile = new File (sdCard.getAbsolutePath() + "/Cassini/config.txt");
-        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
-        if (!savedFile.exists()) {
-            Log.e(TAG, "loadConfig: config file not found");
-        } else {
-            Log.d(TAG, "loadConfig: read config file");
-            try {
-                InputStream inputStream = new FileInputStream(savedFile);
-                if ( inputStream != null ) {
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    String receiveString = "";
-                    receiveString = bufferedReader.readLine();
-                    inputStream.close();
-                    int version = Integer.valueOf(receiveString);
-                    db = new DatabaseHelper(this, version);
-                    Log.d(TAG, "loadConfig: db version is " + version);
-                    bufferedReader.close();
-                    inputStreamReader.close();
-                }
-                inputStream.close();
-            }
-            catch (FileNotFoundException e) {
-                Log.e(TAG, "File not found: " + e.toString());
-            } catch (IOException e) {
-                Log.e(TAG, "Can not read file: " + e.toString());
-            }
-        }
-    }
+//    private void loadConfig() {
+//        File sdCard = Environment.getExternalStorageDirectory();
+//        File savedFile = new File (sdCard.getAbsolutePath() + "/Cassini/config.txt");
+//        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
+//        if (!savedFile.exists()) {
+//            Log.e(TAG, "loadConfig: config file not found");
+//        } else {
+//            Log.d(TAG, "loadConfig: read config file");
+//            try {
+//                InputStream inputStream = new FileInputStream(savedFile);
+//                if ( inputStream != null ) {
+//                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+//                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+//                    String receiveString = "";
+//                    receiveString = bufferedReader.readLine();
+//                    inputStream.close();
+//                    int version = Integer.valueOf(receiveString);
+//                    db = new DatabaseHelper(this, version);
+//                    Log.d(TAG, "loadConfig: db version is " + version);
+//                    bufferedReader.close();
+//                    inputStreamReader.close();
+//                }
+//                inputStream.close();
+//            }
+//            catch (FileNotFoundException e) {
+//                Log.e(TAG, "File not found: " + e.toString());
+//            } catch (IOException e) {
+//                Log.e(TAG, "Can not read file: " + e.toString());
+//            }
+//        }
+//    }
 
     private void formStoriesArray() {
-        loadConfig();
+//        loadConfig();
+        db = new DatabaseHelper(mContext,1);
         Cursor res = db.getAllEntryData();
 
         if (res.getCount() == 0) {

@@ -58,4 +58,6 @@ class TagBlockAdapter extends RecyclerView.Adapter<TagBlockAdapter.ViewHolder> {
         return tagNames.size();
     }
 
+    public String getTag(int position) {return tagNames.get(position);}
+
 }

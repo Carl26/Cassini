@@ -203,12 +203,8 @@ public class MainActivity extends AppCompatActivity {
         tags.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast myToast = Toast.makeText(
-                        getApplicationContext(),
-                        "The best things are yet to come.",
-                        Toast.LENGTH_LONG
-                );
-                myToast.show();
+                Intent intent = new Intent(getApplication(),TagsViewActivity.class);
+                startActivity(intent);
             }
         });
 
