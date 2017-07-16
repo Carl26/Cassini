@@ -25,6 +25,13 @@ class Storie {
         this.dimensionData = dimensionData;
     }
 
+    public Storie(String dateTime, String location, ArrayList<String> tagList, String mainText) {
+        mMainText = mainText;
+        mLocation = location;
+        mDateTime = dateTime;
+        mTagList = tagList;
+    }
+
     public String getmMainText() {
         return mMainText;
     }
