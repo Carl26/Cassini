@@ -62,7 +62,9 @@ public class AllEntriesActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG, "onResume");
         formStoriesArray();
-        initList();
+        if (stories != null) {
+            initList();
+        }
     }
 
     private void initToolbar() {
@@ -134,6 +136,7 @@ public class AllEntriesActivity extends AppCompatActivity {
             tagList = gson.fromJson(tagJson, type);
             mainText = res.getString(8);
             temp = new Storie(date, location, tagList, mainText);
+            Log.d(TAG, "formStoriesArray: taglist is " + tagList);
             stories.add(temp);
         }
     }

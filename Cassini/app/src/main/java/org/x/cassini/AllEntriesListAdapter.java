@@ -63,12 +63,14 @@ class AllEntriesListAdapter extends BaseAdapter {
             date.setText(storie.getmDateTime());
             // add tags programmatically to the right of location
             LinearLayout tags = (LinearLayout) view.findViewById(R.id.all_entries_list_tags);
-            for (String tag : tagList) {
-                TextView tagView = new TextView(mContext);
-                tagView.setTextColor(view.getResources().getColor(R.color.black));
-                tagView.setText(tag);
-                tagView.setPadding(5, 5, 5, 5);
-                tags.addView(tagView);
+            if (tagList != null) {
+                for (String tag : tagList) {
+                    TextView tagView = new TextView(mContext);
+                    tagView.setTextColor(view.getResources().getColor(R.color.black));
+                    tagView.setText(tag);
+                    tagView.setPadding(5, 5, 5, 5);
+                    tags.addView(tagView);
+                }
             }
         } else {
             view = convertView;
