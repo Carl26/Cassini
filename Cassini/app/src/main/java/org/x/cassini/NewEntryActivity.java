@@ -406,11 +406,15 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private void saveDiary() {
         // grab dimension input if any
+        boolean hasInput = false;
         dimensionInput = new ArrayList<>();
         if (!dimensionIdList.isEmpty()) {
             for (int id : dimensionIdList) {
                 Dimension tempDimension = (Dimension) findViewById(id);
                 String tempInput = tempDimension.getInput();
+                if (!tempInput.equals("")) {
+                    hasInput = true;
+                }
                 dimensionInput.add(tempInput);
                 Log.d(TAG, "saveDiary: added input " + tempInput + " to " + tempDimension.getHeader());
             }
@@ -418,7 +422,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
         // save diary only if there is any input
         if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
-                !tagList.isEmpty() || !mainText.getText().toString().equals("") || !dimensionInput.isEmpty()) {
+                !tagList.isEmpty() || !mainText.getText().toString().equals("") || hasInput) {
             Log.d(TAG, "saveDiary: should save diary here");
 
 //            if (holder == null) {
