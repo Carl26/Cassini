@@ -97,12 +97,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_STAR, star);
         if (tagList.isEmpty()) {
             isTagEmpty = true;
-            contentValues.put(COL_TAG, "");
+            Log.d("DB", "insertData: tag is empty");
         } else {
             isTagEmpty = false;
-            String tag = gson.toJson(tagList);
-            contentValues.put(COL_TAG, tag);
+            Log.d("DB", "insertData: tag is not empty");
         }
+        String tag = gson.toJson(tagList);
+        contentValues.put(COL_TAG, tag);
         contentValues.put(COL_MAIN_TEXT, mainText);
         ArrayList<String> dimensionPointer = new ArrayList<>();
         for (ArrayList<String> pair : dimensionData) {
@@ -181,6 +182,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllTagData() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_TAG_NAME, null);
+        return res;
+    }
+
+    public Cursor getEntry(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME, null);
         return res;
     }
 }
