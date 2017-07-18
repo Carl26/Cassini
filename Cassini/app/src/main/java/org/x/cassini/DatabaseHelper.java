@@ -189,4 +189,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select TAG from " + TABLE_TAG_NAME + " where TAG like '" + alphabet + "%'", null);
         return res;
     }
+
+    public Cursor getTagEntries(String tagName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG='" + tagName + "'", null);
+        return res;
+    }
+
 }
