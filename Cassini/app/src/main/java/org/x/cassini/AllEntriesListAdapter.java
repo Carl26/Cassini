@@ -67,6 +67,10 @@ class AllEntriesListAdapter extends BaseAdapter {
         } else {
             view = convertView;
             holder = (ViewHolder) view.getTag();
+            holder.main.setText("");
+            holder.location.setText("");
+            holder.date.setText("");
+            holder.tags.removeAllViews();
         }
         storie = stories.get(position);
         tagList = storie.getmTagList();
