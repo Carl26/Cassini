@@ -84,6 +84,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean insertData(String date, String location, int weather, int emotion, int exercise, int star,
                         ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {
+        Log.d("DB", "loadDiary: loaded info " + " date " + date + " location " + location +
+                " weather " + weather + " emotion " + emotion + " exercise " + exercise + " star " + star +
+                " tags " + tagList + " maintext " + mainText + " dimension indicators " + dimensionData);
         SQLiteDatabase db = this.getWritableDatabase();
         boolean isSuccessful, isTagEmpty;
         Gson gson = new Gson();
@@ -187,7 +190,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getEntry(String query) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME, null);
+        Cursor res = db.rawQuery(query, null);
         return res;
     }
 }

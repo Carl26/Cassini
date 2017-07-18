@@ -100,11 +100,12 @@ public class NewEntryActivity extends AppCompatActivity {
             sDate = getIntent().getStringExtra("date");
             isEditMode = true;
             Log.d(TAG, "onCreate: requested date is " + sDate);
-        } else {
-            sDate = new SimpleDateFormat("yyyyMMddHHmmss").format(currentDateInfo);
-            isEditMode = false;
-            Log.d(TAG, "onCreate: Today is " + sDate);
         }
+//        else {
+//            sDate = new SimpleDateFormat("yyyyMMddHHmmss").format(currentDateInfo);
+//            isEditMode = false;
+//            Log.d(TAG, "onCreate: Today is " + sDate);
+//        }
 
         initToolbar();
         // establish database and read dimensions
@@ -468,7 +469,7 @@ public class NewEntryActivity extends AppCompatActivity {
             }
         } else {
             // update data to existing row
-            //TODO
+            Log.d(TAG, "saveDiary: update database");
         }
         db.close();
     }
@@ -618,12 +619,12 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void loadDiary() {
-        Log.d(TAG, "loadDiary: load diary");
+        Log.d(TAG, "loadDiary: load diary of " + sDate);
         if (db == null) {
             Log.e(TAG, "loadDiary: DB is not initialized");
             return ;
         }
-        String findEntryQuery = "SELECT * FROM " + TABLE_ENTRY_NAME + " WHERE " + COL_DATE + "=" + sDate;
+        String findEntryQuery = "SELECT * FROM " + TABLE_ENTRY_NAME + " WHERE " + COL_DATE + "=" + "'" + sDate + "'";
         Cursor cursor = db.getEntry(findEntryQuery);
         if (cursor != null) {
             cursor.moveToNext();
@@ -716,7 +717,7 @@ public class NewEntryActivity extends AppCompatActivity {
                 BStar.setBackgroundResource(R.drawable.ic_star_full);
             }
             // tag
-            if (!dbTagList.get(0).equals("")) {
+            if (dbTagList != null) {
                 // tag list is not empty
                 BTag.setBackgroundResource(R.drawable.ic_tag_full);
                 tagList = dbTagList;
