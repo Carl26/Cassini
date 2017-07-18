@@ -28,6 +28,11 @@ class AllEntriesListAdapter extends BaseAdapter {
         mSelectedItems = new SparseBooleanArray();
     }
 
+    class ViewHolder {
+        TextView main, location, date;
+        LinearLayout tags;
+    }
+
     @Override
     public int getCount() {
         return stories.size();
@@ -47,34 +52,37 @@ class AllEntriesListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view;
-        TextView main, location, date;
-        ArrayList<String> tagList;
+        ViewHolder holder;
         Storie storie;
+        ArrayList<String> tagList;
         if (convertView == null) {
-            storie = stories.get(position);
-            tagList = storie.getmTagList();
+            holder = new ViewHolder();
             view = inflater.inflate(R.layout.all_entries_rows, null);
             // setup textviews
-            main = (TextView) view.findViewById(R.id.all_entries_list_main_text);
-            main.setText(storie.getmMainText());
-            location = (TextView) view.findViewById(R.id.all_entries_list_location);
-            location.setText(storie.getmLocation());
-            date = (TextView) view.findViewById(R.id.all_entries_list_time);
-            date.setText(storie.getmDateTime());
-            // add tags programmatically to the right of location
-            LinearLayout tags = (LinearLayout) view.findViewById(R.id.all_entries_list_tags);
-            if (tagList != null) {
-                for (String tag : tagList) {
-                    TextView tagView = new TextView(mContext);
-                    tagView.setTextColor(view.getResources().getColor(R.color.black));
-                    tagView.setText(tag);
-                    tagView.setPadding(5, 5, 5, 5);
-                    tags.addView(tagView);
-                }
-            }
+            holder.main = (TextView) view.findViewById(R.id.all_entries_list_main_text);
+            holder.location = (TextView) view.findViewById(R.id.all_entries_list_location);
+            holder.date = (TextView) view.findViewById(R.id.all_entries_list_time);
+            holder.tags = (LinearLayout) view.findViewById(R.id.all_entries_list_tags);
+            view.setTag(holder);
         } else {
             view = convertView;
-            Log.e(TAG, "getView: convertView is not null");
+            holder = (ViewHolder) view.getTag();
+        }
+        storie = stories.get(position);
+        tagList = storie.getmTagList();
+        holder.main.setText(storie.getmMainText());
+//        Log.e(TAG, "getView: main text is " + storie.getmMainText());
+        holder.location.setText(storie.getmLocation());
+        holder.date.setText(storie.getmDateTime());
+        // add tags programmatically to the right of location
+        if (tagList != null) {
+            for (String tag : tagList) {
+                TextView tagView = new TextView(mContext);
+                tagView.setTextColor(view.getResources().getColor(R.color.black));
+                tagView.setText(tag);
+                tagView.setPadding(5, 5, 5, 5);
+                holder.tags.addView(tagView);
+            }
         }
         return view;
     }
