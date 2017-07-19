@@ -43,5 +43,6 @@
         <activity android:name=".EditTempActivity" />
         <activity android:name=".TagEntriesActivity" />
         <activity android:name=".EditDimensionActivity"></activity>
+        <activity android:name=".SettingsActivity"/>
     </application>
 </manifest>

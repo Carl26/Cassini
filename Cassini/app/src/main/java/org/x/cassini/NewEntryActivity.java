@@ -404,12 +404,6 @@ public class NewEntryActivity extends AppCompatActivity {
         mainText.requestFocus();
     }
 
-    //    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_new_entry, menu);
-//        return true;
-//    }
-//
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         onBackPressed();

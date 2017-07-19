@@ -28,6 +28,7 @@
             android:textSize="16sp"
             android:layout_gravity="center"
             android:id="@+id/edit_temp_toolbar_title" />
+
     </android.support.v7.widget.Toolbar>
 
 
@@ -114,43 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="200dp"
-                android:id="@+id/edit_temp_main_text"
-                />
-
-            <org.x.cassini.Dimension
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/edit_temp_dimension_learn"
-                android:background="#ffffff"
-                android:nextFocusDown="@+id/edit_temp_dimension_problem"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
-
-            <org.x.cassini.Dimension
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/edit_temp_dimension_problem"
-                android:background="#ffffff"
-                android:nextFocusDown="@+id/edit_temp_relative_layout"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="180dp">
-
-                <TextView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:id="@+id/dimension_number"
-                    android:background="@drawable/circle"
-                    android:text="+"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_margin="20dp"
-                    android:gravity="center"/>
-            </LinearLayout>
+                android:id="@+id/edit_temp_main_text" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
