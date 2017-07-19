@@ -1,5 +1,6 @@
 package org.x.cassini;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -47,6 +48,7 @@ public class AllEntriesActivity extends AppCompatActivity {
     private ListView list;
     private AllEntriesListAdapter listAdapter;
     private DatabaseHelper db;
+    private boolean isResult = false;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -60,7 +62,7 @@ public class AllEntriesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
+        Log.e(TAG, "onResume");
         formStoriesArray();
         if (stories != null) {
             initList();
@@ -153,7 +155,7 @@ public class AllEntriesActivity extends AppCompatActivity {
                 Log.d(TAG, "onItemClick: sent date is " + sDate);
                 Intent intent = new Intent(mContext, NewEntryActivity.class);
                 intent.putExtra("date", sDate);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -206,5 +208,16 @@ public class AllEntriesActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: received edit entry result");
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                isResult = true;
+            }
+        }
     }
 }

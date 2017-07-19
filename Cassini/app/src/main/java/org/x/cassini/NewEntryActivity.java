@@ -80,6 +80,8 @@ public class NewEntryActivity extends AppCompatActivity {
     private static String COL_DATE = "DATE";
     private static String TABLE_ENTRY_NAME = "entry_table";
     private File file;
+    private ArrayList<String> dbTagList;
+    private String dbId;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -435,22 +437,15 @@ public class NewEntryActivity extends AppCompatActivity {
                 dimensionInput.add(tempInput);
                 Log.d(TAG, "saveDiary: added input " + tempInput + " to " + tempDimension.getHeader());
             }
+        } else {
+            Log.e(TAG, "saveDiary: dimension list is empty");
         }
-
+        Log.d(TAG, "saveDiary: dimension list size " + dimensionList.size());
         // create a new diary only if there is any input and not in edit mode
         if (!isEditMode) {
             if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
                     !tagList.isEmpty() || !mainText.getText().toString().equals("") || hasInput) {
                 Log.d(TAG, "saveDiary: should save diary here");
-
-//            if (holder == null) {
-//                // fill in details into holder
-//                holder = new Storie(time.getText().toString(), location.getText().toString(),
-//                        intWeather, intEmotion, intExercise, isStar, tagList,
-//                        mainText.getText().toString(), );
-//            } else {
-//                Log.e(TAG, "saveDiary: no input, diary not saved " + sDate);
-//            }
                 String dbDate = time.getText().toString();
                 String dbLocation = location.getText().toString();
                 String dbMainText = mainText.getText().toString();
@@ -465,11 +460,33 @@ public class NewEntryActivity extends AppCompatActivity {
                     dbDimensionInfo.add(tempList);
                 }
                 boolean isInserted = db.insertData(dbDate, dbLocation, intWeather, intEmotion, intExercise, isStar, tagList, dbMainText, dbDimensionInfo);
-                Log.e(TAG, "saveDiary: " + isInserted);
+                Log.e(TAG, "saveDiary: is inserted " + isInserted);
             }
         } else {
             // update data to existing row
             Log.d(TAG, "saveDiary: update database");
+            String dbDate = time.getText().toString();
+            String dbLocation = location.getText().toString();
+            String dbMainText = mainText.getText().toString();
+            ArrayList<ArrayList<String>> dbDimensionInfo = new ArrayList<>();
+            Log.d(TAG, "saveDiary: dimension list size in else " + dimensionList.size());
+            for (int i = 0; i < dimensionList.size(); i++) {
+                String questionId = "D" + dimensionList.get(i).getDimensionId();
+                String answer = dimensionInput.get(i);
+                Log.d(TAG, "saveDiary: q&a: " + questionId + " && " + answer);
+                ArrayList<String> tempList = new ArrayList<>();
+                tempList.add(questionId);
+                tempList.add(answer);
+                dbDimensionInfo.add(tempList);
+            }
+            // provide old tag list for tag table update
+            boolean isUpdated = db.updateData(dbId, dbDate, dbLocation, intWeather, intEmotion, intExercise, isStar, tagList, dbTagList, dbMainText, dbDimensionInfo);
+            Log.d("DB", "update data: loaded info id " + dbId + " date " + dbDate + " location " + dbLocation +
+                    " weather " + intWeather + " emotion " + intEmotion + " exercise " + intExercise + " star " + isStar +
+                    " tags " + tagList + " old tagList " + dbTagList + " maintext " + dbMainText + " dimension indicators " + dbDimensionInfo);
+            Log.e(TAG, "saveDiary: is updated " + isUpdated);
+            Intent intent = new Intent();
+            setResult(RESULT_OK, intent);
         }
         db.close();
     }
@@ -628,7 +645,7 @@ public class NewEntryActivity extends AppCompatActivity {
         Cursor cursor = db.getEntry(findEntryQuery);
         if (cursor != null) {
             cursor.moveToNext();
-            String dbId = cursor.getString(0);
+            dbId = cursor.getString(0);
             String dbDate =cursor.getString(1);
             String dbLocation =cursor.getString(2);
             int dbWeather =cursor.getInt(3);
@@ -644,13 +661,13 @@ public class NewEntryActivity extends AppCompatActivity {
             // parse tags Json into ArrayList
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<String>>(){}.getType();
-            ArrayList<String> dbTagList = gson.fromJson(dbTags, type);
+            dbTagList = gson.fromJson(dbTags, type);
             // parse dimension indicators json to arraylist
             ArrayList<String> dbIndicatorList = gson.fromJson(dbDimensionIndicator, type);
             // get dimension inputs by reading corresponding columns
             dimensionInput = new ArrayList<>();
             ArrayList<Integer> dimensionPosition = new ArrayList<>();
-            if (!dbIndicatorList.get(0).equals("")) {
+            if (dbIndicatorList != null && !dbIndicatorList.get(0).equals("")) {
                 for (String columnName : dbIndicatorList) {
                     int position = Integer.valueOf(columnName.substring(1));
                     int index = 9 + position;
@@ -717,10 +734,12 @@ public class NewEntryActivity extends AppCompatActivity {
                 BStar.setBackgroundResource(R.drawable.ic_star_full);
             }
             // tag
-            if (dbTagList != null) {
+            if (dbTagList != null && !dbTagList.isEmpty()) {
                 // tag list is not empty
                 BTag.setBackgroundResource(R.drawable.ic_tag_full);
-                tagList = dbTagList;
+                for (String tagItem : dbTagList) {
+                    tagList.add(tagItem);
+                }
             }
             // main text
             mainText.setText(dbMainText);
@@ -759,6 +778,7 @@ public class NewEntryActivity extends AppCompatActivity {
                         newEntryLayout.addView(temp);
                         // store dimension info into lists
                         dimensionIdList.add(tempId);
+                        dimensionList.add(temp);
                         inputIndex++;
                     }
                 } catch (IOException e) {
@@ -768,28 +788,5 @@ public class NewEntryActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "loadDiary: unable to find entry" + sDate);
         }
-
-////                Log.e(TAG, "loadDiary: here");
-
-//                // dimensions
-//                // TODO now only reads answer to dimensions -> can be used to read title too
-//                line = br.readLine();
-//                Log.d(TAG, "loadDiary: dh1 " + line);
-//                line = br.readLine().substring(2);
-//                Log.d(TAG, "loadDiary: di1 " + line);
-//                learn.setInput(line);
-//                line = br.readLine();
-//                Log.d(TAG, "loadDiary: dh2 " + line);
-//                line = br.readLine().substring(2);
-//                Log.d(TAG, "loadDiary: di2 " + line);
-//                problem.setInput(line);
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            Log.e(TAG, "loadDiary: no file found");
-//        }
     }
 }
