@@ -267,14 +267,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // add in new tags
         if (!newTags.isEmpty()) {
             for (String newTagItem : newTags) {
+                String query = "Select * from " + TABLE_TAG_NAME + " where " + COL_TAG + " = '" + newTagItem + "'";
+                Cursor cursor = db.rawQuery(query, null);
                 ContentValues contentValuesForTags = new ContentValues();
-                ArrayList<String> tempIdArray = new ArrayList<>();
-                tempIdArray.add(id);
-                String entryIdJson = gson.toJson(tempIdArray);
-                contentValuesForTags.put(COL_TAG, newTagItem);
-                contentValuesForTags.put(COL_ENTRY_ID, entryIdJson);
-                Log.d("DB", "updateData: added a new tag " + newTagItem);
-                tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
+                if (cursor.getCount() <= 0) {
+                    ArrayList<String> tempIdArray = new ArrayList<>();
+                    tempIdArray.add(id);
+                    String entryIdJson = gson.toJson(tempIdArray);
+                    contentValuesForTags.put(COL_TAG, newTagItem);
+                    contentValuesForTags.put(COL_ENTRY_ID, entryIdJson);
+                    Log.d("DB", "updateData: added a new tag " + newTagItem);
+                    tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
+                } else {
+                    Log.d("DB", "updateData: tag found");
+                    cursor.moveToNext();
+                    String tagId = cursor.getString(0);
+                    Log.d("DB", "updateData: tag id " + tagId);
+//                    // adding new tag into existing filed
+                    String tagName = cursor.getString(1);
+                    Log.d("DB", "updateData: tag name " + tagName);
+                    // adding new entry into existing field
+                    String tagEntryId = cursor.getString(2);
+                    Log.d("DB", "insertData: tag entry id " + tagEntryId);
+                    ArrayList<String> entryIdArray = gson.fromJson(tagEntryId, type);
+                    entryIdArray.add(id);
+                    String newEntryId = gson.toJson(entryIdArray);
+                    Log.d("DB", "updateData: new entry id " + newEntryId);
+
+                    contentValuesForTags.put(COL_ID, tagId);
+                    contentValuesForTags.put(COL_TAG, tagName);
+                    contentValuesForTags.put(COL_ENTRY_ID, newEntryId);
+                    tagRes = db.update(TABLE_TAG_NAME, contentValuesForTags, COL_ID + " = ?", new String[] { tagId });
+                }
+                cursor.close();
                 isSuccessful = isSuccessful && (tagRes != -1);
             }
         }
