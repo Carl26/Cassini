@@ -141,7 +141,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     String entryIdJson = gson.toJson(tempIdArray);
                     contentValuesForTags.put(COL_TAG, tagItem);
                     contentValuesForTags.put(COL_ENTRY_ID, entryIdJson);
-                    Log.d("DB", "insertData: added a new tag");
+                    Log.d("DB", "insertData: added a new tag " + tagItem);
                     tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
                 } else {
                     Log.d("DB", "insertData: tag found");
@@ -296,6 +296,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getEntry(String query) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery(query, null);
+        return res;
+    }
+
+    public Cursor getTagList(char alphabet){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select TAG from " + TABLE_TAG_NAME + " where TAG like '" + alphabet + "%'", null);
+        return res;
+    }
+
+    public Cursor getTagEntries(String tagName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG='" + tagName + "'", null);
         return res;
     }
 }

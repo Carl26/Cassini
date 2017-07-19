@@ -1,9 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.x.cassini.EditDimensionActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:id="@+id/edit_dimension_toolbar"
+        android:background="@color/colorPrimaryDark"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_dimension_title"
+            android:text="New Segment"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+        <Button
+            android:id="@+id/edit_dimension_save_button"
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:background="@drawable/background_button"
+            android:layout_gravity="end"
+            android:text="@string/save_button"
+            android:textColor="#ffffff"
+            android:textSize="14sp"
+            android:layout_marginEnd="20dp"
+            android:textAllCaps="false"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_dimension_dim_title_layout"
+        android:layout_below="@id/edit_dimension_toolbar"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_dimension_dim_title"
+            android:text="@string/title"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="5dp"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_dimension_dim_title_text"
+            android:hint="@string/placehold_text"
+            android:textColorHint="@color/gray"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:padding="18dp"
+            android:background="@drawable/half_rounded_rectangle" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_dimension_dim_description_layout"
+        android:layout_below="@id/edit_dimension_dim_title_layout"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_dimension_dim_description"
+            android:text="@string/description"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="5dp"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_dimension_dim_description_text"
+            android:hint="@string/placehold_text"
+            android:textColorHint="@color/gray"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:padding="18dp"
+            android:minHeight="80dp"
+            android:background="@drawable/half_rounded_rectangle" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_dimension_dim_type_layout"
+        android:layout_below="@id/edit_dimension_dim_description_layout"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_dimension_dim_type"
+            android:text="@string/type"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="5dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_dimension_dim_type_box_layout"
+            android:background="@drawable/half_rounded_rectangle"
+            android:orientation="vertical">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_dimension_dim_type_text"
+                android:text="@string/text"
+                android:textColor="@color/black"
+                android:padding="10dp"
+                android:layout_margin="10dp"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:onClick="onRadioButtonClicked"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_dimension_dim_type_number"
+                android:text="@string/number"
+                android:textColor="@color/black"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
+                android:onClick="onRadioButtonClicked"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_dimension_activate_button"
+        android:backgroundTint="@android:color/darker_gray"
+        android:background="@drawable/rounded_rectangle"
+        android:layout_below="@id/edit_dimension_dim_type_layout"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="45dp"
+        android:text="@string/activate"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center"/>
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_dimension_deactivate_button"
+        android:backgroundTint="@android:color/holo_red_light"
+        android:background="@drawable/rounded_rectangle"
+        android:layout_below="@id/edit_dimension_dim_type_layout"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="45dp"
+        android:text="@string/deactivate"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center"/>
+
+
+</RelativeLayout>

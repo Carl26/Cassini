@@ -38,6 +38,10 @@
             <!-- </intent-filter> -->
         </activity>
         <activity android:name=".TimelineActivity" />
-        <activity android:name=".TagsviewActivity"></activity>
+        <activity android:name=".TagsViewActivity" />
+        <activity android:name=".TimelinePreviewActivity" />
+        <activity android:name=".EditTempActivity" />
+        <activity android:name=".TagEntriesActivity" />
+        <activity android:name=".EditDimensionActivity"></activity>
     </application>
 </manifest>

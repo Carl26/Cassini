@@ -111,6 +111,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
         initToolbar();
         // establish database and read dimensions
+        db = new DatabaseHelper(mContext,1);
         loadResources();
     }
 
