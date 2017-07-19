@@ -70,46 +70,46 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/edit_dimension_dim_description_layout"
-        android:layout_below="@id/edit_dimension_dim_title_layout"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="30dp"
-        android:orientation="vertical">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/edit_dimension_dim_description_layout"-->
+        <!--android:layout_below="@id/edit_dimension_dim_title_layout"-->
+        <!--android:layout_marginStart="10dp"-->
+        <!--android:layout_marginEnd="10dp"-->
+        <!--android:layout_marginTop="30dp"-->
+        <!--android:orientation="vertical">-->
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_dimension_dim_description"
-            android:text="@string/description"
-            android:background="@color/colorPrimaryDark"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:padding="5dp"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_dimension_dim_description_text"
-            android:hint="@string/placehold_text"
-            android:textColorHint="@color/gray"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:padding="18dp"
-            android:minHeight="80dp"
-            android:background="@drawable/half_rounded_rectangle" />
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/edit_dimension_dim_description"-->
+            <!--android:text="@string/description"-->
+            <!--android:background="@color/colorPrimaryDark"-->
+            <!--android:textColor="@color/colorPrimary"-->
+            <!--android:textSize="15sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:gravity="center"-->
+            <!--android:padding="5dp"/>-->
+        <!--<EditText-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/edit_dimension_dim_description_text"-->
+            <!--android:hint="@string/placehold_text"-->
+            <!--android:textColorHint="@color/gray"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textColor="@color/black"-->
+            <!--android:padding="18dp"-->
+            <!--android:minHeight="80dp"-->
+            <!--android:background="@drawable/half_rounded_rectangle" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_dimension_dim_type_layout"
-        android:layout_below="@id/edit_dimension_dim_description_layout"
+        android:layout_below="@id/edit_dimension_dim_title_layout"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="30dp"
