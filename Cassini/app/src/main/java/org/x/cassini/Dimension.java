@@ -2,6 +2,7 @@ package org.x.cassini;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -24,6 +25,7 @@ public class Dimension extends LinearLayout {
     private EditText textFiled;
     private TextView header;
     private static int ACTIVE = 1, INACTIVE = 0;
+    private static int TEXT = 0, NUMBER = 1;
 
 //    public Dimension(Context context) {
 //        super(context);
@@ -84,6 +86,14 @@ public class Dimension extends LinearLayout {
             header.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
         } else if (color == INACTIVE) {
             header.setTextColor(ContextCompat.getColor(getContext(), R.color.gray));
+        }
+    }
+
+    public void setType(int type) {
+        if (type == TEXT) {
+            textFiled.setInputType(InputType.TYPE_CLASS_TEXT);
+        } else if (type == NUMBER) {
+            textFiled.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
     }
 }

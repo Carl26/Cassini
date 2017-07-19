@@ -141,9 +141,11 @@ public class NewEntryActivity extends AppCompatActivity {
                         // check if the dimension will be used
                         String isActive = receiveString.substring(0, 1);
                         if (isActive.equals("T")) {
+                            String type = receiveString.substring(1, 2);
+                            Log.d(TAG, "loadResources: type is " + type);
                             // the dimension is active
                             int index = receiveString.indexOf(":");
-                            String dimensionId = receiveString.substring(1, index);
+                            String dimensionId = receiveString.substring(2, index);
                             String dimensionString = receiveString.substring(index + 1);
                             Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
                             Dimension temp = new Dimension(mContext);
@@ -152,6 +154,13 @@ public class NewEntryActivity extends AppCompatActivity {
                             temp.setDimensionId(dimensionId);
                             temp.setBackgroundColor(Color.WHITE);
                             temp.setLayoutParams(params);
+                            if (type.equals("T")) {
+                                temp.setType(0);
+                            } else if (type.equals("I")) {
+                                temp.setType(1);
+                            } else {
+                                Log.e(TAG, "loadResources: no such input type");
+                            }
                             int tempId = View.generateViewId();
                             temp.setId(tempId);
                             // add view into linear layout
