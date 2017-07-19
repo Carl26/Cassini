@@ -2,6 +2,7 @@ package org.x.cassini;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -277,7 +278,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 isSuccessful = isSuccessful && (tagRes != -1);
             }
         }
-
         return isSuccessful;
     }
 

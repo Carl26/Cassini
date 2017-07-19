@@ -485,8 +485,12 @@ public class NewEntryActivity extends AppCompatActivity {
                     " weather " + intWeather + " emotion " + intEmotion + " exercise " + intExercise + " star " + isStar +
                     " tags " + tagList + " old tagList " + dbTagList + " maintext " + dbMainText + " dimension indicators " + dbDimensionInfo);
             Log.e(TAG, "saveDiary: is updated " + isUpdated);
-            Intent intent = new Intent();
-            setResult(RESULT_OK, intent);
+//            Intent intent = new Intent();
+//            setResult(RESULT_OK, intent);
+
+            Intent intentForUpdate = new Intent();
+            intentForUpdate.setAction("org.x.cassini.DB_UPDATE");
+            sendBroadcast(intentForUpdate);
         }
         db.close();
     }

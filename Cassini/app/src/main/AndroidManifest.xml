@@ -40,5 +40,4 @@
         <activity android:name=".TimelineActivity" />
         <activity android:name=".TagsviewActivity"></activity>
     </application>
-
 </manifest>

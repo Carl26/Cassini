@@ -1,8 +1,10 @@
 package org.x.cassini;
 
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
@@ -49,6 +51,7 @@ public class AllEntriesActivity extends AppCompatActivity {
     private AllEntriesListAdapter listAdapter;
     private DatabaseHelper db;
     private boolean isResult = false;
+    private DBBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -63,9 +66,24 @@ public class AllEntriesActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.e(TAG, "onResume");
+        loadData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+    private void loadData() {
         formStoriesArray();
         if (stories != null) {
             initList();
+        }
+        if (receiver == null) {
+            receiver = new DBBroadcastReceiver();
+            IntentFilter filter = new IntentFilter("org.x.cassini.DB_UPDATE");
+            registerReceiver(receiver, filter);
         }
     }
 
@@ -155,7 +173,7 @@ public class AllEntriesActivity extends AppCompatActivity {
                 Log.d(TAG, "onItemClick: sent date is " + sDate);
                 Intent intent = new Intent(mContext, NewEntryActivity.class);
                 intent.putExtra("date", sDate);
-                startActivityForResult(intent, 1);
+                startActivity(intent);
             }
         });
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -210,14 +228,27 @@ public class AllEntriesActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: received edit entry result");
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                isResult = true;
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        Log.d(TAG, "onActivityResult: received edit entry result");
+//        if (requestCode == 1) {
+//            if (resultCode == RESULT_OK) {
+//                isResult = true;
+//            }
+//        }
+//    }
+
+    public class DBBroadcastReceiver extends BroadcastReceiver {
+        private String TAG = "DBBR";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("org.x.cassini.DB_UPDATE")) {
+                Log.d(TAG, "onReceive: received db update intent");
+                loadData();
             }
         }
     }
+
 }
