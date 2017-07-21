@@ -96,4 +96,8 @@ public class Dimension extends LinearLayout {
             textFiled.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
     }
+
+    public int getType() {
+        return textFiled.getInputType();
+    }
 }

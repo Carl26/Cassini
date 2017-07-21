@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import static java.security.AccessController.getContext;
 
 public class EditTempActivity extends AppCompatActivity {
-    private LinearLayout dimensionsHolder;
+    private LinearLayout dimensionsHolder, plusHolder;
     private Toolbar toolbar;
     private String TAG = "Settings";
     private boolean isSaving = false;
@@ -58,6 +58,17 @@ public class EditTempActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         dimensionsHolder = (LinearLayout) findViewById(R.id.edit_temp_bottom_linear);
+        plusHolder = (LinearLayout) findViewById(R.id.edit_dimension_plus_holder);
+        plusHolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EditDimensionActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isExist", false);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, 1);
+            }
+        });
     }
 
     private void loadConfig() {
@@ -86,26 +97,42 @@ public class EditTempActivity extends AppCompatActivity {
                     Log.d(TAG, "loadResources: read dimension: " + receiveString);
                     // check if the dimension will be used
                     String isActive = receiveString.substring(0, 1);
+                    final boolean isActivated;
 
                     // the dimension is active
                     int index = receiveString.indexOf(":");
-                    String dimensionId = receiveString.substring(1, index);
-                    String dimensionString = receiveString.substring(index + 1);
+                    String dimensionId = receiveString.substring(2, index);
+                    final String dimensionString = receiveString.substring(index + 1);
                     Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
                     Dimension temp = new Dimension(getApplicationContext());
                     if (isActive.equals("T")) {
                         temp.setColor(1);
+                        isActivated = true;
                         Log.d(TAG, "loadConfig: tis an active dimension");
                     } else if (isActive.equals("F")) {
                         temp.setColor(0);
+                        isActivated = false;
                         Log.d(TAG, "loadConfig: tis anot active dimension");
+                    } else {
+                        isActivated = false;
+                        Log.e(TAG, "loadConfig: wrong activation state");
                     }
                     temp.setHeader(dimensionString);
                     temp.setDimensionId(dimensionId);
                     temp.setBackgroundColor(Color.WHITE);
                     temp.setLayoutParams(params);
-                    int tempId = View.generateViewId();
+                    final int tempId = View.generateViewId();
                     temp.setId(tempId);
+                    final int tempType;
+                    String type = receiveString.substring(1, 2);
+                    if (type.equals("T")) {
+                        tempType = 0;
+                    } else if (type.equals("I")) {
+                        tempType = 1;
+                    } else {
+                        Log.e(TAG, "loadConfig: no such type");
+                        tempType = -1;
+                    }
                     // use a linearlayout to contain both dimension and textview button
                     TextView indexButton = new TextView(getApplicationContext());
                     int pixel = (int) (25 * scale + 0.5f);
@@ -125,6 +152,21 @@ public class EditTempActivity extends AppCompatActivity {
                     indexHolder.addView(indexButton);
                     indexHolder.addView(temp);
 
+                    indexHolder.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), EditDimensionActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("isExist", true);
+                            bundle.putString("header", dimensionString);
+                            // this is view id
+                            bundle.putInt("id", tempId);
+                            bundle.putInt("type", tempType);
+                            bundle.putBoolean("isActivated", isActivated);
+                            intent.putExtras(bundle);
+                            startActivityForResult(intent, 1);
+                        }
+                    });
                     // add view into linear layout
                     dimensionsHolder.addView(indexHolder);
                     // store dimension info into lists
@@ -140,24 +182,55 @@ public class EditTempActivity extends AppCompatActivity {
             Log.e("main activity", "Can not read file: " + e.toString());
         }
 
-        // loaded all dimensions, time to add in + text view
-        TextView plusButton = new TextView(getApplicationContext());
-        int pixel = (int) (25 * scale + 0.5f);
-        LinearLayout.LayoutParams plusButtonParams = new LinearLayout.LayoutParams(pixel, pixel);
-        int pixelMargin = (int) (20*scale+0.5f);
-        plusButtonParams.setMargins(pixelMargin, pixelMargin, pixelMargin, pixelMargin);
-        plusButtonParams.gravity = Gravity.CENTER;
-        plusButton.setLayoutParams(plusButtonParams);
-        plusButton.setText("+");
-        plusButton.setBackgroundResource(R.drawable.circle);
-        plusButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
-        plusButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-        plusButton.setTypeface(Typeface.DEFAULT_BOLD);
-        LinearLayout plusHolder = new LinearLayout(getApplicationContext());
-        plusHolder.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        plusHolder.setMinimumHeight((int) (180 * scale + 0.5f));
-        plusHolder.addView(plusButton);
-        dimensionsHolder.addView(plusHolder);
+//        // loaded all dimensions, time to add in + text view
+//        TextView plusButton = new TextView(getApplicationContext());
+//        int pixel = (int) (25 * scale + 0.5f);
+//        LinearLayout.LayoutParams plusButtonParams = new LinearLayout.LayoutParams(pixel, pixel);
+//        int pixelMargin = (int) (20*scale+0.5f);
+//        plusButtonParams.setMargins(pixelMargin, pixelMargin, pixelMargin, pixelMargin);
+//        plusButtonParams.gravity = Gravity.CENTER;
+//        plusButton.setLayoutParams(plusButtonParams);
+//        plusButton.setText("+");
+//        plusButton.setBackgroundResource(R.drawable.circle);
+//        plusButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+//        plusButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+//        plusButton.setTypeface(Typeface.DEFAULT_BOLD);
+//        LinearLayout plusHolder = new LinearLayout(getApplicationContext());
+//        plusHolder.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//        plusHolder.setMinimumHeight((int) (180 * scale + 0.5f));
+//        plusHolder.addView(plusButton);
+//        plusHolder.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getApplicationContext(), EditDimensionActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putBoolean("isExist", false);
+//                intent.putExtras(bundle);
+//                startActivityForResult(intent, 1);
+//            }
+//        });
+//        dimensionsHolder.addView(plusHolder);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: received edit entry result");
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                // TODO set value
+                Bundle bundle = data.getExtras();
+                boolean isExist = bundle.getBoolean("isExist");
+                if (isExist) {
+                    int id = bundle.getInt("id");
+                    Log.d(TAG, "onActivityResult: id is " + id);
+                }
+                boolean isActivated = bundle.getBoolean("isActivated");
+                String newTitle = bundle.getString("newTitle");
+                int type = bundle.getInt("type");
+                Log.d(TAG, "onActivityResult: is exist " + isExist + " is activated " + isActivated + " new title " + newTitle + " type " + type);
+            }
+        }
     }
 
     @Override
