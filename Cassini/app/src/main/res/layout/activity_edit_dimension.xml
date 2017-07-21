@@ -159,7 +159,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/edit_dimension_activate_button"
-        android:backgroundTint="@android:color/darker_gray"
+        android:backgroundTint="@android:color/holo_red_light"
         android:background="@drawable/rounded_rectangle"
         android:layout_below="@id/edit_dimension_dim_type_layout"
         android:layout_marginTop="30dp"

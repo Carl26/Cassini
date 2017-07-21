@@ -70,6 +70,7 @@ public class EditDimensionActivity extends AppCompatActivity {
                     bundle.putInt("type", typeId);
                     intent.putExtras(bundle);
                     setResult(RESULT_OK, intent);
+                    Log.d(TAG, "onClick: type is " + typeId);
                     Log.d(TAG, "saveButton: sent result");
                     finish();
                 }

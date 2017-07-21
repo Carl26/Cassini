@@ -40,6 +40,8 @@ public class EditTempActivity extends AppCompatActivity {
     private ArrayList<Integer> dimensionIdList;
     private File file;
     private DatabaseHelper db;
+    private int lastIndex = -1;
+    private Dimension temp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +74,12 @@ public class EditTempActivity extends AppCompatActivity {
     }
 
     private void loadConfig() {
-        final float scale = getResources().getDisplayMetrics().density;
         // preset layoutparams for dimensions
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(10, 10, 10, 10);
         dimensionList = new ArrayList<>();
         dimensionIdList = new ArrayList<>();
+        final float scale = getResources().getDisplayMetrics().density;
         try {
             file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config.txt");
             FileInputStream inputStream = new FileInputStream(file);
@@ -104,7 +106,8 @@ public class EditTempActivity extends AppCompatActivity {
                     String dimensionId = receiveString.substring(2, index);
                     final String dimensionString = receiveString.substring(index + 1);
                     Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
-                    Dimension temp = new Dimension(getApplicationContext());
+                    lastIndex = Integer.valueOf(dimensionId);
+                    temp = new Dimension(getApplicationContext());
                     if (isActive.equals("T")) {
                         temp.setColor(1);
                         isActivated = true;
@@ -117,30 +120,37 @@ public class EditTempActivity extends AppCompatActivity {
                         isActivated = false;
                         Log.e(TAG, "loadConfig: wrong activation state");
                     }
+                    temp.setIsActivated(isActivated);
                     temp.setHeader(dimensionString);
                     temp.setDimensionId(dimensionId);
                     temp.setBackgroundColor(Color.WHITE);
                     temp.setLayoutParams(params);
                     final int tempId = View.generateViewId();
                     temp.setId(tempId);
-                    final int tempType;
+                    int tempType;
                     String type = receiveString.substring(1, 2);
                     if (type.equals("T")) {
                         tempType = 0;
+                        Log.d(TAG, "loadConfig: type is text");
                     } else if (type.equals("I")) {
                         tempType = 1;
+                        Log.d(TAG, "loadConfig: type is number");
                     } else {
                         Log.e(TAG, "loadConfig: no such type");
                         tempType = -1;
                     }
+                    Log.e(TAG, "loadConfig: temptype is " + tempType);
+                    Log.e(TAG, "loadConfig: temp type before: " + temp.getType() );
+                    temp.setType(tempType);
+                    Log.e(TAG, "loadConfig: temp type now " + temp.getType());
                     // use a linearlayout to contain both dimension and textview button
                     TextView indexButton = new TextView(getApplicationContext());
                     int pixel = (int) (25 * scale + 0.5f);
-                    LinearLayout.LayoutParams plusButtonParams = new LinearLayout.LayoutParams(pixel, pixel);
+                    LinearLayout.LayoutParams indexButtonParams = new LinearLayout.LayoutParams(pixel, pixel);
                     int pixelMargin = (int) (20*scale+0.5f);
-                    plusButtonParams.setMargins(pixelMargin, pixelMargin, pixelMargin, pixelMargin);
-                    plusButtonParams.gravity = Gravity.CENTER;
-                    indexButton.setLayoutParams(plusButtonParams);
+                    indexButtonParams.setMargins(pixelMargin, pixelMargin, pixelMargin, pixelMargin);
+                    indexButtonParams.gravity = Gravity.CENTER;
+                    indexButton.setLayoutParams(indexButtonParams);
                     indexButton.setText(dimensionId);
                     indexButton.setBackgroundResource(R.drawable.circle);
                     indexButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
@@ -158,11 +168,11 @@ public class EditTempActivity extends AppCompatActivity {
                             Intent intent = new Intent(getApplicationContext(), EditDimensionActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putBoolean("isExist", true);
-                            bundle.putString("header", dimensionString);
+                            bundle.putString("header", temp.getHeader());
                             // this is view id
                             bundle.putInt("id", tempId);
-                            bundle.putInt("type", tempType);
-                            bundle.putBoolean("isActivated", isActivated);
+                            bundle.putInt("type", temp.getType());
+                            bundle.putBoolean("isActivated", temp.getIsActivated());
                             intent.putExtras(bundle);
                             startActivityForResult(intent, 1);
                         }
@@ -181,35 +191,6 @@ public class EditTempActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.e("main activity", "Can not read file: " + e.toString());
         }
-
-//        // loaded all dimensions, time to add in + text view
-//        TextView plusButton = new TextView(getApplicationContext());
-//        int pixel = (int) (25 * scale + 0.5f);
-//        LinearLayout.LayoutParams plusButtonParams = new LinearLayout.LayoutParams(pixel, pixel);
-//        int pixelMargin = (int) (20*scale+0.5f);
-//        plusButtonParams.setMargins(pixelMargin, pixelMargin, pixelMargin, pixelMargin);
-//        plusButtonParams.gravity = Gravity.CENTER;
-//        plusButton.setLayoutParams(plusButtonParams);
-//        plusButton.setText("+");
-//        plusButton.setBackgroundResource(R.drawable.circle);
-//        plusButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
-//        plusButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-//        plusButton.setTypeface(Typeface.DEFAULT_BOLD);
-//        LinearLayout plusHolder = new LinearLayout(getApplicationContext());
-//        plusHolder.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        plusHolder.setMinimumHeight((int) (180 * scale + 0.5f));
-//        plusHolder.addView(plusButton);
-//        plusHolder.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getApplicationContext(), EditDimensionActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putBoolean("isExist", false);
-//                intent.putExtras(bundle);
-//                startActivityForResult(intent, 1);
-//            }
-//        });
-//        dimensionsHolder.addView(plusHolder);
     }
 
     @Override
@@ -218,17 +199,78 @@ public class EditTempActivity extends AppCompatActivity {
         Log.d(TAG, "onActivityResult: received edit entry result");
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                // TODO set value
+                final float scale = getResources().getDisplayMetrics().density;
                 Bundle bundle = data.getExtras();
                 boolean isExist = bundle.getBoolean("isExist");
+                final boolean isActivated = bundle.getBoolean("isActivated");
+                final String newTitle = bundle.getString("newTitle");
+                final int type = bundle.getInt("type");
+                LinearLayout indexHolder = new LinearLayout(getApplicationContext());
+                int id = -1;
                 if (isExist) {
-                    int id = bundle.getInt("id");
+                    id = bundle.getInt("id");
                     Log.d(TAG, "onActivityResult: id is " + id);
+                    temp = (Dimension) findViewById(id);
+                } else {
+                    temp = new Dimension(getApplicationContext());
+                    lastIndex = lastIndex + 1;
+                    temp.setDimensionId(String.valueOf(lastIndex));
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params.setMargins(10, 10, 10, 10);
+                    temp.setBackgroundColor(Color.WHITE);
+                    temp.setLayoutParams(params);
+                    TextView indexButton = new TextView(getApplicationContext());
+                    int pixel = (int) (25 * scale + 0.5f);
+                    LinearLayout.LayoutParams indexButtonParams = new LinearLayout.LayoutParams(pixel, pixel);
+                    int pixelMargin = (int) (20*scale+0.5f);
+                    indexButtonParams.setMargins(pixelMargin, pixelMargin, pixelMargin, pixelMargin);
+                    indexButtonParams.gravity = Gravity.CENTER;
+                    indexButton.setLayoutParams(indexButtonParams);
+                    indexButton.setText("" + lastIndex);
+                    indexButton.setBackgroundResource(R.drawable.circle);
+                    indexButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    indexButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                    indexButton.setTypeface(Typeface.DEFAULT_BOLD);
+                    indexHolder = new LinearLayout(getApplicationContext());
+                    indexHolder.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    indexHolder.setOrientation(LinearLayout.HORIZONTAL);
+                    indexHolder.addView(indexButton);
+                    indexHolder.addView(temp);
+                    final int tempId = View.generateViewId();
+                    temp.setId(tempId);
+                    indexHolder.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), EditDimensionActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("isExist", true);
+                            bundle.putString("header", newTitle);
+                            // this is view id
+                            bundle.putInt("id", tempId);
+                            bundle.putInt("type", type);
+                            bundle.putBoolean("isActivated", isActivated);
+                            intent.putExtras(bundle);
+                            startActivityForResult(intent, 1);
+                        }
+                    });
                 }
-                boolean isActivated = bundle.getBoolean("isActivated");
-                String newTitle = bundle.getString("newTitle");
-                int type = bundle.getInt("type");
+                if (isActivated) {
+                    temp.setColor(1);
+                } else {
+                    temp.setColor(0);
+                }
+                temp.setIsActivated(isActivated);
+                temp.setHeader(newTitle);
+                temp.setType(type);
                 Log.d(TAG, "onActivityResult: is exist " + isExist + " is activated " + isActivated + " new title " + newTitle + " type " + type);
+                Log.d(TAG, "onActivityResult: temp type is " + temp.getType());
+                if (!isExist) {
+                    // add to layout
+                    dimensionsHolder.addView(indexHolder);
+                    // store dimension info into lists
+                    dimensionList.add(temp);
+                    dimensionIdList.add(id);
+                }
             }
         }
     }

@@ -26,6 +26,8 @@ public class Dimension extends LinearLayout {
     private TextView header;
     private static int ACTIVE = 1, INACTIVE = 0;
     private static int TEXT = 0, NUMBER = 1;
+    private int type;
+    private boolean isActivated = false;
 
 //    public Dimension(Context context) {
 //        super(context);
@@ -91,13 +93,23 @@ public class Dimension extends LinearLayout {
 
     public void setType(int type) {
         if (type == TEXT) {
+            this.type = TEXT;
             textFiled.setInputType(InputType.TYPE_CLASS_TEXT);
         } else if (type == NUMBER) {
+            this.type = NUMBER;
             textFiled.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
     }
 
     public int getType() {
-        return textFiled.getInputType();
+        return type;
+    }
+
+    public void setIsActivated(boolean isActivated) {
+        this.isActivated = isActivated;
+    }
+
+    public boolean getIsActivated() {
+        return isActivated;
     }
 }
