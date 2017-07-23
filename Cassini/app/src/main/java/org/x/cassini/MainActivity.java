@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 //        clearDb();
 
         Log.d(TAG, "Entered onCreate");
-        loadConfig();
+        db = new DatabaseHelper(getApplicationContext(),1);
         // initialize various components
         initTextViews();
         findViewById(R.id.mainpage_relative_layout).requestFocus();
@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadConfig() {
-        db = new DatabaseHelper(getApplicationContext(),1);
 //
 //        File sdCard = Environment.getExternalStorageDirectory();
 //        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");

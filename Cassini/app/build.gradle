@@ -15,6 +15,9 @@ android {
                 cppFlags "-std=c++11"
             }
         }
+//        jackOptions {
+//            enabled true
+//        }
     }
     buildTypes {
         release {
@@ -26,6 +29,10 @@ android {
         cmake {
             path "CMakeLists.txt"
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
@@ -39,5 +46,6 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:percent:25.3.1'
     testCompile 'junit:junit:4.12'
 }
