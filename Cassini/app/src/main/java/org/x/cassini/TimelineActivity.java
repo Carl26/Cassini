@@ -88,29 +88,37 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
     private void generateTimeline() {
         Bundle bundle = new Bundle();
         String title = "";
+        int dimensionId = -10;
         if (checkedButtonHorizontal == -1) {
-            title = titleList.get(checkedButtonVertical);
+            int position = checkedButtonVertical - 1;
+            title = titleList.get(position);
+            dimensionId = Integer.valueOf(idList.get(position));
         } else {
             switch (checkedButtonHorizontal) {
                 case 0: title = "Weather";
+                    dimensionId = -4;
                     break;
                 case 1: title = "Emotion";
+                    dimensionId = -3;
                     break;
                 case 2: title = "Exercise";
+                    dimensionId = -2;
                     break;
                 case 3: title = "Tag";
+                    dimensionId = -1;
                     break;
             }
         }
         bundle.putString("title", title);
         Log.d(TAG, "generateTimeline: title is " + title);
-        // TODO put button info
         bundle.putInt("startDay", startDay);
         bundle.putInt("startMonth", startMonth);
         bundle.putInt("startYear", startYear);
         bundle.putInt("endDay", endDay);
         bundle.putInt("endMonth", endMonth);
         bundle.putInt("endYear", endYear);
+        bundle.putInt("dimensionId", dimensionId);
+        Log.d(TAG, "generateTimeline: dimension id is " + dimensionId);
         Intent intent = new Intent(this, TimelinePreviewActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -228,10 +236,11 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
         rgHorizontal.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                Log.d(TAG, "onCheckedChanged: checked button id is " + checkedId);
+                Log.d(TAG, "horizontal onCheckedChanged: checked button id is " + checkedId);
                 if (checkedButtonVertical != -1) {
                     rgVertical.clearCheck();
                     checkedButtonVertical = -1;
+                    Log.e(TAG, "onCheckedChanged: cleared vertical check");
                 }
                 switch (checkedId) {
                     case R.id.timeline_rb_weather: checkedButtonHorizontal = 0;
@@ -253,13 +262,16 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
         rgVertical.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                Log.d(TAG, "onCheckedChanged: checked button id is " + checkedId);
+                Log.d(TAG, "vertical onCheckedChanged: checked button id is " + checkedId);
                 if (checkedButtonHorizontal != -1) {
                     rgHorizontal.clearCheck();
                     checkedButtonHorizontal = -1;
+                    Log.e(TAG, "onCheckedChanged: cleared horizontal check");
                 }
-                int position = checkedId - 1;
-                checkedButtonVertical = viewIdList.get(position);
+                if (checkedId != -1) {
+                    int position = checkedId - 1;
+                    checkedButtonVertical = viewIdList.get(position);
+                }
             }
         });
     }
