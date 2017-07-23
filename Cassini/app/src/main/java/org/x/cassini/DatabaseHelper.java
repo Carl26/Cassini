@@ -75,7 +75,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (newVersion > oldVersion) {
             // add new dimension as column into entry table
             String NEW_COLUMN_NAME = dimensionHolder;
-            db.execSQL("ALTER TABLE " + TABLE_ENTRY_NAME + "ADD COLUMN " + NEW_COLUMN_NAME + "TEXT");
+            db.execSQL("ALTER TABLE " + TABLE_ENTRY_NAME + "ADD COLUMN '"+ NEW_COLUMN_NAME + "' TEXT");
         }
     }
 

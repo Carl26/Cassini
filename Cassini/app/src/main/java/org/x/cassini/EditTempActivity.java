@@ -25,8 +25,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import static java.security.AccessController.getContext;
@@ -42,6 +44,9 @@ public class EditTempActivity extends AppCompatActivity {
     private DatabaseHelper db;
     private int lastIndex = -1;
     private Dimension temp;
+    private boolean isUpgradingNeeded = false;
+    private int version = -1;
+    private int initialListSize = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +95,7 @@ public class EditTempActivity extends AppCompatActivity {
                 String receiveString = "";
                 receiveString = bufferedReader.readLine();
                 inputStream.close();
-                int version = Integer.valueOf(receiveString);
+                version = Integer.valueOf(receiveString);
                 db = new DatabaseHelper(this, version);
                 Log.d(TAG, "loadConfig: db version is " + version);
 
@@ -139,10 +144,10 @@ public class EditTempActivity extends AppCompatActivity {
                         Log.e(TAG, "loadConfig: no such type");
                         tempType = -1;
                     }
-                    Log.e(TAG, "loadConfig: temptype is " + tempType);
-                    Log.e(TAG, "loadConfig: temp type before: " + temp.getType() );
+//                    Log.e(TAG, "loadConfig: temptype is " + tempType);
+//                    Log.e(TAG, "loadConfig: temp type before: " + temp.getType() );
                     temp.setType(tempType);
-                    Log.e(TAG, "loadConfig: temp type now " + temp.getType());
+//                    Log.e(TAG, "loadConfig: temp type now " + temp.getType());
                     // use a linearlayout to contain both dimension and textview button
                     TextView indexButton = new TextView(getApplicationContext());
                     int pixel = (int) (25 * scale + 0.5f);
@@ -182,8 +187,9 @@ public class EditTempActivity extends AppCompatActivity {
                     // store dimension info into lists
                     dimensionList.add(temp);
                     dimensionIdList.add(tempId);
+                    initialListSize = dimensionList.size();
+                    Log.d(TAG, "loadConfig: loaded " + initialListSize + " dimensions");
                 }
-
             }
         }
         catch (FileNotFoundException e) {
@@ -212,6 +218,7 @@ public class EditTempActivity extends AppCompatActivity {
                     Log.d(TAG, "onActivityResult: id is " + id);
                     temp = (Dimension) findViewById(id);
                 } else {
+                    isUpgradingNeeded = true;
                     temp = new Dimension(getApplicationContext());
                     lastIndex = lastIndex + 1;
                     temp.setDimensionId(String.valueOf(lastIndex));
@@ -269,8 +276,10 @@ public class EditTempActivity extends AppCompatActivity {
                     dimensionsHolder.addView(indexHolder);
                     // store dimension info into lists
                     dimensionList.add(temp);
-                    dimensionIdList.add(id);
+                    dimensionIdList.add(lastIndex);
+                    Log.d(TAG, "onActivityResult: last index is " + lastIndex);
                 }
+                Log.d(TAG, "onActivityResult: now dimension list size is " + dimensionList.size());
             }
         }
     }
@@ -299,8 +308,65 @@ public class EditTempActivity extends AppCompatActivity {
         super.onDestroy();
         if (isSaving) {
             Log.d(TAG, "onDestroy: saving to config file");
+            int count = dimensionList.size() - initialListSize;
+            Log.d(TAG, "onDestroy: added " + count + " new more dimensions");
+            if (isUpgradingNeeded) {
+//                upgradeDb(count);
+            }
+            saveConfig(count);
         } else {
             Log.d(TAG, "onDestroy: changes not saved");
         }
+    }
+
+    private void saveConfig(int count) {
+        try {
+            file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config1.txt");
+            FileOutputStream fos = new FileOutputStream(file);
+            if (version == -1) {
+                Log.e(TAG, "saveConfig: version is incorrect");
+                return;
+            }
+            StringBuilder builder = new StringBuilder();
+            // database version
+            int newVersion = version + count;
+            builder.append(newVersion);
+            builder.append(System.lineSeparator());
+            // write all dimensions to file
+            for (int i = 0; i < dimensionList.size(); i++) {
+                Dimension temp = dimensionList.get(i);
+                int dimensionId = dimensionIdList.get(i);
+                String dimensionTitle = temp.getHeader();
+                int dimensionType = temp.getType();
+                String typeString = "";
+                if (dimensionType == 0) {
+                    typeString = "T";
+                } else if (dimensionType == 1) {
+                    typeString = "I";
+                } else {
+                    Log.e(TAG, "saveConfig: wrong type");
+                    return;
+                }
+                boolean dimensionActive = temp.getIsActivated();
+                String activeString;
+                if (dimensionActive) {
+                    activeString = "T";
+                } else {
+                    activeString = "F";
+                }
+                String toBeWrittenIn = activeString + typeString + dimensionId + ":" + dimensionTitle;
+                Log.d(TAG, "saveConfig: new line is " + toBeWrittenIn);
+                builder.append(toBeWrittenIn);
+                builder.append(System.lineSeparator());
+            }
+            fos.write(builder.toString().getBytes());
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void upgradeDb(int count) {
+
     }
 }
