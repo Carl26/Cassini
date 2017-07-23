@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -86,6 +87,7 @@ public class AllEntriesActivity extends AppCompatActivity {
             registerReceiver(receiver, filter);
         }
     }
+
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.all_entries_toolbar);
