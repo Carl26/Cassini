@@ -2,6 +2,7 @@ package org.x.cassini;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Guo Mingxuan on 2017/7/11 0011.
@@ -176,6 +178,134 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return isSuccessful;
     }
 
+    public boolean updateData(String id, String date, String location, int weather, int emotion, int exercise, int star,
+                              ArrayList<String> tagList, ArrayList<String> oldTagList,
+                              String mainText, ArrayList<ArrayList<String>> dimensionData) {
+        Log.d("DB", "update data: loaded info id " + id + " date " + date + " location " + location +
+                " weather " + weather + " emotion " + emotion + " exercise " + exercise + " star " + star +
+                " tags " + tagList + " old tagList " + oldTagList + " maintext " + mainText + " dimension indicators " + dimensionData);
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean isSuccessful, isTagEmpty;
+        Gson gson = new Gson();
+        // insert data into entry table
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_ID, id);
+        contentValues.put(COL_DATE, date);
+        contentValues.put(COL_LOCATION, location);
+        contentValues.put(COL_WEATHER, weather);
+        contentValues.put(COL_EMOTION, emotion);
+        contentValues.put(COL_EXERCISE, exercise);
+        contentValues.put(COL_STAR, star);
+        String tag = gson.toJson(tagList);
+        contentValues.put(COL_TAG, tag);
+        contentValues.put(COL_MAIN_TEXT, mainText);
+        ArrayList<String> dimensionPointer = new ArrayList<>();
+        for (ArrayList<String> pair : dimensionData) {
+            String COLUMN_HEADER = pair.get(0);
+            String data = pair.get(1);
+            // forming list of pointers
+            dimensionPointer.add(COLUMN_HEADER);
+            contentValues.put(COLUMN_HEADER, data);
+        }
+        String pointers = gson.toJson(dimensionPointer);
+        contentValues.put(COL_DIMENSION_POINTER, pointers);
+        Log.d("DB", "updateData: dimension pointers " + pointers);
+        int numberOfRows = db.update(TABLE_ENTRY_NAME, contentValues, COL_ID + " = ?", new String[] { id });
+        isSuccessful = (numberOfRows>0);
+
+        // update tag table if needed
+        ArrayList<String> deletedTags = new ArrayList<>();
+        ArrayList<String> newTags = new ArrayList<>();
+        long tagRes;
+        Type type = new TypeToken<ArrayList<String>>(){}.getType();
+        for (int i = 0; i < oldTagList.size(); i++) {
+            String item = oldTagList.get(i);
+            boolean toBeDeleted = true;
+            if (!tagList.contains(item)) {
+                deletedTags.add(item);
+                toBeDeleted = false;
+                Log.d("DB", "updateData: deleted tags added " + item);
+            }
+            if (toBeDeleted) {
+                boolean isDeleted = tagList.remove(item);
+                Log.d("DB", "updateData: is item " + item + " removed " + isDeleted);
+            }
+        }
+        for (String remainingItem : tagList) {
+            newTags.add(remainingItem);
+        }
+        for (String what : newTags) {
+            Log.d("DB", "updateData: new tag contains " + what);
+        }
+        // remove deleted tags
+        if (!deletedTags.isEmpty()) {
+            for (String deletedItem : deletedTags) {
+                String query = "Select * from " + TABLE_TAG_NAME + " where " + COL_TAG + " = '" + deletedItem + "'";
+                ContentValues contentValuesForTags = new ContentValues();
+                Cursor cursor = db.rawQuery(query, null);
+                cursor.moveToNext();
+                String tagId = cursor.getString(0);
+                Log.d("DB", "updateData: tag id " + tagId);
+                String tagName = cursor.getString(1);
+                Log.d("DB", "updateData: tag name " + tagName);
+                String tagEntryId = cursor.getString(2);
+                Log.d("DB", "updateData: tag entry id " + tagEntryId);
+                ArrayList<String> entryIdArray = gson.fromJson(tagEntryId, type);
+                entryIdArray.remove(id);
+                String newEntryId = gson.toJson(entryIdArray);
+                Log.d("DB", "insertData: new entry id " + newEntryId);
+
+                contentValuesForTags.put(COL_ID, tagId);
+                contentValuesForTags.put(COL_TAG, tagName);
+                contentValuesForTags.put(COL_ENTRY_ID, newEntryId);
+                int tagNumberOfRows = db.update(TABLE_TAG_NAME, contentValuesForTags, COL_ID + " = ?", new String[] { tagId });
+                tagRes = tagNumberOfRows;
+                cursor.close();
+                isSuccessful = isSuccessful && (tagRes != -1);
+            }
+        }
+        // add in new tags
+        if (!newTags.isEmpty()) {
+            for (String newTagItem : newTags) {
+                String query = "Select * from " + TABLE_TAG_NAME + " where " + COL_TAG + " = '" + newTagItem + "'";
+                Cursor cursor = db.rawQuery(query, null);
+                ContentValues contentValuesForTags = new ContentValues();
+                if (cursor.getCount() <= 0) {
+                    ArrayList<String> tempIdArray = new ArrayList<>();
+                    tempIdArray.add(id);
+                    String entryIdJson = gson.toJson(tempIdArray);
+                    contentValuesForTags.put(COL_TAG, newTagItem);
+                    contentValuesForTags.put(COL_ENTRY_ID, entryIdJson);
+                    Log.d("DB", "updateData: added a new tag " + newTagItem);
+                    tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
+                } else {
+                    Log.d("DB", "updateData: tag found");
+                    cursor.moveToNext();
+                    String tagId = cursor.getString(0);
+                    Log.d("DB", "updateData: tag id " + tagId);
+//                    // adding new tag into existing filed
+                    String tagName = cursor.getString(1);
+                    Log.d("DB", "updateData: tag name " + tagName);
+                    // adding new entry into existing field
+                    String tagEntryId = cursor.getString(2);
+                    Log.d("DB", "insertData: tag entry id " + tagEntryId);
+                    ArrayList<String> entryIdArray = gson.fromJson(tagEntryId, type);
+                    entryIdArray.add(id);
+                    String newEntryId = gson.toJson(entryIdArray);
+                    Log.d("DB", "updateData: new entry id " + newEntryId);
+
+                    contentValuesForTags.put(COL_ID, tagId);
+                    contentValuesForTags.put(COL_TAG, tagName);
+                    contentValuesForTags.put(COL_ENTRY_ID, newEntryId);
+                    tagRes = db.update(TABLE_TAG_NAME, contentValuesForTags, COL_ID + " = ?", new String[] { tagId });
+                }
+                cursor.close();
+                isSuccessful = isSuccessful && (tagRes != -1);
+            }
+        }
+        return isSuccessful;
+    }
+
     public Cursor getAllEntryData() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME, null);
@@ -188,6 +318,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+
+    public Cursor getEntry(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery(query, null);
+        return res;
+    }
+
     public Cursor getTagList(char alphabet){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select TAG from " + TABLE_TAG_NAME + " where TAG like '" + alphabet + "%'", null);
@@ -196,13 +333,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getTagEntries(String tagName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG Like '%" + tagName + "%'", null);
-        return res;
-    }
-
-    public Cursor getEntry(String query) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery(query, null);
+        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG like '%" + tagName + "%'", null);
         return res;
     }
 }

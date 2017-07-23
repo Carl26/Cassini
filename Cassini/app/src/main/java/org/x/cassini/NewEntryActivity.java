@@ -82,6 +82,8 @@ public class NewEntryActivity extends AppCompatActivity {
     private static String COL_DATE = "DATE";
     private static String TABLE_ENTRY_NAME = "entry_table";
     private File file;
+    private ArrayList<String> dbTagList;
+    private String dbId;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -111,8 +113,8 @@ public class NewEntryActivity extends AppCompatActivity {
 
         initToolbar();
         // establish database and read dimensions
-        db = new DatabaseHelper(mContext,1);
         loadResources();
+//        db = new DatabaseHelper(mContext,1);
     }
 
     private void loadResources() {
@@ -141,9 +143,11 @@ public class NewEntryActivity extends AppCompatActivity {
                         // check if the dimension will be used
                         String isActive = receiveString.substring(0, 1);
                         if (isActive.equals("T")) {
+                            String type = receiveString.substring(1, 2);
+                            Log.d(TAG, "loadResources: type is " + type);
                             // the dimension is active
                             int index = receiveString.indexOf(":");
-                            String dimensionId = receiveString.substring(1, index);
+                            String dimensionId = receiveString.substring(2, index);
                             String dimensionString = receiveString.substring(index + 1);
                             Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
                             Dimension temp = new Dimension(mContext);
@@ -152,6 +156,13 @@ public class NewEntryActivity extends AppCompatActivity {
                             temp.setDimensionId(dimensionId);
                             temp.setBackgroundColor(Color.WHITE);
                             temp.setLayoutParams(params);
+                            if (type.equals("T")) {
+                                temp.setType(0);
+                            } else if (type.equals("I")) {
+                                temp.setType(1);
+                            } else {
+                                Log.e(TAG, "loadResources: no such input type");
+                            }
                             int tempId = View.generateViewId();
                             temp.setId(tempId);
                             // add view into linear layout
@@ -213,7 +224,7 @@ public class NewEntryActivity extends AppCompatActivity {
                     if (!sTag.equals("")) { // user has entered something
                         tagList.add(sTag);
                         Log.d(TAG, "onFocusChange: added tag " + sTag);
-                        BTag.setBackgroundResource(R.drawable.ic_tag_full);
+                        BTag.setImageResource(R.drawable.ic_tag_filled);
                     } else {
                         Log.d(TAG, "onFocusChange: nothing to be added");
                     }
@@ -278,10 +289,10 @@ public class NewEntryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isStar == 0) { // not starred
-                    BStar.setBackgroundResource(R.drawable.ic_star_full);
+                    BStar.setImageResource(R.drawable.ic_star_full);
                     isStar = 1;
                 } else {
-                    BStar.setBackgroundResource(R.drawable.ic_star_empty);
+                    BStar.setImageResource(R.drawable.ic_star_empty);
                     isStar = 0;
                 }
             }
@@ -339,7 +350,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private void finishEditingTag() {
         if (tagList.isEmpty()) {
-            BTag.setBackgroundResource(R.drawable.ic_tag_empty);
+            BTag.setImageResource(R.drawable.ic_tag_empty);
         }
         tagGrid.setVisibility(View.GONE);
         tagField.setVisibility(View.GONE);
@@ -404,12 +415,6 @@ public class NewEntryActivity extends AppCompatActivity {
         mainText.requestFocus();
     }
 
-    //    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_new_entry, menu);
-//        return true;
-//    }
-//
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         onBackPressed();
@@ -438,22 +443,15 @@ public class NewEntryActivity extends AppCompatActivity {
                 dimensionInput.add(tempInput);
                 Log.d(TAG, "saveDiary: added input " + tempInput + " to " + tempDimension.getHeader());
             }
+        } else {
+            Log.e(TAG, "saveDiary: dimension list is empty");
         }
-
+        Log.d(TAG, "saveDiary: dimension list size " + dimensionList.size());
         // create a new diary only if there is any input and not in edit mode
         if (!isEditMode) {
             if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
                     !tagList.isEmpty() || !mainText.getText().toString().equals("") || hasInput) {
                 Log.d(TAG, "saveDiary: should save diary here");
-
-//            if (holder == null) {
-//                // fill in details into holder
-//                holder = new Storie(time.getText().toString(), location.getText().toString(),
-//                        intWeather, intEmotion, intExercise, isStar, tagList,
-//                        mainText.getText().toString(), );
-//            } else {
-//                Log.e(TAG, "saveDiary: no input, diary not saved " + sDate);
-//            }
                 String dbDate = time.getText().toString();
                 String dbLocation = location.getText().toString();
                 String dbMainText = mainText.getText().toString();
@@ -468,11 +466,37 @@ public class NewEntryActivity extends AppCompatActivity {
                     dbDimensionInfo.add(tempList);
                 }
                 boolean isInserted = db.insertData(dbDate, dbLocation, intWeather, intEmotion, intExercise, isStar, tagList, dbMainText, dbDimensionInfo);
-                Log.e(TAG, "saveDiary: " + isInserted);
+                Log.e(TAG, "saveDiary: is inserted " + isInserted);
             }
         } else {
             // update data to existing row
             Log.d(TAG, "saveDiary: update database");
+            String dbDate = time.getText().toString();
+            String dbLocation = location.getText().toString();
+            String dbMainText = mainText.getText().toString();
+            ArrayList<ArrayList<String>> dbDimensionInfo = new ArrayList<>();
+            Log.d(TAG, "saveDiary: dimension list size in else " + dimensionList.size());
+            for (int i = 0; i < dimensionList.size(); i++) {
+                String questionId = "D" + dimensionList.get(i).getDimensionId();
+                String answer = dimensionInput.get(i);
+                Log.d(TAG, "saveDiary: q&a: " + questionId + " && " + answer);
+                ArrayList<String> tempList = new ArrayList<>();
+                tempList.add(questionId);
+                tempList.add(answer);
+                dbDimensionInfo.add(tempList);
+            }
+            // provide old tag list for tag table update
+            boolean isUpdated = db.updateData(dbId, dbDate, dbLocation, intWeather, intEmotion, intExercise, isStar, tagList, dbTagList, dbMainText, dbDimensionInfo);
+            Log.d("DB", "update data: loaded info id " + dbId + " date " + dbDate + " location " + dbLocation +
+                    " weather " + intWeather + " emotion " + intEmotion + " exercise " + intExercise + " star " + isStar +
+                    " tags " + tagList + " old tagList " + dbTagList + " maintext " + dbMainText + " dimension indicators " + dbDimensionInfo);
+            Log.e(TAG, "saveDiary: is updated " + isUpdated);
+//            Intent intent = new Intent();
+//            setResult(RESULT_OK, intent);
+
+            Intent intentForUpdate = new Intent();
+            intentForUpdate.setAction("org.x.cassini.DB_UPDATE");
+            sendBroadcast(intentForUpdate);
         }
         db.close();
     }
@@ -518,27 +542,27 @@ public class NewEntryActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // TODO save the selected weather profile to disk
                     switch (position) {
-                        case 0: BWeather.setBackgroundResource(R.drawable.ic_sunny);
+                        case 0: BWeather.setImageResource(R.drawable.ic_sunny);
                             grid.setVisibility(View.GONE);
                             intWeather = SUNNY;
                             break;
-                        case 1: BWeather.setBackgroundResource(R.drawable.ic_cloudy);
+                        case 1: BWeather.setImageResource(R.drawable.ic_cloudy);
                             grid.setVisibility(View.GONE);
                             intWeather = CLOUDY;
                             break;
-                        case 2: BWeather.setBackgroundResource(R.drawable.ic_rainy);
+                        case 2: BWeather.setImageResource(R.drawable.ic_rainy);
                             grid.setVisibility(View.GONE);
                             intWeather = RAINY;
                             break;
-                        case 3: BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
+                        case 3: BWeather.setImageResource(R.drawable.ic_heavy_rain);
                             grid.setVisibility(View.GONE);
                             intWeather = HEAVYRAIN;
                             break;
-                        case 4: BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
+                        case 4: BWeather.setImageResource(R.drawable.ic_thunderstorm);
                             grid.setVisibility(View.GONE);
                             intWeather = THUNDERSTORM;
                             break;
-                        case 5: BWeather.setBackgroundResource(R.drawable.ic_snow);
+                        case 5: BWeather.setImageResource(R.drawable.ic_snow);
                             grid.setVisibility(View.GONE);
                             intWeather = SNOW;
                             break;
@@ -554,27 +578,27 @@ public class NewEntryActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // TODO save the selected weather profile to disk
                     switch (position) {
-                        case 0: BEmotion.setBackgroundResource(R.drawable.ic_happy);
+                        case 0: BEmotion.setImageResource(R.drawable.ic_happy);
                             grid.setVisibility(View.GONE);
                             intEmotion = HAPPY;
                             break;
-                        case 1: BEmotion.setBackgroundResource(R.drawable.ic_sad);
+                        case 1: BEmotion.setImageResource(R.drawable.ic_sad);
                             grid.setVisibility(View.GONE);
                             intEmotion = SAD;
                             break;
-                        case 2: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
+                        case 2: BEmotion.setImageResource(R.drawable.ic_neutral);
                             grid.setVisibility(View.GONE);
                             intEmotion = NEUTRAL;
                             break;
-                        case 3: BEmotion.setBackgroundResource(R.drawable.ic_angry);
+                        case 3: BEmotion.setImageResource(R.drawable.ic_angry);
                             grid.setVisibility(View.GONE);
                             intEmotion = ANGRY;
                             break;
-                        case 4: BEmotion.setBackgroundResource(R.drawable.ic_embarrassed);
+                        case 4: BEmotion.setImageResource(R.drawable.ic_embarrassed);
                             grid.setVisibility(View.GONE);
                             intEmotion = EMBARRASSED;
                             break;
-                        case 5: BEmotion.setBackgroundResource(R.drawable.ic_kiss);
+                        case 5: BEmotion.setImageResource(R.drawable.ic_kiss);
                             grid.setVisibility(View.GONE);
                             intEmotion = KISS;
                             break;
@@ -591,27 +615,27 @@ public class NewEntryActivity extends AppCompatActivity {
                     // TODO save the selected weather profile to disk
                     switch (position) {
                         case 0:
-                            BExercise.setBackgroundResource(R.drawable.ic_walk);
+                            BExercise.setImageResource(R.drawable.ic_walk);
                             grid.setVisibility(View.GONE);
                             intExercise = WALK;
                             break;
                         case 1:
-                            BExercise.setBackgroundResource(R.drawable.ic_run);
+                            BExercise.setImageResource(R.drawable.ic_run);
                             grid.setVisibility(View.GONE);
                             intExercise = RUN;
                             break;
                         case 2:
-                            BExercise.setBackgroundResource(R.drawable.ic_ball);
+                            BExercise.setImageResource(R.drawable.ic_ball);
                             grid.setVisibility(View.GONE);
                             intExercise = BALL;
                             break;
                         case 3:
-                            BExercise.setBackgroundResource(R.drawable.ic_cycling);
+                            BExercise.setImageResource(R.drawable.ic_cycling);
                             grid.setVisibility(View.GONE);
                             intExercise = CYCLING;
                             break;
                         case 4:
-                            BExercise.setBackgroundResource(R.drawable.ic_swim);
+                            BExercise.setImageResource(R.drawable.ic_swim);
                             grid.setVisibility(View.GONE);
                             intExercise = SWIN;
                             break;
@@ -631,7 +655,7 @@ public class NewEntryActivity extends AppCompatActivity {
         Cursor cursor = db.getEntry(findEntryQuery);
         if (cursor != null) {
             cursor.moveToNext();
-            String dbId = cursor.getString(0);
+            dbId = cursor.getString(0);
             String dbDate =cursor.getString(1);
             String dbLocation =cursor.getString(2);
             int dbWeather =cursor.getInt(3);
@@ -647,13 +671,13 @@ public class NewEntryActivity extends AppCompatActivity {
             // parse tags Json into ArrayList
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<String>>(){}.getType();
-            ArrayList<String> dbTagList = gson.fromJson(dbTags, type);
+            dbTagList = gson.fromJson(dbTags, type);
             // parse dimension indicators json to arraylist
             ArrayList<String> dbIndicatorList = gson.fromJson(dbDimensionIndicator, type);
             // get dimension inputs by reading corresponding columns
             dimensionInput = new ArrayList<>();
             ArrayList<Integer> dimensionPosition = new ArrayList<>();
-            if (!dbIndicatorList.get(0).equals("")) {
+            if (dbIndicatorList != null && !dbIndicatorList.get(0).equals("")) {
                 for (String columnName : dbIndicatorList) {
                     int position = Integer.valueOf(columnName.substring(1));
                     int index = 9 + position;
@@ -667,63 +691,65 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case SUNNY:
-                    BWeather.setBackgroundResource(R.drawable.ic_sunny);
+                    BWeather.setImageResource(R.drawable.ic_sunny);
                     break;
                 case CLOUDY:
-                    BWeather.setBackgroundResource(R.drawable.ic_cloudy);
+                    BWeather.setImageResource(R.drawable.ic_cloudy);
                     break;
                 case RAINY:
-                    BWeather.setBackgroundResource(R.drawable.ic_rainy);
+                    BWeather.setImageResource(R.drawable.ic_rainy);
                     break;
                 case HEAVYRAIN:
-                    BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
+                    BWeather.setImageResource(R.drawable.ic_heavy_rain);
                     break;
                 case THUNDERSTORM:
-                    BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
+                    BWeather.setImageResource(R.drawable.ic_thunderstorm);
                     break;
                 case SNOW:
-                    BWeather.setBackgroundResource(R.drawable.ic_snow);
+                    BWeather.setImageResource(R.drawable.ic_snow);
                     break;
             }
             // emotion
             switch (dbEmotion) {
                 case UNSET: break;
-                case HAPPY: BEmotion.setBackgroundResource(R.drawable.ic_happy);
+                case HAPPY: BEmotion.setImageResource(R.drawable.ic_happy);
                     break;
-                case SAD: BEmotion.setBackgroundResource(R.drawable.ic_sad);
+                case SAD: BEmotion.setImageResource(R.drawable.ic_sad);
                     break;
-                case NEUTRAL: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
+                case NEUTRAL: BEmotion.setImageResource(R.drawable.ic_neutral);
                     break;
-                case ANGRY: BEmotion.setBackgroundResource(R.drawable.ic_angry);
+                case ANGRY: BEmotion.setImageResource(R.drawable.ic_angry);
                     break;
-                case EMBARRASSED: BEmotion.setBackgroundResource(R.drawable.ic_embarrassed);
+                case EMBARRASSED: BEmotion.setImageResource(R.drawable.ic_embarrassed);
                     break;
-                case KISS: BEmotion.setBackgroundResource(R.drawable.ic_kiss);
+                case KISS: BEmotion.setImageResource(R.drawable.ic_kiss);
                     break;
             }
             // exercise
             switch (dbExercise) {
                 case UNSET: break;
-                case WALK: BExercise.setBackgroundResource(R.drawable.ic_walk);
+                case WALK: BExercise.setImageResource(R.drawable.ic_walk);
                     break;
-                case RUN: BExercise.setBackgroundResource(R.drawable.ic_run);
+                case RUN: BExercise.setImageResource(R.drawable.ic_run);
                     break;
-                case BALL: BExercise.setBackgroundResource(R.drawable.ic_ball);
+                case BALL: BExercise.setImageResource(R.drawable.ic_ball);
                     break;
-                case CYCLING: BExercise.setBackgroundResource(R.drawable.ic_cycling);
+                case CYCLING: BExercise.setImageResource(R.drawable.ic_cycling);
                     break;
-                case SWIN: BExercise.setBackgroundResource(R.drawable.ic_swim);
+                case SWIN: BExercise.setImageResource(R.drawable.ic_swim);
                     break;
             }
             // star
             if (dbStar == 1) {
-                BStar.setBackgroundResource(R.drawable.ic_star_full);
+                BStar.setImageResource(R.drawable.ic_star_full);
             }
             // tag
-            if (dbTagList != null) {
+            if (dbTagList != null && !dbTagList.isEmpty()) {
                 // tag list is not empty
-                BTag.setBackgroundResource(R.drawable.ic_tag_full);
-                tagList = dbTagList;
+                BTag.setImageResource(R.drawable.ic_tag_full);
+                for (String tagItem : dbTagList) {
+                    tagList.add(tagItem);
+                }
             }
             // main text
             mainText.setText(dbMainText);
@@ -746,7 +772,7 @@ public class NewEntryActivity extends AppCompatActivity {
                         }
                         line = br.readLine();
                         int index = line.indexOf(":");
-                        String dimensionId = line.substring(1, index);
+                        String dimensionId = line.substring(2, index);
                         String dimensionString = line.substring(index + 1);
                         Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
                         Dimension temp = new Dimension(mContext);
@@ -762,6 +788,7 @@ public class NewEntryActivity extends AppCompatActivity {
                         newEntryLayout.addView(temp);
                         // store dimension info into lists
                         dimensionIdList.add(tempId);
+                        dimensionList.add(temp);
                         inputIndex++;
                     }
                 } catch (IOException e) {
@@ -771,28 +798,5 @@ public class NewEntryActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "loadDiary: unable to find entry" + sDate);
         }
-
-////                Log.e(TAG, "loadDiary: here");
-
-//                // dimensions
-//                // TODO now only reads answer to dimensions -> can be used to read title too
-//                line = br.readLine();
-//                Log.d(TAG, "loadDiary: dh1 " + line);
-//                line = br.readLine().substring(2);
-//                Log.d(TAG, "loadDiary: di1 " + line);
-//                learn.setInput(line);
-//                line = br.readLine();
-//                Log.d(TAG, "loadDiary: dh2 " + line);
-//                line = br.readLine().substring(2);
-//                Log.d(TAG, "loadDiary: di2 " + line);
-//                problem.setInput(line);
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            Log.e(TAG, "loadDiary: no file found");
-//        }
     }
 }

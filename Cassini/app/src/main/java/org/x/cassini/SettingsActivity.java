@@ -39,6 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
+
         toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class TagsViewActivity extends AppCompatActivity {
@@ -39,7 +47,7 @@ public class TagsViewActivity extends AppCompatActivity {
 
         mContext = getApplication();
         initToolbar();
-
+        loadConfig();
     }
 
     @Override
@@ -47,18 +55,18 @@ public class TagsViewActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG, "onResume");
 
-//        loadConfig();
 
-//        BroadcastReceiver br = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                initTagLists();
-//                Log.d(TAG,"On receive Broadcast");
-//            }
-//        };
-//
-//        IntentFilter filter = new IntentFilter(org.x.cassini.DB_UPDATE);
-//        this.registerReceiver(br,filter);
+        BroadcastReceiver br = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                loadConfig();
+                initTagLists();
+                Log.d(TAG,"On receive Broadcast");
+            }
+        };
+
+        IntentFilter filter = new IntentFilter("org.x.cassini.DB_UPDATE");
+        this.registerReceiver(br,filter);
 
         initTagLists();
         initTagBlocks();
@@ -91,8 +99,6 @@ public class TagsViewActivity extends AppCompatActivity {
             mTagList.add(String.valueOf(mAlphabet[i]));
         }
 
-
-        db = new DatabaseHelper(mContext, 1);
         for(int i=0; i<26; i++) {
             Log.d(TAG,"For letter " + mAlphabet[i]);
             Cursor res = db.getTagList(mAlphabet[i]);
@@ -110,37 +116,37 @@ public class TagsViewActivity extends AppCompatActivity {
 
     }
 
-//    private void loadConfig() {
-//        File sdCard = Environment.getExternalStorageDirectory();
-//        File savedFile = new File (sdCard.getAbsolutePath() + "/Cassini/config.txt");
-//        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
-//        if (!savedFile.exists()) {
-//            Log.e(TAG, "loadConfig: config file not found");
-//        } else {
-//            Log.d(TAG, "loadConfig: read config file");
-//            try {
-//                InputStream inputStream = new FileInputStream(savedFile);
-//                if ( inputStream != null ) {
-//                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-//                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-//                    String receiveString = "";
-//                    receiveString = bufferedReader.readLine();
-//                    inputStream.close();
-//                    int version = Integer.valueOf(receiveString);
-//                    db = new DatabaseHelper(this, version);
-//                    Log.d(TAG, "loadConfig: db version is " + version);
-//                    bufferedReader.close();
-//                    inputStreamReader.close();
-//                }
-//                inputStream.close();
-//            }
-//            catch (FileNotFoundException e) {
-//                Log.e(TAG, "File not found: " + e.toString());
-//            } catch (IOException e) {
-//                Log.e(TAG, "Can not read file: " + e.toString());
-//            }
-//        }
-//    }
+    private void loadConfig() {
+        File sdCard = Environment.getExternalStorageDirectory();
+        File savedFile = new File (sdCard.getAbsolutePath() + "/Cassini/config.txt");
+        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
+        if (!savedFile.exists()) {
+            Log.e(TAG, "loadConfig: config file not found");
+        } else {
+            Log.d(TAG, "loadConfig: read config file");
+            try {
+                InputStream inputStream = new FileInputStream(savedFile);
+                if ( inputStream != null ) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String receiveString = "";
+                    receiveString = bufferedReader.readLine();
+                    inputStream.close();
+                    int version = Integer.valueOf(receiveString);
+                    db = new DatabaseHelper(this, version);
+                    Log.d(TAG, "loadConfig: db version is " + version);
+                    bufferedReader.close();
+                    inputStreamReader.close();
+                }
+                inputStream.close();
+            }
+            catch (FileNotFoundException e) {
+                Log.e(TAG, "File not found: " + e.toString());
+            } catch (IOException e) {
+                Log.e(TAG, "Can not read file: " + e.toString());
+            }
+        }
+    }
 
 
     private void initTagBlocks() {

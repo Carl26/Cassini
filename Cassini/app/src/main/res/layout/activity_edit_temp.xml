@@ -28,6 +28,7 @@
             android:textSize="16sp"
             android:layout_gravity="center"
             android:id="@+id/edit_temp_toolbar_title" />
+
     </android.support.v7.widget.Toolbar>
 
 
@@ -106,38 +107,26 @@
         tools:layout_editor_absoluteX="8dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/edit_temp_bottom_linear">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="200dp"
-                android:id="@+id/edit_temp_main_text"
-                />
-
-            <org.x.cassini.Dimension
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/edit_temp_dimension_learn"
-                android:background="#ffffff"
-                android:nextFocusDown="@+id/edit_temp_dimension_problem"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
-
-            <org.x.cassini.Dimension
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/edit_temp_dimension_problem"
-                android:background="#ffffff"
-                android:nextFocusDown="@+id/edit_temp_relative_layout"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="180dp">
+                android:orientation="vertical"
+                android:id="@+id/edit_temp_bottom_linear">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="200dp"
+                    android:id="@+id/edit_temp_main_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="180dp"
+                android:id="@+id/edit_dimension_plus_holder">
 
                 <TextView
                     android:layout_width="25dp"

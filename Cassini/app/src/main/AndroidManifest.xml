@@ -38,12 +38,16 @@
             <!-- </intent-filter> -->
         </activity>
         <activity android:name=".TimelineActivity" />
-        <activity android:name=".TagsViewActivity" ></activity>
+        <activity android:name=".TagsViewActivity" >
+            <intent-filter>
+                <action android:name="org.x.cassini.DB_UPDATE"></action>
+            </intent-filter>
+        </activity>
         <activity android:name=".TimelinePreviewActivity" />
         <activity android:name=".EditTempActivity" />
         <activity android:name=".TagEntriesActivity" />
         <activity android:name=".EditDimensionActivity" />
         <activity android:name=".SettingsActivity"></activity>
-    </application>
 
+    </application>
 </manifest>

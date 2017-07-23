@@ -35,10 +35,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        clearDb();
+        clearDb();
+        loadConfig();
+//        db = new DatabaseHelper(getApplicationContext(),1);
 
         Log.d(TAG, "Entered onCreate");
-        db = new DatabaseHelper(getApplicationContext(),1);
         // initialize various components
         initTextViews();
         findViewById(R.id.mainpage_relative_layout).requestFocus();
@@ -113,60 +114,59 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadConfig() {
-//
-//        File sdCard = Environment.getExternalStorageDirectory();
-//        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
-//        if (!dir.exists()) {
-//            dir.mkdirs();
-//        }
-//        Log.d(TAG, "loadConfig: folder created/ found");
-//        File savedFile = new File(dir, "config.txt");
-//        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
-//        if (!savedFile.exists()) {
-//            Log.d(TAG, "loadConfig: create a new config file");
-//            FileOutputStream fos;
-//            try {
-//                fos = new FileOutputStream(savedFile);
-//                StringBuilder builder = new StringBuilder();
-//                // database version
-//                builder.append("1");
-//                builder.append(System.lineSeparator());
-//                // default dimension
-//                builder.append("T1:What is the one thing I learnt today?");
-//                builder.append(System.lineSeparator());
-//                fos.write(builder.toString().getBytes());
-//                db = new DatabaseHelper(this, 1);
-//                fos.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            Log.d(TAG, "loadConfig: read config file");
-//            try {
-//                InputStream inputStream = new FileInputStream(savedFile);
-//
-//                if ( inputStream != null ) {
-//                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-//                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-//                    String receiveString = "";
-//                    receiveString = bufferedReader.readLine();
-//                    inputStream.close();
-//                    int version = Integer.valueOf(receiveString);
-//                    db = new DatabaseHelper(this, version);
-//                    Log.d(TAG, "loadConfig: db version is " + version);
-//                    bufferedReader.close();
-//                    inputStreamReader.close();
-//                }
-//                inputStream.close();
-//            }
-//            catch (FileNotFoundException e) {
-//                Log.e("main activity", "File not found: " + e.toString());
-//            } catch (IOException e) {
-//                Log.e("main activity", "Can not read file: " + e.toString());
-//            }
-//        }
+        File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        Log.d(TAG, "loadConfig: folder created/ found");
+        File savedFile = new File(dir, "config.txt");
+        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
+        if (!savedFile.exists()) {
+            Log.d(TAG, "loadConfig: create a new config file");
+            FileOutputStream fos;
+            try {
+                fos = new FileOutputStream(savedFile);
+                StringBuilder builder = new StringBuilder();
+                // database version
+                builder.append("1");
+                builder.append(System.lineSeparator());
+                // default dimension
+                builder.append("TT1:What is the one thing I learnt today?");
+                builder.append(System.lineSeparator());
+                fos.write(builder.toString().getBytes());
+                db = new DatabaseHelper(this, 1);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d(TAG, "loadConfig: read config file");
+            try {
+                InputStream inputStream = new FileInputStream(savedFile);
+
+                if ( inputStream != null ) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String receiveString = "";
+                    receiveString = bufferedReader.readLine();
+                    inputStream.close();
+                    int version = Integer.valueOf(receiveString);
+                    db = new DatabaseHelper(this, version);
+                    Log.d(TAG, "loadConfig: db version is " + version);
+                    bufferedReader.close();
+                    inputStreamReader.close();
+                }
+                inputStream.close();
+            }
+            catch (FileNotFoundException e) {
+                Log.e("main activity", "File not found: " + e.toString());
+            } catch (IOException e) {
+                Log.e("main activity", "Can not read file: " + e.toString());
+            }
+        }
     }
 
     private void initTextViews(){
@@ -186,12 +186,6 @@ public class MainActivity extends AppCompatActivity {
         timelineView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-//                Toast myToast = Toast.makeText(
-//                        getApplicationContext(),
-//                        "The best things are yet to come.",
-//                        Toast.LENGTH_LONG
-//                );
-//                myToast.show();
                 Intent timelineAct = new Intent(getApplication(),TimelineActivity.class);
                 startActivity(timelineAct);
             }

@@ -1,7 +1,10 @@
 package org.x.cassini;
 
+import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
@@ -47,6 +50,8 @@ public class AllEntriesActivity extends AppCompatActivity {
     private ListView list;
     private AllEntriesListAdapter listAdapter;
     private DatabaseHelper db;
+    private boolean isResult = false;
+    private DBBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -60,10 +65,25 @@ public class AllEntriesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
+        Log.e(TAG, "onResume");
+        loadData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+    private void loadData() {
         formStoriesArray();
         if (stories != null) {
             initList();
+        }
+        if (receiver == null) {
+            receiver = new DBBroadcastReceiver();
+            IntentFilter filter = new IntentFilter("org.x.cassini.DB_UPDATE");
+            registerReceiver(receiver, filter);
         }
     }
 
@@ -83,41 +103,41 @@ public class AllEntriesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    private void loadConfig() {
-//        File sdCard = Environment.getExternalStorageDirectory();
-//        File savedFile = new File (sdCard.getAbsolutePath() + "/Cassini/config.txt");
-//        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
-//        if (!savedFile.exists()) {
-//            Log.e(TAG, "loadConfig: config file not found");
-//        } else {
-//            Log.d(TAG, "loadConfig: read config file");
-//            try {
-//                InputStream inputStream = new FileInputStream(savedFile);
-//                if ( inputStream != null ) {
-//                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-//                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-//                    String receiveString = "";
-//                    receiveString = bufferedReader.readLine();
-//                    inputStream.close();
-//                    int version = Integer.valueOf(receiveString);
-//                    db = new DatabaseHelper(this, version);
-//                    Log.d(TAG, "loadConfig: db version is " + version);
-//                    bufferedReader.close();
-//                    inputStreamReader.close();
-//                }
-//                inputStream.close();
-//            }
-//            catch (FileNotFoundException e) {
-//                Log.e(TAG, "File not found: " + e.toString());
-//            } catch (IOException e) {
-//                Log.e(TAG, "Can not read file: " + e.toString());
-//            }
-//        }
-//    }
+    private void loadConfig() {
+        File sdCard = Environment.getExternalStorageDirectory();
+        File savedFile = new File (sdCard.getAbsolutePath() + "/Cassini/config.txt");
+        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
+        if (!savedFile.exists()) {
+            Log.e(TAG, "loadConfig: config file not found");
+        } else {
+            Log.d(TAG, "loadConfig: read config file");
+            try {
+                InputStream inputStream = new FileInputStream(savedFile);
+                if ( inputStream != null ) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String receiveString = "";
+                    receiveString = bufferedReader.readLine();
+                    inputStream.close();
+                    int version = Integer.valueOf(receiveString);
+                    db = new DatabaseHelper(this, version);
+                    Log.d(TAG, "loadConfig: db version is " + version);
+                    bufferedReader.close();
+                    inputStreamReader.close();
+                }
+                inputStream.close();
+            }
+            catch (FileNotFoundException e) {
+                Log.e(TAG, "File not found: " + e.toString());
+            } catch (IOException e) {
+                Log.e(TAG, "Can not read file: " + e.toString());
+            }
+        }
+    }
 
     private void formStoriesArray() {
-//        loadConfig();
-        db = new DatabaseHelper(mContext,1);
+        loadConfig();
+//        db = new DatabaseHelper(mContext,1);
         Cursor res = db.getAllEntryData();
 
         if (res.getCount() == 0) {
@@ -208,4 +228,28 @@ public class AllEntriesActivity extends AppCompatActivity {
             }
         });
     }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        Log.d(TAG, "onActivityResult: received edit entry result");
+//        if (requestCode == 1) {
+//            if (resultCode == RESULT_OK) {
+//                isResult = true;
+//            }
+//        }
+//    }
+
+    public class DBBroadcastReceiver extends BroadcastReceiver {
+        private String TAG = "DBBR";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("org.x.cassini.DB_UPDATE")) {
+                Log.d(TAG, "onReceive: received db update intent");
+                loadData();
+            }
+        }
+    }
+
 }
