@@ -167,21 +167,6 @@ public class EditTempActivity extends AppCompatActivity {
                     indexHolder.addView(indexButton);
                     indexHolder.addView(temp);
 
-                    indexHolder.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getApplicationContext(), EditDimensionActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean("isExist", true);
-                            bundle.putString("header", temp.getHeader());
-                            // this is view id
-                            bundle.putInt("id", tempId);
-                            bundle.putInt("type", temp.getType());
-                            bundle.putBoolean("isActivated", temp.getIsActivated());
-                            intent.putExtras(bundle);
-                            startActivityForResult(intent, 1);
-                        }
-                    });
                     // add view into linear layout
                     dimensionsHolder.addView(indexHolder);
                     // store dimension info into lists
@@ -189,6 +174,25 @@ public class EditTempActivity extends AppCompatActivity {
                     dimensionIdList.add(tempId);
                     initialListSize = dimensionList.size();
                     Log.d(TAG, "loadConfig: loaded " + initialListSize + " dimensions");
+                    int position = dimensionList.size() - 1;
+                    final Dimension listenerTemp = dimensionList.get(position);
+
+                    indexHolder.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), EditDimensionActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("isExist", true);
+                            bundle.putString("header", listenerTemp.getHeader());
+                            // this is view id
+                            bundle.putInt("id", tempId);
+                            bundle.putInt("type", listenerTemp.getType());
+                            bundle.putBoolean("isActivated", temp.getIsActivated());
+                            Log.d(TAG, "onClick: sent bundle contains " + listenerTemp.getHeader() + " " + tempId + " " + listenerTemp.getType() + " " + isActivated);
+                            intent.putExtras(bundle);
+                            startActivityForResult(intent, 1);
+                        }
+                    });
                 }
             }
         }
@@ -256,6 +260,7 @@ public class EditTempActivity extends AppCompatActivity {
                             bundle.putInt("id", tempId);
                             bundle.putInt("type", type);
                             bundle.putBoolean("isActivated", isActivated);
+                            Log.d(TAG, "onClick: sent bundle contains " + newTitle + " " + tempId + " " + type + " " + isActivated);
                             intent.putExtras(bundle);
                             startActivityForResult(intent, 1);
                         }
@@ -382,9 +387,9 @@ public class EditTempActivity extends AppCompatActivity {
         finish();
     }
 
-    private void upgradeDb(int count) {
-        int newVersion = version + count;
-        Log.d(TAG, "upgradeDb: new version is " + newVersion);
-        db = new DatabaseHelper(getApplicationContext(), newVersion);
-    }
+//    private void upgradeDb(int count) {
+//        int newVersion = version + count;
+//        Log.d(TAG, "upgradeDb: new version is " + newVersion);
+//        db = new DatabaseHelper(getApplicationContext(), newVersion);
+//    }
 }
