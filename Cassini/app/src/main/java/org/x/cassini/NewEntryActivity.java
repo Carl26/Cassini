@@ -766,12 +766,12 @@ public class NewEntryActivity extends AppCompatActivity {
                     BufferedReader br = new BufferedReader(new InputStreamReader(fis));
                     String line = br.readLine();
                     Log.d(TAG, "loadDiary: db version is " + line);
-                    int count;
+                    int count = 0;
                     int inputIndex = 0;
                     for (int position : dimensionPosition) {
-                        count = position - inputIndex - 1;
+//                        count = position;
                         Log.d(TAG, "loadDiary: position is " + position + " count is " + count + " inputindex is " + inputIndex);
-                        for (int i = 0; i < count; i++) {
+                        for (int i = 0; i < position - count - 1; i++) {
                             // read unneeded lines
                             br.readLine();
                             Log.e(TAG, "loadDiary: skipped one line");
@@ -797,6 +797,7 @@ public class NewEntryActivity extends AppCompatActivity {
                         dimensionIdList.add(tempId);
                         dimensionList.add(temp);
                         inputIndex++;
+                        count = position;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
