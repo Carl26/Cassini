@@ -119,6 +119,7 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
         bundle.putInt("endYear", endYear);
         bundle.putInt("dimensionId", dimensionId);
         Log.d(TAG, "generateTimeline: dimension id is " + dimensionId);
+        Log.e(TAG, "generateTimeline: " + startDay + startMonth + startYear + " " + endDay + endMonth + endYear);
         Intent intent = new Intent(this, TimelinePreviewActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -288,13 +289,13 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
             startYear = year;
             startMonth = month;
             startDay = dayOfMonth;
-            Log.d(TAG, "onDateSelected: start date set");
+            Log.d(TAG, "onDateSelected: start date set " + startYear + startMonth + startDay);
         } else if (textViewId == R.id.timeline_to_date) {
             isEndDateSet = true;
             endYear = year;
             endMonth = month;
             endDay = dayOfMonth;
-            Log.d(TAG, "onDateSelected: end date set");
+            Log.d(TAG, "onDateSelected: end date set " + endYear + endMonth + endDay);
         }
     }
 
