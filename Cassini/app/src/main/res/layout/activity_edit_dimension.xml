@@ -164,7 +164,7 @@
         android:layout_below="@id/edit_dimension_dim_type_layout"
         android:layout_marginTop="30dp"
         android:layout_marginStart="45dp"
-        android:text="@string/activate"
+        android:text="@string/deactivate"
         android:textColor="@color/colorPrimary"
         android:gravity="center"/>
     <!--<Button-->

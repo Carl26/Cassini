@@ -770,7 +770,7 @@ public class NewEntryActivity extends AppCompatActivity {
                         }
                         line = br.readLine();
                         int index = line.indexOf(":");
-                        String dimensionId = line.substring(1, index);
+                        String dimensionId = line.substring(2, index);
                         String dimensionString = line.substring(index + 1);
                         Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
                         Dimension temp = new Dimension(mContext);
