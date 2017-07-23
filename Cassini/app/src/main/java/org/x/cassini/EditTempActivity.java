@@ -304,15 +304,16 @@ public class EditTempActivity extends AppCompatActivity {
 //                upgradeDb(count);
 //            }
             saveConfig(count);
+            return true;
 //            Intent intentForUpdate = new Intent();
 //            intentForUpdate.setAction("org.x.cassini.DB_UPGRADE");
 //            sendBroadcast(intentForUpdate);
 //            return true;
 //        } else {
+        } else {
+            onBackPressed();
+            return super.onOptionsItemSelected(item);
         }
-        onBackPressed();
-        return super.onOptionsItemSelected(item);
-//        }
     }
 
     @Override
@@ -378,6 +379,7 @@ public class EditTempActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Log.e(TAG, "saveConfig: saved config");
+        finish();
     }
 
     private void upgradeDb(int count) {
