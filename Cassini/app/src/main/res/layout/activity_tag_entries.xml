@@ -18,4 +18,16 @@
             android:layout_gravity="center"
             android:id="@+id/tag_entries_toolbar_title" />
     </android.support.v7.widget.Toolbar>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="12dp"
+        android:padding="5dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="12dp"
+        android:id="@+id/tag_entries_list">
+
+    </ListView>
 </LinearLayout>

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -14,51 +16,17 @@
         android:id="@+id/new_entry_toolbar"
         android:background="@color/colorPrimaryDark">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Entry"
-        android:textColor="#ffffff"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:layout_gravity="center"
-        android:id="@+id/new_entry_toolbar_title" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Entry"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:id="@+id/new_entry_toolbar_title" />
     </android.support.v7.widget.Toolbar>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#ffffff"
-        android:layout_below="@id/new_entry_toolbar"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:id="@+id/new_entry_info">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingTop="5dp"
-            android:paddingLeft="38dp"
-            android:textStyle="italic"
-            android:textSize="10sp"
-            android:ellipsize="end"
-            android:id="@+id/new_entry_time"
-            android:gravity="start"
-            android:text="time"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textStyle="italic"
-            android:padding="5dp"
-            android:id="@+id/new_entry_location"
-            android:layout_gravity="end"
-            android:textSize="10sp"
-            android:ellipsize="end"
-            android:paddingLeft="10dp"
-            android:text="Singapore"/>
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,66 +34,69 @@
         android:id="@+id/new_entry_options"
         android:background="#ffffff"
         android:padding="3dp"
-        android:layout_below="@+id/new_entry_info"
+        android:layout_below="@+id/new_entry_toolbar"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="3dp"
             android:id="@+id/new_entry_buttons">
-            <Button
+            <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:id="@+id/new_entry_weather"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="19dp"
-                android:background="@drawable/ic_weather"/>
+                android:padding="8dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="14dp"
+                app:srcCompat="@drawable/ic_cloud_filed"/>
 
-            <Button
-                android:layout_width="35dp"
+            <ImageView
+                android:layout_width="0dp"
                 android:layout_height="35dp"
+                android:layout_weight="1"
                 android:id="@+id/new_entry_emotion"
-                android:layout_marginLeft="19dp"
-                android:layout_marginRight="19dp"
-                android:background="@drawable/ic_happy"/>
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_happy"/>
 
-            <Button
-                android:layout_width="35dp"
+            <ImageView
+                android:layout_width="0dp"
                 android:layout_height="35dp"
+                android:layout_weight="1"
+                android:padding="6dp"
                 android:id="@+id/new_entry_exercise"
-                android:layout_marginLeft="19dp"
-                android:layout_marginRight="19dp"
-                android:background="@drawable/ic_exercise"/>
+                app:srcCompat="@drawable/ic_exercise_filled"/>
 
-            <Button
-                android:layout_width="35dp"
+            <ImageView
+                android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:id="@+id/new_entry_star"
-                android:layout_marginLeft="19dp"
-                android:layout_marginRight="19dp"
-                android:background="@drawable/ic_star_empty" />
+                android:layout_weight="1"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_star_full" />
 
-            <Button
+            <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:id="@+id/new_entry_tag"
-                android:layout_marginLeft="19dp"
-                android:layout_marginRight="18dp"
-                android:background="@drawable/ic_tag_empty" />
-
-    </LinearLayout>
+                android:padding="10dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="10dp"
+                app:srcCompat="@drawable/tag_filled" />
+        </LinearLayout>
 
         <GridView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/background_grid"
             android:numColumns="auto_fit"
-            android:columnWidth="60dp"
+            android:columnWidth="40dp"
             android:paddingLeft="10dp"
             android:gravity="center"
             android:id="@+id/new_entry_grid"
             android:stretchMode="columnWidth"
+            android:layout_marginBottom="10dp"
             android:visibility="gone"/>
 
         <EditText
@@ -135,6 +106,7 @@
             android:background="@android:color/transparent"
             android:maxLines="1"
             android:paddingLeft="3dp"
+            android:paddingBottom="10dp"
             android:layout_margin="3dp"
             android:inputType="text"
             android:visibility="gone"/>
@@ -143,7 +115,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:numColumns="auto_fit"
-            android:columnWidth="50dp"
+            android:columnWidth="60dp"
             android:gravity="center"
             android:id="@+id/new_entry_tag_grid"
             android:stretchMode="columnWidth"
@@ -165,21 +137,61 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/new_entry_bottom_linear">
-            <TextView
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="300dp"
-                android:id="@+id/new_entry_main_text"
-                android:clickable="true"
-                android:layout_margin="10dp"
-                android:padding="20dp"
-                android:backgroundTint="#ffffff"
-                android:textSize="13sp"
-                android:textColor="@color/black"
-                android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:orientation="vertical"
+                android:id="@+id/new_entry_bottom_linear">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="300dp"
+                    android:id="@+id/new_entry_main_text"
+                    android:clickable="true"
+                    android:layout_margin="10dp"
+                    android:padding="20dp"
+                    android:backgroundTint="#ffffff"
+                    android:textSize="18sp"
+                    android:lineSpacingExtra="1dp"
+                    android:textColor="@color/black"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#ffffff"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/new_entry_info">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:textStyle="italic"
+                    android:textSize="10sp"
+                    android:id="@+id/new_entry_time"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic"
+                    android:padding="5dp"
+                    android:id="@+id/new_entry_location"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:textSize="10sp"
+                    android:paddingLeft="10dp"
+                    android:text="Singapore"/>
+            </LinearLayout>
+
         </LinearLayout>
+
     </ScrollView>
+
 </RelativeLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:layout_height="56dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:text="Stories"
+            android:text="Storie"
             android:gravity="center"
             android:background="#434343"
             android:textColor="#ffffff"
@@ -26,117 +26,119 @@
             android:layout_alignParentEnd="true"/>
 
 
-    <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1px"-->
-        <!--android:layout_marginLeft="20dp"-->
-        <!--android:layout_marginRight="20dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_below="@id/main_title"-->
-        <!--android:background="@android:color/darker_gray"/>-->
-    <TextView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:id="@+id/main_all_entries"
-        android:background="@drawable/circle"
-        android:layout_below="@id/main_title"
-        android:text="Entries"
-        android:textColor="@color/colorPrimary"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="center"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        app:layout_heightPercent="35%"
+        android:id="@+id/first_row"
+        android:layout_below="@id/main_title">
+        <View
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/divider_top"
+            android:background="@android:color/transparent"/>
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/main_all_entries"
+            android:background="@drawable/circle"
+            android:layout_toStartOf="@id/divider_top"
+            android:text="Entries"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
 
-    <TextView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:id="@+id/main_timeline_view"
-        android:background="@drawable/circle"
-        android:layout_toEndOf="@id/main_all_entries"
-        android:layout_below="@id/main_title"
-        android:text="Lenses"
-        android:textColor="@color/colorPrimary"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="50dp"
-        android:gravity="center"/>
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/main_timeline_view"
+            android:background="@drawable/circle"
+            android:layout_toEndOf="@id/divider_top"
+            android:text="Lenses"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
+    </RelativeLayout>
 
-    <TextView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:id="@+id/main_tags"
-        android:background="@drawable/circle"
-        android:layout_below="@id/main_all_entries"
-        android:text="Tags"
-        android:textColor="@color/colorPrimary"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="center"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        app:layout_heightPercent="20%"
+        android:id="@+id/second_row"
+        android:layout_below="@id/first_row">
+        <View
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/divider_middle"
+            android:background="@android:color/transparent"/>
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/main_tags"
+            android:background="@drawable/circle"
+            android:layout_toStartOf="@id/divider_middle"
+            android:text="Tags"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
 
-    <TextView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:id="@+id/main_stories"
-        android:background="@drawable/circle"
-        android:layout_toEndOf="@id/main_tags"
-        android:layout_below="@id/main_timeline_view"
-        android:text="Stories"
-        android:textColor="@color/colorPrimary"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="50dp"
-        android:gravity="center"/>
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/main_stories"
+            android:background="@drawable/circle_light_gray"
+            android:layout_toEndOf="@id/divider_middle"
+            android:text="Stories"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
+    </RelativeLayout>
 
-    <TextView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:id="@+id/main_settings"
-        android:background="@drawable/circle"
-        android:layout_below="@id/main_tags"
-        android:text="Settings"
-        android:textColor="@color/colorPrimary"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="center"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        app:layout_heightPercent="35%"
+        android:id="@+id/third_row"
+        android:layout_below="@id/second_row">
+        <View
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/divider_bottom"
+            android:background="@android:color/transparent"/>
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/main_settings"
+            android:background="@drawable/circle"
+            android:layout_toStartOf="@id/divider_bottom"
+            android:text="Settings"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
 
-    <TextView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:id="@+id/main_new_entry"
-        android:background="@drawable/circle"
-        android:layout_toEndOf="@id/main_settings"
-        android:layout_below="@id/main_stories"
-        android:text="+"
-        android:textColor="@color/colorPrimary"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="center"/>
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/main_new_entry"
+            android:background="@drawable/circle"
+            android:layout_toEndOf="@id/divider_bottom"
+            android:text="+"
+            android:textColor="@color/colorPrimary"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
+    </RelativeLayout>
 
     <!--<LinearLayout-->
         <!--android:layout_width="match_parent"-->
@@ -444,4 +446,4 @@
         <!--android:text="tags" />-->
 
 
-</RelativeLayout>
+</android.support.percent.PercentRelativeLayout>

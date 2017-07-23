@@ -126,7 +126,7 @@
             android:textStyle="bold"
             android:gravity="center"
             android:padding="5dp"/>
-        <LinearLayout
+        <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_dimension_dim_type_box_layout"
@@ -154,7 +154,7 @@
                 android:layout_marginBottom="10dp"
                 android:onClick="onRadioButtonClicked"/>
 
-        </LinearLayout>
+        </RadioGroup>
 
     </LinearLayout>
 

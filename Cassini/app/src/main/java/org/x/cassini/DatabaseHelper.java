@@ -84,6 +84,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean insertData(String date, String location, int weather, int emotion, int exercise, int star,
                         ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {
+        Log.d("DB", "loadDiary: loaded info " + " date " + date + " location " + location +
+                " weather " + weather + " emotion " + emotion + " exercise " + exercise + " star " + star +
+                " tags " + tagList + " maintext " + mainText + " dimension indicators " + dimensionData);
         SQLiteDatabase db = this.getWritableDatabase();
         boolean isSuccessful, isTagEmpty;
         Gson gson = new Gson();
@@ -97,12 +100,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_STAR, star);
         if (tagList.isEmpty()) {
             isTagEmpty = true;
-            contentValues.put(COL_TAG, "");
+            Log.d("DB", "insertData: tag is empty");
         } else {
             isTagEmpty = false;
-            String tag = gson.toJson(tagList);
-            contentValues.put(COL_TAG, tag);
+            Log.d("DB", "insertData: tag is not empty");
         }
+        String tag = gson.toJson(tagList);
+        contentValues.put(COL_TAG, tag);
         contentValues.put(COL_MAIN_TEXT, mainText);
         ArrayList<String> dimensionPointer = new ArrayList<>();
         for (ArrayList<String> pair : dimensionData) {
@@ -192,8 +196,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getTagEntries(String tagName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG='" + tagName + "'", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG Like '%" + tagName + "%'", null);
         return res;
     }
 
+    public Cursor getEntry(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery(query, null);
+        return res;
+    }
 }

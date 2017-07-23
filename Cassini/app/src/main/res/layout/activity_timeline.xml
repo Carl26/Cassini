@@ -24,11 +24,12 @@
             android:id="@+id/timeline_toolbar_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@drawable/rounded_rectangle"
             android:layout_gravity="end"
+            android:background="@android:color/transparent"
             android:text="@string/confirm_button"
             android:textColor="#ffffff"
             android:textSize="14sp"
+            android:textStyle="bold"
             android:textAllCaps="false"/>
 
     </android.support.v7.widget.Toolbar>
@@ -37,10 +38,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="61dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/timeline_date_relative_layout"
-        android:layout_below="@+id/timeline_toolbar"
+        android:layout_below="@id/timeline_toolbar"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/underline"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingBottom="8dp">
@@ -95,7 +96,15 @@
             android:layout_marginTop="10dp"/>
     </RelativeLayout>
 
-        <RadioGroup
+    <View
+        android:layout_width="250dp"
+        android:layout_height="1dp"
+        android:background="@color/colorDividerGray"
+        android:id="@+id/timeline_divider"
+        android:layout_below="@id/timeline_date_relative_layout"
+        android:layout_centerHorizontal="true"/>
+
+    <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -103,17 +112,21 @@
             android:layout_marginLeft="20dp"
             android:layout_marginBottom="10dp"
             android:id="@+id/timeline_radio_group_horizontal"
-            android:layout_below="@+id/timeline_date_relative_layout"
+            android:layout_below="@id/timeline_divider"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true">
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="1dp"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:id="@+id/timeline_rb_weather"
-                android:drawableRight="@drawable/ic_weather"
-                android:layout_margin="5dp"/>
+                android:drawableRight="@drawable/ic_cloud_filed"
+                android:layout_margin="10dp"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
@@ -121,34 +134,35 @@
                 android:checked="false"
                 android:id="@+id/timeline_rb_emotion"
                 android:drawableRight="@drawable/ic_happy"
-                android:layout_margin="5dp"/>
+                android:layout_margin="10dp"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:id="@+id/timeline_rb_exercise"
-                android:drawableRight="@drawable/ic_exercise"
-                android:layout_margin="5dp"/>
+                android:drawableRight="@drawable/ic_exercise_filled"
+                android:layout_margin="10dp"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:id="@+id/timeline_rb_tag"
-                android:drawableRight="@drawable/ic_tag_full"
-                android:layout_margin="5dp"/>
+                android:drawableRight="@drawable/ic_tag_filled"
+                android:layout_margin="10dp"/>
         </RadioGroup>
 
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/timeline_scroll_view"
-        android:layout_below="@+id/timeline_radio_group_horizontal"
-        android:layout_alignStart="@+id/timeline_radio_group_horizontal">
+        android:layout_below="@id/timeline_radio_group_horizontal"
+        android:layout_alignStart="@id/timeline_radio_group_horizontal">
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
             android:id="@+id/timeline_radio_group_vertical">
 
             <RadioButton
@@ -156,6 +170,8 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="What have I learnt today?"
+                android:fontFamily="sans-serif-light"
+                android:textSize="18sp"
                 android:id="@+id/timeline_rb_learnt"
                 android:layout_margin="5dp"/>
 
@@ -163,7 +179,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
-                android:text="What problem did I face today?"
+                android:text="What problem did I face today ?"
+                android:fontFamily="sans-serif-light"
+                android:textSize="18sp"
                 android:id="@+id/timeline_rb_problem"
                 android:layout_margin="5dp"/>
         </RadioGroup>

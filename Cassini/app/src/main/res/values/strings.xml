@@ -20,4 +20,5 @@
     <string name="number">Number</string>
     <string name="deactivate">Deactivate</string>
     <string name="activate">Activate</string>
+    <string name="unavailable_feature">This feature will be available in the next release. The best things are yet to come!</string>
 </resources>

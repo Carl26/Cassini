@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,15 +26,18 @@ import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import static android.R.id.list;
+
 public class TagEntriesActivity extends AppCompatActivity {
 
     private Context mContext;
     private String TAG = "TagEntriesActivity";
     private ArrayList<Storie> mTagEntries;
-    private AllEntriesListAdapter mTagEntriesAdapter;
     private Toolbar toolbar;
     private DatabaseHelper db;
     private String mTag;
+    private ListView list;
+    private AllEntriesListAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,12 +112,13 @@ public class TagEntriesActivity extends AppCompatActivity {
     private void formEntriesList(String tag) {
 //        loadConfig();
         db = new DatabaseHelper(mContext, 1);
-        Cursor res = db.getAllEntryData();
+        Cursor res = db.getTagEntries(tag);
 
         if (res.getCount() == 0) {
             Toast.makeText(mContext, "No record found!", Toast.LENGTH_SHORT).show();
             return;
         }
+
         Storie temp;
         String date, location, mainText, tagJson;
         ArrayList<String> tagList;
@@ -128,77 +133,75 @@ public class TagEntriesActivity extends AppCompatActivity {
             tagList = gson.fromJson(tagJson, type);
             mainText = res.getString(8);
             temp = new Storie(date, location, tagList, mainText);
-            mTagEntries.add(temp);
+            mTagEntries.add(0,temp);
         }
 
     }
 
     private void initEntriesList() {
-//        list = (ListView) findViewById(R.id.all_entries_list);
-//        listAdapter = new AllEntriesListAdapter(mContext, stories);
-//        list.setAdapter(listAdapter);
-//        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Storie selected = stories.get(position);
-//                String filename = selected.getmDateTime().replaceAll("[\\s\\/:]", "");
-//                Intent intent = new Intent(mContext, NewEntryActivity.class);
-//                intent.putExtra("date", filename);
-//                startActivity(intent);
-//            }
-//        });
-//        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                Log.d(TAG, "onItemLongClick: long click received");
-//                list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-//                list.setItemsCanFocus(false);
-//                list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-//                    @Override
-//                    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-//                        final int count = list.getCheckedItemCount();
-//                        getSupportActionBar().setTitle(count + " selected");
-//                        listAdapter.toggleSelection(position);
-//                    }
-//
-//                    @Override
-//                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//                        mode.getMenuInflater().inflate(R.menu.menu_all_entries, menu);
-//                        return true;
-//                    }
-//
-//                    @Override
-//                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-//                        if (item.getItemId() == R.id.menu_delete) {
-//                            SparseBooleanArray selection = listAdapter.getmSelectedItems();
-//                            for (int i = 0; i < selection.size(); i++) {
-//                                if (selection.get(i)) {
-//                                    Storie toRemove = listAdapter.getItem(i);
-//                                    listAdapter.remove(toRemove);
-//                                }
-//                            }
-//                            mode.finish();
-//                            return true;
-//                        } else {
-//                            return false;
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onDestroyActionMode(ActionMode mode) {
-//                        listAdapter.clearSelection();
-//                    }
-//                });
-//                return true;
-//            }
-//        });
-//    }
-//
-//    }
+        list = (ListView) findViewById(R.id.tag_entries_list);
+        listAdapter = new AllEntriesListAdapter(mContext, mTagEntries);
+        list.setAdapter(listAdapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Storie selected = mTagEntries.get(position);
+                String sDate = selected.getmDateTime();
+                Log.d(TAG, "onItemClick: sent date is " + sDate);
+                Intent intent = new Intent(mContext, NewEntryActivity.class);
+                intent.putExtra("date", sDate);
+                startActivity(intent);
+            }
+        });
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemLongClick: long click received");
+                list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+                list.setItemsCanFocus(false);
+                list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+                    @Override
+                    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                        final int count = list.getCheckedItemCount();
+                        getSupportActionBar().setTitle(count + " selected");
+                        listAdapter.toggleSelection(position);
+                    }
+
+                    @Override
+                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                        mode.getMenuInflater().inflate(R.menu.menu_all_entries, menu);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                        if (item.getItemId() == R.id.menu_delete) {
+                            SparseBooleanArray selection = listAdapter.getmSelectedItems();
+                            for (int i = 0; i < selection.size(); i++) {
+                                if (selection.get(i)) {
+                                    Storie toRemove = listAdapter.getItem(i);
+                                    listAdapter.remove(toRemove);
+                                }
+                            }
+                            mode.finish();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void onDestroyActionMode(ActionMode mode) {
+                        listAdapter.clearSelection();
+                    }
+                });
+                return true;
+            }
+        });
     }
 }

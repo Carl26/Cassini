@@ -62,7 +62,9 @@ public class AllEntriesActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG, "onResume");
         formStoriesArray();
-        initList();
+        if (stories != null) {
+            initList();
+        }
     }
 
     private void initToolbar() {
@@ -135,7 +137,8 @@ public class AllEntriesActivity extends AppCompatActivity {
             tagList = gson.fromJson(tagJson, type);
             mainText = res.getString(8);
             temp = new Storie(date, location, tagList, mainText);
-            stories.add(temp);
+            Log.d(TAG, "formStoriesArray: storie is " + date + " " + location + " " + tagList + " " + mainText);
+            stories.add(0,temp);
         }
     }
 
@@ -147,9 +150,10 @@ public class AllEntriesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Storie selected = stories.get(position);
-                String filename = selected.getmDateTime().replaceAll("[\\s\\/:]", "");
+                String sDate = selected.getmDateTime();
+                Log.d(TAG, "onItemClick: sent date is " + sDate);
                 Intent intent = new Intent(mContext, NewEntryActivity.class);
-                intent.putExtra("date", filename);
+                intent.putExtra("date", sDate);
                 startActivity(intent);
             }
         });

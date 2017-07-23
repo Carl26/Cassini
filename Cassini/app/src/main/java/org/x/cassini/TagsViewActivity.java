@@ -1,10 +1,11 @@
 package org.x.cassini;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
-import android.nfc.Tag;
-import android.os.Environment;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,31 +15,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 public class TagsViewActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private Context mContext;
-    private ArrayList<TagBlock> mTagBlocks;
     private char[] mAlphabet;
-    private ArrayList<ArrayList<String>> mTagLists;
+    private int[] mAlphabetIndex;
+    private ArrayList<String> mTagList;
     private String TAG = "TagsViewActivity";
-    private LinearLayout tagBlockLayout;
+    private TagsViewAdapter mAdapter;
+    private RecyclerView mtagListLayout;
     private DatabaseHelper db;
 
     @Override
@@ -48,6 +39,7 @@ public class TagsViewActivity extends AppCompatActivity {
 
         mContext = getApplication();
         initToolbar();
+
     }
 
     @Override
@@ -56,7 +48,18 @@ public class TagsViewActivity extends AppCompatActivity {
         Log.d(TAG, "onResume");
 
 //        loadConfig();
-//        formTagBlocksArray();
+
+//        BroadcastReceiver br = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                initTagLists();
+//                Log.d(TAG,"On receive Broadcast");
+//            }
+//        };
+//
+//        IntentFilter filter = new IntentFilter(org.x.cassini.DB_UPDATE);
+//        this.registerReceiver(br,filter);
+
         initTagLists();
         initTagBlocks();
     }
@@ -72,44 +75,41 @@ public class TagsViewActivity extends AppCompatActivity {
 
     }
 
-    private void initTagLists() {
-        mAlphabet = new char[26];
-        mTagLists = new ArrayList<>(26);
-        mTagBlocks = new ArrayList<>(26);
-
-
-        for(int i=0; i<26; i++) {
-            mAlphabet[i] = (char) ('A' + i);
-            Log.d(TAG, "initAlphabet " + mAlphabet[i]);
-
-            db = new DatabaseHelper(mContext, 1);
-            Cursor res = db.getTagList(mAlphabet[i]);
-//            Log.d(TAG, "getTagFromDb");
-
-            ArrayList<String> placeholder = new ArrayList<>(100);
-            mTagLists.add(placeholder);
-
-            while (res.moveToNext()) {
-                mTagLists.get(i).add(res.getString(0));
-//                Log.d(TAG,"got Tag with Name " + mTagLists.get(i));
-            }
-//            Log.d(TAG, "WriteToStringArray");
-
-
-                TagBlock temp = new TagBlock(mAlphabet[i], mTagLists.get(i));
-//            Log.d(TAG, "TagBlock generated with " + temp.getmTagNames());
-
-                mTagBlocks.add(temp);
-                Log.d(TAG, "Write " + mTagBlocks.get(i).getmAlphabet() + " To TagBlock Array");
-
-        }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        onBackPressed();
+        return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        onBackPressed();
-//        return super.onOptionsItemSelected(item);
-//    }
+    private void initTagLists() {
+        mAlphabet = new char[26];
+        mTagList = new ArrayList<>();
+        mAlphabetIndex = new int[26];
+        for(int i=0; i<26; i++) {
+            mAlphabetIndex[i] = i;
+            mAlphabet[i] = (char) ('A' + i);
+            mTagList.add(String.valueOf(mAlphabet[i]));
+        }
+
+
+        db = new DatabaseHelper(mContext, 1);
+        for(int i=0; i<26; i++) {
+            Log.d(TAG,"For letter " + mAlphabet[i]);
+            Cursor res = db.getTagList(mAlphabet[i]);
+
+            int temp = mAlphabetIndex[i];
+            while (res.moveToNext()) {
+                mTagList.add(temp+1, res.getString(0));
+                temp++;
+            }
+            for(int j = i+1; j<26; j++) {
+                mAlphabetIndex[j] = mAlphabetIndex[j] + (temp - mAlphabetIndex[i]);
+//                Log.d(TAG,"Letter " + mAlphabet[j] + " now has index " + mAlphabetIndex[j]);
+            }
+        }
+
+    }
+
 //    private void loadConfig() {
 //        File sdCard = Environment.getExternalStorageDirectory();
 //        File savedFile = new File (sdCard.getAbsolutePath() + "/Cassini/config.txt");
@@ -142,88 +142,22 @@ public class TagsViewActivity extends AppCompatActivity {
 //        }
 //    }
 
-//    private void formTagBlocksArray() {
-//        mAlphabet = new char[26];
-//        mTagBlocks = new ArrayList<TagBlock>(1000);
-//
-//        for(int i=0; i<26; i++) {
-//            mAlphabet[i] = (char) ('A' + i);
-//            Log.d(TAG, "initAlphabet " + mAlphabet[i]);
-//
-//            db = new DatabaseHelper(mContext,1);
-//            Cursor res = db.getTagList(mAlphabet[i]);
-//            Log.d(TAG, "getTagFromDb");
-//
-//            ArrayList<String> mTagNames = new ArrayList<String>(1000);
-//            while (res.moveToNext()) {
-//                mTagNames.add(res.getString(0));
-//                Log.d(TAG,"got Tag with Name " + mTagNames);
-//            }
-//            Log.d(TAG, "WriteToStringArray");
-//
-//            TagBlock temp = new TagBlock(mAlphabet[i],mTagNames);
-//            Log.d(TAG,"TagBlock generated with " + temp.getmTagNames());
-//
-//            mTagBlocks.add(temp);
-//            Log.d(TAG, "Write " + mTagBlocks.get(i).getmAlphabet() + " To TagBlock Array");
-//        }
-
-//        TagBlock.setOnClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent(mContext, NewEntryActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
-//    }
-
 
     private void initTagBlocks() {
-        tagBlockLayout = (LinearLayout) findViewById(R.id.tagsview_list);
-        LayoutInflater mInflator = (LayoutInflater) getSystemService(mContext.LAYOUT_INFLATER_SERVICE);
-
-        if (tagBlockLayout.getChildCount() == 0) {
-            for (int i = 0; i < 26; i++) {
-
-                TagBlock tagBlock = mTagBlocks.get(i);
-                if(!tagBlock.isEmpty()) {
-//            LinearLayout templayout = (LinearLayout) inflate(mContext,R.layout.tag_block,this);
-//            setContentView(R.layout.tag_block);
-                    View templayout = mInflator.inflate(R.layout.tag_block, null);
-//            View templayout = LayoutInflater.from(mContext).inflate(R.layout.tag_block,);
-                    TextView tagAlphabet = (TextView) templayout.findViewById(R.id.tag_alphabet);
-                    View divider = (View) templayout.findViewById(R.id.tag_divider);
-                    RecyclerView tagList = (RecyclerView) templayout.findViewById(R.id.tag_list);
-
-
-                    tagAlphabet.setText(String.valueOf(tagBlock.getmAlphabet()));
-//            Log.d(TAG,"Bind Tags with Alphabet" + tagBlock.getmAlphabet());
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
-                    tagList.setLayoutManager(layoutManager);
-                    final TagBlockAdapter mTagListAdapter = new TagBlockAdapter(tagBlock.getmTagNames());
-//            Log.d(TAG,"Created new TagBlockAdapter with " + tagBlock.getmTagNames());
-                    tagList.setAdapter(mTagListAdapter);
-                    Log.d(TAG, "Set Adapter for tags with Alphabet " + tagBlock.getmAlphabet() + " and is_empty = " + tagBlock.isEmpty());
-//                if (tagBlock.isEmpty()) {
-//                    tagAlphabet.setVisibility(View.GONE);
-//                    divider.setVisibility(View.GONE);
-//                    tagList.setVisibility(View.GONE);
-//                }
-                    ItemClickSupport.addTo(tagList)
-                            .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                                @Override
-                                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                                    Intent intent = new Intent(mContext, TagEntriesActivity.class);
-                                    intent.putExtra("Tag", mTagListAdapter.getTag(position));
-                                    startActivity(intent);
-                                }
-                            });
-//            ((ViewGroup)templayout.getParent()).removeView(templayout);
-                    tagBlockLayout.addView(templayout);
-                    Log.d(TAG, "added view #" + tagBlockLayout.getChildCount());
-                }
-            }
-        }
+        mtagListLayout = (RecyclerView) findViewById(R.id.taglist_layout);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        mtagListLayout.setLayoutManager(layoutManager);
+        mAdapter = new TagsViewAdapter(mTagList,mContext);
+        mAdapter.setmAlphabetIndex(mAlphabetIndex);
+        mtagListLayout.setAdapter(mAdapter);
+        ItemClickSupport.addTo(mtagListLayout)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        Intent intent = new Intent(mContext,TagEntriesActivity.class);
+                        intent.putExtra("Tag",mTagList.get(position));
+                        startActivity(intent);
+                    }
+                });
     }
 }

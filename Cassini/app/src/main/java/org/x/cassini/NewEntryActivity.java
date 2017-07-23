@@ -3,7 +3,9 @@ package org.x.cassini;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.AlertDialog;
@@ -18,9 +20,13 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +51,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String TAG = "NewEntry";
     private TextView time, location, mainText, toolbarTitle;
-    private Button BWeather, BEmotion, BExercise, BStar, BTag;
+    private ImageView BWeather, BEmotion, BExercise, BStar, BTag;
     private LinearLayout newEntryLayout;
     private ArrayList<Dimension> dimensionList;
     private ArrayList<String> dimensionInput;
@@ -71,6 +78,10 @@ public class NewEntryActivity extends AppCompatActivity {
     private Storie holder;
     private DatabaseHelper db;
     private ArrayList<Integer> dimensionIdList;
+    private boolean isEditMode = false;
+    private static String COL_DATE = "DATE";
+    private static String TABLE_ENTRY_NAME = "entry_table";
+    private File file;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -89,11 +100,14 @@ public class NewEntryActivity extends AppCompatActivity {
         // load other dates if needed
         if (getIntent().getStringExtra("date") != null) {
             sDate = getIntent().getStringExtra("date");
+            isEditMode = true;
             Log.d(TAG, "onCreate: requested date is " + sDate);
-        } else {
-            sDate = new SimpleDateFormat("yyyyMMddHHmmss").format(currentDateInfo);
-            Log.d(TAG, "onCreate: Today is " + sDate);
         }
+//        else {
+//            sDate = new SimpleDateFormat("yyyyMMddHHmmss").format(currentDateInfo);
+//            isEditMode = false;
+//            Log.d(TAG, "onCreate: Today is " + sDate);
+//        }
 
         initToolbar();
         // establish database and read dimensions
@@ -108,7 +122,7 @@ public class NewEntryActivity extends AppCompatActivity {
         dimensionList = new ArrayList<>();
         dimensionIdList = new ArrayList<>();
         try {
-            File file = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config.txt");
+            file = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config.txt");
             FileInputStream inputStream = new FileInputStream(file);
 
             if ( inputStream != null ) {
@@ -120,31 +134,34 @@ public class NewEntryActivity extends AppCompatActivity {
                 int version = Integer.valueOf(receiveString);
                 db = new DatabaseHelper(this, version);
                 Log.d(TAG, "loadConfig: db version is " + version);
-                while ((receiveString=bufferedReader.readLine()) != null) {
-                    Log.d(TAG, "loadResources: read dimension: " + receiveString);
-                    // check if the dimension will be used
-                    String isActive = receiveString.substring(0, 1);
-                    if (isActive.equals("T")) {
-                        // the dimension is active
-                        int index = receiveString.indexOf(":");
-                        String dimensionId = receiveString.substring(1, index);
-                        String dimensionString = receiveString.substring(index + 1);
-                        Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
-                        Dimension temp = new Dimension(mContext);
+                if (!isEditMode) {
+                    // only init dimensions if not in edit mode
+                    while ((receiveString = bufferedReader.readLine()) != null) {
+                        Log.d(TAG, "loadResources: read dimension: " + receiveString);
+                        // check if the dimension will be used
+                        String isActive = receiveString.substring(0, 1);
+                        if (isActive.equals("T")) {
+                            // the dimension is active
+                            int index = receiveString.indexOf(":");
+                            String dimensionId = receiveString.substring(1, index);
+                            String dimensionString = receiveString.substring(index + 1);
+                            Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
+                            Dimension temp = new Dimension(mContext);
 //                    temp.inflate(this, R.layout.dimension, null);
-                        temp.setHeader(dimensionString);
-                        temp.setDimensionId(dimensionId);
-                        temp.setBackgroundColor(Color.WHITE);
-                        temp.setLayoutParams(params);
-                        int tempId = View.generateViewId();
-                        temp.setId(tempId);
-                        // add view into linear layout
-                        newEntryLayout.addView(temp);
-                        // store dimension info into lists
-                        dimensionList.add(temp);
-                        dimensionIdList.add(tempId);
-                    } else {
-                        Log.d(TAG, "loadResources: inactive dimension: " + receiveString);
+                            temp.setHeader(dimensionString);
+                            temp.setDimensionId(dimensionId);
+                            temp.setBackgroundColor(Color.WHITE);
+                            temp.setLayoutParams(params);
+                            int tempId = View.generateViewId();
+                            temp.setId(tempId);
+                            // add view into linear layout
+                            newEntryLayout.addView(temp);
+                            // store dimension info into lists
+                            dimensionList.add(temp);
+                            dimensionIdList.add(tempId);
+                        } else {
+                            Log.d(TAG, "loadResources: inactive dimension: " + receiveString);
+                        }
                     }
                 }
             }
@@ -177,11 +194,11 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void initButtons() {
-        BWeather = (Button) findViewById(R.id.new_entry_weather);
-        BEmotion = (Button) findViewById(R.id.new_entry_emotion);
-        BExercise = (Button) findViewById(R.id.new_entry_exercise);
-        BStar = (Button) findViewById(R.id.new_entry_star);
-        BTag = (Button) findViewById(R.id.new_entry_tag);
+        BWeather = (ImageView) findViewById(R.id.new_entry_weather);
+        BEmotion = (ImageView) findViewById(R.id.new_entry_emotion);
+        BExercise = (ImageView) findViewById(R.id.new_entry_exercise);
+        BStar = (ImageView) findViewById(R.id.new_entry_star);
+        BTag = (ImageView) findViewById(R.id.new_entry_tag);
         grid = (GridView) findViewById(R.id.new_entry_grid);
 //        weatherAdapter = new NewEntryGridAdapter(mContext, weatherIcons);
 //        grid.setAdapter(weatherAdapter);
@@ -381,7 +398,9 @@ public class NewEntryActivity extends AppCompatActivity {
 //                dimensionList.get(i).setInput(dimensionInput.get(i));
 //            }
 //        }
-//        loadDiary();
+        if (isEditMode && !isResult) {
+            loadDiary();
+        }
         mainText.requestFocus();
     }
 
@@ -407,20 +426,25 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private void saveDiary() {
         // grab dimension input if any
+        boolean hasInput = false;
         dimensionInput = new ArrayList<>();
         if (!dimensionIdList.isEmpty()) {
             for (int id : dimensionIdList) {
                 Dimension tempDimension = (Dimension) findViewById(id);
                 String tempInput = tempDimension.getInput();
+                if (!tempInput.equals("")) {
+                    hasInput = true;
+                }
                 dimensionInput.add(tempInput);
                 Log.d(TAG, "saveDiary: added input " + tempInput + " to " + tempDimension.getHeader());
             }
         }
 
-        // save diary only if there is any input
-        if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
-                !tagList.isEmpty() || !mainText.getText().toString().equals("") || !dimensionInput.isEmpty()) {
-            Log.d(TAG, "saveDiary: should save diary here");
+        // create a new diary only if there is any input and not in edit mode
+        if (!isEditMode) {
+            if (intWeather != UNSET || intEmotion != UNSET || intExercise != UNSET ||
+                    !tagList.isEmpty() || !mainText.getText().toString().equals("") || hasInput) {
+                Log.d(TAG, "saveDiary: should save diary here");
 
 //            if (holder == null) {
 //                // fill in details into holder
@@ -430,22 +454,27 @@ public class NewEntryActivity extends AppCompatActivity {
 //            } else {
 //                Log.e(TAG, "saveDiary: no input, diary not saved " + sDate);
 //            }
-            String dbDate = time.getText().toString();
-            String dbLocation = location.getText().toString();
-            String dbMainText = mainText.getText().toString();
-            ArrayList<ArrayList<String>> dbDimensionInfo = new ArrayList<>();
-            for (int i = 0; i < dimensionList.size(); i++) {
-                String questionId = "D" + dimensionList.get(i).getDimensionId();
-                String answer = dimensionInput.get(i);
-                Log.d(TAG, "saveDiary: q&a: " + questionId + " && " + answer);
-                ArrayList<String> tempList = new ArrayList<>();
-                tempList.add(questionId);
-                tempList.add(answer);
-                dbDimensionInfo.add(tempList);
+                String dbDate = time.getText().toString();
+                String dbLocation = location.getText().toString();
+                String dbMainText = mainText.getText().toString();
+                ArrayList<ArrayList<String>> dbDimensionInfo = new ArrayList<>();
+                for (int i = 0; i < dimensionList.size(); i++) {
+                    String questionId = "D" + dimensionList.get(i).getDimensionId();
+                    String answer = dimensionInput.get(i);
+                    Log.d(TAG, "saveDiary: q&a: " + questionId + " && " + answer);
+                    ArrayList<String> tempList = new ArrayList<>();
+                    tempList.add(questionId);
+                    tempList.add(answer);
+                    dbDimensionInfo.add(tempList);
+                }
+                boolean isInserted = db.insertData(dbDate, dbLocation, intWeather, intEmotion, intExercise, isStar, tagList, dbMainText, dbDimensionInfo);
+                Log.e(TAG, "saveDiary: " + isInserted);
             }
-            boolean isInserted = db.insertData(dbDate, dbLocation, intWeather, intEmotion, intExercise, isStar, tagList, dbMainText, dbDimensionInfo);
-            Log.e(TAG, "saveDiary: " + isInserted);
+        } else {
+            // update data to existing row
+            Log.d(TAG, "saveDiary: update database");
         }
+        db.close();
     }
 
     private void initIntArrays() {
@@ -592,123 +621,159 @@ public class NewEntryActivity extends AppCompatActivity {
         }
     }
 
-//    private void loadDiary() {
-//        Log.d(TAG, "loadDiary: load diary");
-//        File sdCard = Environment.getExternalStorageDirectory();
-//        File dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
-//        if (!dir.exists()) {
-//            dir.mkdirs();
-//        }
-//        File savedFile = new File(dir, sDate + ".txt");
-//        if (savedFile.exists()) {
-//            FileInputStream fis;
-//            BufferedReader br;
-//            String line;
-//            int count;
-//            char[] buffer;
-//            try {
-//                fis = new FileInputStream(savedFile);
-//                br = new BufferedReader(new InputStreamReader(fis));
-//                // start reading
-//                // date and time
-//                line = br.readLine();
-//                Log.d(TAG, "loadDiary: " + line);
-//                time.setText(line);
-//                // location
-//                line = br.readLine();
-//                Log.d(TAG, "loadDiary: " + line);
-//                location.setText(line);
-//                // weather
-//                line = br.readLine();
-//                count = Integer.valueOf(line);
-//                Log.d(TAG, "loadDiary: " + count);
-//                switch (count) {
-//                    case UNSET: break;
-//                    case SUNNY: BWeather.setBackgroundResource(R.drawable.ic_sunny);
-//                        break;
-//                    case CLOUDY: BWeather.setBackgroundResource(R.drawable.ic_cloudy);
-//                        break;
-//                    case RAINY: BWeather.setBackgroundResource(R.drawable.ic_rainy);
-//                        break;
-//                    case HEAVYRAIN: BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
-//                        break;
-//                    case THUNDERSTORM: BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
-//                        break;
-//                    case SNOW: BWeather.setBackgroundResource(R.drawable.ic_snow);
-//                        break;
-//                }
-//                // emotion
-//                line = br.readLine();
-//                count = Integer.valueOf(line);
-//                Log.d(TAG, "loadDiary: " + count);
-//                switch (count) {
-//                    case UNSET: break;
-//                    case HAPPY: BEmotion.setBackgroundResource(R.drawable.ic_happy);
-//                        break;
-//                    case SAD: BEmotion.setBackgroundResource(R.drawable.ic_sad);
-//                        break;
-//                    case NEUTRAL: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
-//                        break;
-//                    case ANGRY: BEmotion.setBackgroundResource(R.drawable.ic_angry);
-//                        break;
-//                    case EMBARRASSED: BEmotion.setBackgroundResource(R.drawable.ic_embarrassed);
-//                        break;
-//                    case KISS: BEmotion.setBackgroundResource(R.drawable.ic_kiss);
-//                        break;
-//                }
-//                // exercise
-//                line = br.readLine();
-//                count = Integer.valueOf(line);
-//                Log.d(TAG, "loadDiary: " + count);
-//                switch (count) {
-//                    case UNSET: break;
-//                    case WALK: BExercise.setBackgroundResource(R.drawable.ic_walk);
-//                        break;
-//                    case RUN: BExercise.setBackgroundResource(R.drawable.ic_run);
-//                        break;
-//                    case BALL: BExercise.setBackgroundResource(R.drawable.ic_ball);
-//                        break;
-//                    case CYCLING: BExercise.setBackgroundResource(R.drawable.ic_cycling);
-//                        break;
-//                    case SWIN: BExercise.setBackgroundResource(R.drawable.ic_swim);
-//                        break;
-//                }
-//                // star
-//                line = br.readLine();
-//                count = Integer.valueOf(line);
-//                Log.d(TAG, "loadDiary: " + count);
-//                if (count == 1) {
-//                    BStar.setBackgroundResource(R.drawable.ic_star_full);
-//                }
-//                // tag
-//                line = br.readLine();
-//                Log.d(TAG, "loadDiary: number of tags" + line);
-//                count = Integer.valueOf(line);
-//                Log.d(TAG, "loadDiary: " + count);
-//                if (count != 0) {
-//                    // at least one tag
-//                    BTag.setBackgroundResource(R.drawable.ic_tag_full);
-//                    tagList = new ArrayList<>();
-//                    for (int i = 0; i < count; i++) {
-//                        line = br.readLine();
-//                        tagList.add(line);
-//                    }
-//                }
+    private void loadDiary() {
+        Log.d(TAG, "loadDiary: load diary of " + sDate);
+        if (db == null) {
+            Log.e(TAG, "loadDiary: DB is not initialized");
+            return ;
+        }
+        String findEntryQuery = "SELECT * FROM " + TABLE_ENTRY_NAME + " WHERE " + COL_DATE + "=" + "'" + sDate + "'";
+        Cursor cursor = db.getEntry(findEntryQuery);
+        if (cursor != null) {
+            cursor.moveToNext();
+            String dbId = cursor.getString(0);
+            String dbDate =cursor.getString(1);
+            String dbLocation =cursor.getString(2);
+            int dbWeather =cursor.getInt(3);
+            int dbEmotion =cursor.getInt(4);
+            int dbExercise =cursor.getInt(5);
+            int dbStar =cursor.getInt(6);
+            String dbTags =cursor.getString(7);
+            String dbMainText =cursor.getString(8);
+            String dbDimensionIndicator =cursor.getString(9);
+            Log.d(TAG, "loadDiary: loaded info " + "id " + dbId + " date " + dbDate + " location " + dbLocation +
+                    " weather " + dbWeather + " emotion " + dbEmotion + " exercise " + dbExercise + " star " + dbStar +
+                    " tags " + dbTags + " maintext " + dbMainText + " dimension indicators " + dbDimensionIndicator);
+            // parse tags Json into ArrayList
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<String>>(){}.getType();
+            ArrayList<String> dbTagList = gson.fromJson(dbTags, type);
+            // parse dimension indicators json to arraylist
+            ArrayList<String> dbIndicatorList = gson.fromJson(dbDimensionIndicator, type);
+            // get dimension inputs by reading corresponding columns
+            dimensionInput = new ArrayList<>();
+            ArrayList<Integer> dimensionPosition = new ArrayList<>();
+            if (!dbIndicatorList.get(0).equals("")) {
+                for (String columnName : dbIndicatorList) {
+                    int position = Integer.valueOf(columnName.substring(1));
+                    int index = 9 + position;
+                    dimensionPosition.add(position);
+                    dimensionInput.add(cursor.getString(index));
+                }
+            }
+            // fill in data into empty new entry template
+            // weather
+            switch (dbWeather) {
+                case UNSET:
+                    break;
+                case SUNNY:
+                    BWeather.setBackgroundResource(R.drawable.ic_sunny);
+                    break;
+                case CLOUDY:
+                    BWeather.setBackgroundResource(R.drawable.ic_cloudy);
+                    break;
+                case RAINY:
+                    BWeather.setBackgroundResource(R.drawable.ic_rainy);
+                    break;
+                case HEAVYRAIN:
+                    BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
+                    break;
+                case THUNDERSTORM:
+                    BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
+                    break;
+                case SNOW:
+                    BWeather.setBackgroundResource(R.drawable.ic_snow);
+                    break;
+            }
+            // emotion
+            switch (dbEmotion) {
+                case UNSET: break;
+                case HAPPY: BEmotion.setBackgroundResource(R.drawable.ic_happy);
+                    break;
+                case SAD: BEmotion.setBackgroundResource(R.drawable.ic_sad);
+                    break;
+                case NEUTRAL: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
+                    break;
+                case ANGRY: BEmotion.setBackgroundResource(R.drawable.ic_angry);
+                    break;
+                case EMBARRASSED: BEmotion.setBackgroundResource(R.drawable.ic_embarrassed);
+                    break;
+                case KISS: BEmotion.setBackgroundResource(R.drawable.ic_kiss);
+                    break;
+            }
+            // exercise
+            switch (dbExercise) {
+                case UNSET: break;
+                case WALK: BExercise.setBackgroundResource(R.drawable.ic_walk);
+                    break;
+                case RUN: BExercise.setBackgroundResource(R.drawable.ic_run);
+                    break;
+                case BALL: BExercise.setBackgroundResource(R.drawable.ic_ball);
+                    break;
+                case CYCLING: BExercise.setBackgroundResource(R.drawable.ic_cycling);
+                    break;
+                case SWIN: BExercise.setBackgroundResource(R.drawable.ic_swim);
+                    break;
+            }
+            // star
+            if (dbStar == 1) {
+                BStar.setBackgroundResource(R.drawable.ic_star_full);
+            }
+            // tag
+            if (dbTagList != null) {
+                // tag list is not empty
+                BTag.setBackgroundResource(R.drawable.ic_tag_full);
+                tagList = dbTagList;
+            }
+            // main text
+            mainText.setText(dbMainText);
+            // dimension
+            if (!dimensionPosition.isEmpty()) {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(10, 10, 10, 10);
+                dimensionIdList = new ArrayList<>();
+                try {
+                    FileInputStream fis = new FileInputStream(file);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                    String line;
+                    int count = 0;
+                    int inputIndex = 0;
+                    for (int position : dimensionPosition) {
+                        count = position - count;
+                        for (int i = 0; i < count; i++) {
+                            // read unneeded lines
+                            br.readLine();
+                        }
+                        line = br.readLine();
+                        int index = line.indexOf(":");
+                        String dimensionId = line.substring(1, index);
+                        String dimensionString = line.substring(index + 1);
+                        Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
+                        Dimension temp = new Dimension(mContext);
+//                    temp.inflate(this, R.layout.dimension, null);
+                        temp.setHeader(dimensionString);
+                        temp.setDimensionId(dimensionId);
+                        temp.setInput(dimensionInput.get(inputIndex));
+                        temp.setBackgroundColor(Color.WHITE);
+                        temp.setLayoutParams(params);
+                        int tempId = View.generateViewId();
+                        temp.setId(tempId);
+                        // add view into linear layout
+                        newEntryLayout.addView(temp);
+                        // store dimension info into lists
+                        dimensionIdList.add(tempId);
+                        inputIndex++;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Log.e(TAG, "loadDiary: unable to find entry" + sDate);
+        }
+
 ////                Log.e(TAG, "loadDiary: here");
-//                // main text
-//                line = br.readLine();
-//                count = Integer.valueOf(line);
-//                Log.d(TAG, "loadDiary: " + count);
-//                if (count != 0) {
-//                    buffer = new char[count];
-//                    br.read(buffer, 0, count);
-//                    String formText = new String(buffer);
-//                    Log.d(TAG, "loadDiary: " + formText);
-//                    if (!isResult) {
-//                        // only load text when it has not been overwritten by result
-//                        mainText.setText(formText);
-//                    }
-//                }
+
 //                // dimensions
 //                // TODO now only reads answer to dimensions -> can be used to read title too
 //                line = br.readLine();
@@ -729,5 +794,5 @@ public class NewEntryActivity extends AppCompatActivity {
 //        } else {
 //            Log.e(TAG, "loadDiary: no file found");
 //        }
-//    }
+    }
 }
