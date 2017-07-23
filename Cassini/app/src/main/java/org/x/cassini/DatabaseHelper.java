@@ -74,15 +74,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (newVersion > oldVersion) {
             // add new dimension as column into entry table
-            String NEW_COLUMN_NAME = dimensionHolder;
-            db.execSQL("ALTER TABLE " + TABLE_ENTRY_NAME + "ADD COLUMN '"+ NEW_COLUMN_NAME + "' TEXT");
+            int count = newVersion - oldVersion;
+            for (int i = 1; i <= count; i++) {
+                int columnId = oldVersion + i;
+                String NEW_COLUMN_NAME = "D" + columnId;
+                Log.d("DB", "onUpgrade: new column id is " + NEW_COLUMN_NAME);
+                db.execSQL("ALTER TABLE " + TABLE_ENTRY_NAME + " ADD COLUMN " + NEW_COLUMN_NAME + " TEXT");
+            }
         }
+        Log.e("DB", "onUpgrade: upgrade complete");
     }
 
     // upgrade db right after calling this
-    public void updateDimensions(String newDimension, int oldVersion, int newVersion) {
-        dimensionHolder = newDimension;
-    }
+//    public void updateDimensions(String newDimension, int oldVersion, int newVersion) {
+//        dimensionHolder = newDimension;
+//        Log.d("DB", "updateDimensions: old version is " + oldVersion + " new version is " + newVersion + " and new dimension is " + dimensionHolder);
+//    }
 
     public boolean insertData(String date, String location, int weather, int emotion, int exercise, int star,
                         ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {

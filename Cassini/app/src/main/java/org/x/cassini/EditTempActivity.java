@@ -297,31 +297,44 @@ public class EditTempActivity extends AppCompatActivity {
 
         if (id == R.id.save_button) {
             Log.d(TAG, "onOptionsItemSelected: exiting with changes saved");
-            isSaving = true;
+//            isSaving = true;
+            int count = dimensionList.size() - initialListSize;
+            Log.d(TAG, "onDestroy: added " + count + " new more dimensions");
+//            if (isUpgradingNeeded) {
+//                upgradeDb(count);
+//            }
+            saveConfig(count);
+//            Intent intentForUpdate = new Intent();
+//            intentForUpdate.setAction("org.x.cassini.DB_UPGRADE");
+//            sendBroadcast(intentForUpdate);
+//            return true;
+//        } else {
         }
         onBackPressed();
         return super.onOptionsItemSelected(item);
+//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (isSaving) {
-            Log.d(TAG, "onDestroy: saving to config file");
-            int count = dimensionList.size() - initialListSize;
-            Log.d(TAG, "onDestroy: added " + count + " new more dimensions");
-            if (isUpgradingNeeded) {
+//        if (isSaving) {
+//            Log.d(TAG, "onDestroy: saving to config file");
+//            int count = dimensionList.size() - initialListSize;
+//            Log.d(TAG, "onDestroy: added " + count + " new more dimensions");
+//            if (isUpgradingNeeded) {
 //                upgradeDb(count);
-            }
-            saveConfig(count);
-        } else {
-            Log.d(TAG, "onDestroy: changes not saved");
-        }
+//            }
+//            saveConfig(count);
+//        } else {
+//            Log.d(TAG, "onDestroy: changes not saved");
+//        }
+        Log.e(TAG, "onDestroy: destroyed");
     }
 
     private void saveConfig(int count) {
         try {
-            file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config1.txt");
+            file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config.txt");
             FileOutputStream fos = new FileOutputStream(file);
             if (version == -1) {
                 Log.e(TAG, "saveConfig: version is incorrect");
@@ -335,7 +348,7 @@ public class EditTempActivity extends AppCompatActivity {
             // write all dimensions to file
             for (int i = 0; i < dimensionList.size(); i++) {
                 Dimension temp = dimensionList.get(i);
-                int dimensionId = dimensionIdList.get(i);
+                int dimensionId = i + 1;
                 String dimensionTitle = temp.getHeader();
                 int dimensionType = temp.getType();
                 String typeString = "";
@@ -364,9 +377,12 @@ public class EditTempActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.e(TAG, "saveConfig: saved config");
     }
 
     private void upgradeDb(int count) {
-
+        int newVersion = version + count;
+        Log.d(TAG, "upgradeDb: new version is " + newVersion);
+        db = new DatabaseHelper(getApplicationContext(), newVersion);
     }
 }
