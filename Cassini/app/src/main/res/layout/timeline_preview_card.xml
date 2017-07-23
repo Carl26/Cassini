@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="60dp"
         android:layout_weight="1"
         android:id="@+id/tp_card_time"
         android:orientation="vertical">
@@ -29,7 +29,7 @@
             android:text="Jul"
             android:textSize="10sp"
             android:textColor="@color/colorPrimaryDark"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal" />
     </LinearLayout>
 
     <View
@@ -38,18 +38,20 @@
         android:background="@color/colorDividerGray"/>
 
     <TextView
+        android:id="@+id/tp_card_main"
         android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="8"
-        android:layout_height="wrap_content"
+        android:background="@drawable/speech_bubble"
         android:minHeight="50dp"
-        android:text="@string/placehold_text"
         android:paddingStart="25dp"
         android:paddingTop="5dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/speech_bubble"/>
+        android:text="@string/placehold_text"
+        android:textColor="@color/black"/>
 
 </LinearLayout>

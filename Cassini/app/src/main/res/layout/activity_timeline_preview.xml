@@ -22,10 +22,13 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:id="@+id/timeline_preview_list"
+        android:background="@android:color/transparent"
+        android:padding="5dp">
 
-    </android.support.v7.widget.RecyclerView>
+    </ListView>
 
 </LinearLayout>

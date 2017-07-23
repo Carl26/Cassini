@@ -5,7 +5,11 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -26,11 +30,26 @@ public class TimelinePreviewActivity extends AppCompatActivity {
     private DatabaseHelper db;
     private File file;
     private int version;
+    private ListView list;
+    private TimelinePreviewListAdapter adapter;
+    private TextView toolbarTitle;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_timeline_preview);
+        initList();
+        initToolbar();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        onBackPressed();
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void initList() {
         Bundle data = getIntent().getExtras();
         startDay = data.getInt("startDay");
         startMonth = data.getInt("startMonth");
@@ -81,12 +100,29 @@ public class TimelinePreviewActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ArrayList<String> result = db.getTimeline(startDate, endDate, dimensionId);
+        ArrayList<ArrayList<String>> result = db.getTimeline(startDate, endDate, dimensionId);
         if (result.isEmpty()) {
             Log.e(TAG, "onCreate: no record found");
             Toast.makeText(getApplicationContext(), "No data found for the selected!", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "onCreate: " + result);
+            list = (ListView) findViewById(R.id.timeline_preview_list);
+            adapter = new TimelinePreviewListAdapter(getApplication(), result);
+            list.setAdapter(adapter);
+//            adapter.notifyDataSetChanged();
         }
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.timeline_preview_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        Log.d(TAG, "Title is " + getSupportActionBar().getTitle());
+
+        toolbarTitle = (TextView) findViewById(R.id.timeline_preview_toolbar_title);
+        toolbarTitle.setText(title);
     }
 }

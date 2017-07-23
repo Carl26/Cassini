@@ -343,7 +343,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public ArrayList<String> getTimeline(String startDate, String endDate, int dimensionId) {
+    public ArrayList<ArrayList<String>> getTimeline(String startDate, String endDate, int dimensionId) {
         SQLiteDatabase db = this.getWritableDatabase();
         String columnNeeded;
         if (dimensionId == -4) {
@@ -362,7 +362,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long start = Long.valueOf(startDate);
         long end = Long.valueOf(endDate);
         int minId = -1, maxId;
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> resultInfo = new ArrayList<>();
+        ArrayList<String> resultDate = new ArrayList<>();
+        ArrayList<String> resultMonth = new ArrayList<>();
+        ArrayList<ArrayList<String>> resultBulk = new ArrayList<>();
         while (res.moveToNext()) {
             String date = res.getString(1);
             String day = date.substring(0, 2);
@@ -376,16 +379,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if (minId == -1) {
                     minId = Integer.valueOf(res.getString(0));
                     String info = res.getString(2);
-                    result.add(info);
-                    Log.d("DB", "getTimeline: found the first " +  info + " with id " + minId);
+                    resultInfo.add(info);
+                    resultDate.add(day);
+                    resultMonth.add(month);
+                    Log.d("DB", "getTimeline: found the first " +  info + " with id " + minId + " at " + month + " " + day);
                 } else {
                     maxId = Integer.valueOf(res.getString(0));
                     String info = res.getString(2);
-                    result.add(info);
-                    Log.d("DB", "getTimeline: current included " + info + " id is " + maxId);
+                    resultInfo.add(info);
+                    resultDate.add(day);
+                    resultMonth.add(month);
+                    Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
                 }
             }
         }
-        return result;
+        resultBulk.add(resultMonth);
+        resultBulk.add(resultDate);
+        resultBulk.add(resultInfo);
+        return resultBulk;
     }
 }
