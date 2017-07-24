@@ -64,15 +64,16 @@
         android:layout_alignBottom="@id/all_entries_list_left"
         android:layout_toEndOf="@id/all_entries_list_main_text"
         android:orientation="vertical">
+
         <TextView
+            android:id="@+id/all_entries_list_time_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/all_entries_list_time_date"
             android:gravity="center_horizontal"
             android:text="20"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
