@@ -10,6 +10,7 @@
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
         <item name="android:editTextStyle">@style/RobotoEditTextStyle</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_back_button_3</item>
+        <item name="actionMenuTextColor">@color/colorPrimary</item>
         <item name="android:actionMenuTextColor">@color/colorPrimary</item>
     </style>
 
