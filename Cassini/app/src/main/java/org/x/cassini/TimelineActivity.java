@@ -142,6 +142,7 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
                 db = new DatabaseHelper(this, version);
                 Log.d(TAG, "loadConfig: db version is " + version);
 
+                int count = 1;
                 // only init dimensions if not in edit mode
                 while ((receiveString = bufferedReader.readLine()) != null) {
                     Log.d(TAG, "loadResources: read dimension: " + receiveString);
@@ -155,10 +156,11 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
                     dimensionButton.setText(dimensionString);
                     dimensionButton.setTextSize(14);
                     dimensionButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black));
-                    int viewId = View.generateViewId();
+                    int viewId = count;
                     dimensionButton.setId(viewId);
                     viewIdList.add(viewId);
                     rgVertical.addView(dimensionButton);
+                    count++;
 //                    Log.d(TAG, "loadDimensions: dimension list size is " + titleList.size() + " view id list size is " + viewIdList.size());
                 }
             }
