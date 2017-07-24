@@ -161,6 +161,7 @@ public class EditTempActivity extends AppCompatActivity {
                     indexButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     indexButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                     indexButton.setTypeface(Typeface.DEFAULT_BOLD);
+                    indexButton.setGravity(Gravity.CENTER);
                     LinearLayout indexHolder = new LinearLayout(getApplicationContext());
                     indexHolder.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     indexHolder.setOrientation(LinearLayout.HORIZONTAL);
@@ -243,6 +244,7 @@ public class EditTempActivity extends AppCompatActivity {
                     indexButton.setGravity(Gravity.CENTER_HORIZONTAL);
                     indexButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                     indexButton.setTypeface(Typeface.DEFAULT_BOLD);
+                    indexButton.setGravity(Gravity.CENTER);
                     indexHolder = new LinearLayout(getApplicationContext());
                     indexHolder.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     indexHolder.setOrientation(LinearLayout.HORIZONTAL);
