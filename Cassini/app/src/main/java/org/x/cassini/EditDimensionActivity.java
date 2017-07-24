@@ -116,9 +116,10 @@ public class EditDimensionActivity extends AppCompatActivity {
             } else {
                 Log.e(TAG, "loadIntent: no such type");
             }
-            if (isActivated) {
-                activateButton.setBackgroundTintList(ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.holo_red_light));
-                activateButton.setText(R.string.deactivate);
+            if (!isActivated) {
+                Log.d(TAG, "loadIntent: button set to activate");
+                activateButton.setBackgroundTintList(ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.darker_gray));
+                activateButton.setText(R.string.activate);
             }
             isExist = true;
         } else {

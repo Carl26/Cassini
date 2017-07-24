@@ -36,7 +36,7 @@ import static java.security.AccessController.getContext;
 public class EditTempActivity extends AppCompatActivity {
     private LinearLayout dimensionsHolder, plusHolder;
     private Toolbar toolbar;
-    private String TAG = "Settings";
+    private String TAG = "EditTemp";
     private boolean isSaving = false;
     private ArrayList<Dimension> dimensionList;
     private ArrayList<Integer> dimensionIdList;
@@ -187,7 +187,7 @@ public class EditTempActivity extends AppCompatActivity {
                             // this is view id
                             bundle.putInt("id", tempId);
                             bundle.putInt("type", listenerTemp.getType());
-                            bundle.putBoolean("isActivated", temp.getIsActivated());
+                            bundle.putBoolean("isActivated", isActivated);
                             Log.d(TAG, "onClick: sent bundle contains " + listenerTemp.getHeader() + " " + tempId + " " + listenerTemp.getType() + " " + isActivated);
                             intent.putExtras(bundle);
                             startActivityForResult(intent, 1);
