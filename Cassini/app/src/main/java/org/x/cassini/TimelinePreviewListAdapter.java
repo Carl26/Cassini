@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 
@@ -21,8 +25,11 @@ import java.util.ArrayList;
 
 class TimelinePreviewListAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<String> info, monthList, dayList;
+    private ArrayList<String> info, monthList, dayList, tempTagList;
     private int dimensionId;
+    private Gson gson;
+    private Type type;
+
 
     TimelinePreviewListAdapter(Context mContext, ArrayList<ArrayList<String>> result, int dimensionId) {
         this.mContext = mContext;
@@ -30,6 +37,10 @@ class TimelinePreviewListAdapter extends BaseAdapter {
         dayList = result.get(1);
         info = result.get(2);
         this.dimensionId = dimensionId;
+        if (dimensionId == -1) {
+            gson = new Gson();
+            type = new TypeToken<ArrayList<String>>(){}.getType();
+        }
         Log.d("TP", "TimelinePreviewListAdapter: " + monthList + dayList + info + " with id " + dimensionId);
     }
 
@@ -59,7 +70,7 @@ class TimelinePreviewListAdapter extends BaseAdapter {
         View view;
         ViewHolder holder;
         Log.d("TP", "getView: getting views with id " + dimensionId);
-        if (dimensionId >= -1) {
+        if (dimensionId > -1) {
             Log.d("TP", "getView: load text layout");
             if (convertView == null) {
                 holder = new ViewHolder();
@@ -77,10 +88,43 @@ class TimelinePreviewListAdapter extends BaseAdapter {
                 holder.day.setText("");
                 holder.month.setText("");
             }
-            String mainText = "" + info.get(position);
-            String dayText = "" + dayList.get(position);
+            String mainText = info.get(position);
+            String dayText = dayList.get(position);
             String monthText = new DateFormatSymbols().getMonths()[Integer.valueOf(monthList.get(position)) - 1];
             holder.main.setText(mainText);
+            holder.day.setText(dayText);
+            holder.month.setText(monthText);
+        } else if (dimensionId == -1) {
+            Log.d("TP", "getView: load text layout");
+            if (convertView == null) {
+                holder = new ViewHolder();
+                view = inflater.inflate(R.layout.timeline_preview_card, null);
+                // setup textviews
+                holder.main = (TextView) view.findViewById(R.id.tp_card_main);
+                holder.day = (TextView) view.findViewById(R.id.tp_card_date);
+                holder.month = (TextView) view.findViewById(R.id.tp_card_month);
+                view.setTag(holder);
+            } else {
+                Log.e("TP", "getView: convert view not null");
+                view = convertView;
+                holder = (ViewHolder) view.getTag();
+                holder.main.setText("");
+                holder.day.setText("");
+                holder.month.setText("");
+            }
+            String mainText = info.get(position);
+            tempTagList = gson.fromJson(mainText, type);
+            String tempTag = "";
+            for (String tag : tempTagList) {
+                if (tempTag.equals("")) {
+                    tempTag = "#" + tag;
+                } else {
+                    tempTag = tempTag + ", #" + tag;
+                }
+            }
+            String dayText = dayList.get(position);
+            String monthText = new DateFormatSymbols().getMonths()[Integer.valueOf(monthList.get(position)) - 1];
+            holder.main.setText(tempTag);
             holder.day.setText(dayText);
             holder.month.setText(monthText);
         } else {
@@ -102,7 +146,7 @@ class TimelinePreviewListAdapter extends BaseAdapter {
                 holder.month.setText("");
             }
             int iconInfo = Integer.valueOf(info.get(position));
-            String dayText = "" + dayList.get(position);
+            String dayText = dayList.get(position);
             String monthText = new DateFormatSymbols().getMonths()[Integer.valueOf(monthList.get(position)) - 1];
             Drawable temp = findDrawable(iconInfo);
             holder.image.setImageDrawable(temp);
