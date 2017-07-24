@@ -269,6 +269,7 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
                     checkedButtonHorizontal = -1;
                     Log.e(TAG, "onCheckedChanged: cleared horizontal check");
                 }
+                Log.d(TAG, "onCheckedChanged: checked id is " + checkedId);
                 if (checkedId != -1) {
                     int position = checkedId - 1;
                     checkedButtonVertical = viewIdList.get(position);
