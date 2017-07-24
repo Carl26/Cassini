@@ -367,6 +367,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<String> resultDate = new ArrayList<>();
         ArrayList<String> resultMonth = new ArrayList<>();
         ArrayList<ArrayList<String>> resultBulk = new ArrayList<>();
+        Gson gson = new Gson();
+        String emptyJson = gson.toJson(new ArrayList<String>());
         while (res.moveToNext()) {
             String date = res.getString(1);
             String day = date.substring(0, 2);
@@ -381,7 +383,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     if (minId == -1) {
                         minId = Integer.valueOf(res.getString(0));
                         String info = res.getString(2);
-                        if (info != null && !info.equals("")) {
+                        if (info != null && !info.equals("") && !info.equalsIgnoreCase(emptyJson)) {
                             resultInfo.add(info);
                             resultDate.add(day);
                             resultMonth.add(month);
@@ -392,7 +394,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     } else {
                         maxId = Integer.valueOf(res.getString(0));
                         String info = res.getString(2);
-                        if (info != null && !info.equals("")) {
+                        if (info != null && !info.equals("") && !info.equalsIgnoreCase(emptyJson)) {
                             resultInfo.add(info);
                             resultDate.add(day);
                             resultMonth.add(month);
