@@ -325,6 +325,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+
     public Cursor getEntry(String query) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery(query, null);
@@ -339,7 +340,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getTagEntries(String tagName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG='" + tagName + "'", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG like '%" + tagName + "%'", null);
         return res;
     }
 

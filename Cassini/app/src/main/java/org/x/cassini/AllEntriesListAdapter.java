@@ -1,6 +1,12 @@
 package org.x.cassini;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -29,7 +35,7 @@ class AllEntriesListAdapter extends BaseAdapter {
     }
 
     class ViewHolder {
-        TextView main, location, date;
+        TextView main, location, date, month;
         LinearLayout tags;
     }
 
@@ -61,7 +67,8 @@ class AllEntriesListAdapter extends BaseAdapter {
             // setup textviews
             holder.main = (TextView) view.findViewById(R.id.all_entries_list_main_text);
             holder.location = (TextView) view.findViewById(R.id.all_entries_list_location);
-            holder.date = (TextView) view.findViewById(R.id.all_entries_list_time);
+            holder.date = (TextView) view.findViewById(R.id.all_entries_list_time_date);
+            holder.month = (TextView) view.findViewById(R.id.all_entries_list_time_month);
             holder.tags = (LinearLayout) view.findViewById(R.id.all_entries_list_tags);
             view.setTag(holder);
         } else {
@@ -70,6 +77,7 @@ class AllEntriesListAdapter extends BaseAdapter {
             holder.main.setText("");
             holder.location.setText("");
             holder.date.setText("");
+            holder.month.setText("");
             holder.tags.removeAllViews();
         }
         storie = stories.get(position);
@@ -77,14 +85,19 @@ class AllEntriesListAdapter extends BaseAdapter {
         holder.main.setText(storie.getmMainText());
 //        Log.e(TAG, "getView: main text is " + storie.getmMainText());
         holder.location.setText(storie.getmLocation());
-        holder.date.setText(storie.getmDateTime());
+        holder.date.setText(storie.getmDay());
+        holder.month.setText(storie.getmMonth());
         // add tags programmatically to the right of location
         if (tagList != null) {
             for (String tag : tagList) {
-                TextView tagView = new TextView(mContext);
-                tagView.setTextColor(view.getResources().getColor(R.color.black));
+                View v = inflater.inflate(R.layout.all_entries_row_tag,null);
+                TextView tagView = (TextView) v.findViewById(R.id.tag_item);
                 tagView.setText(tag);
-                tagView.setPadding(5, 5, 5, 5);
+//                tagView.setTextColor(view.getResources().getColor(R.color.black));
+//                tagView.setPadding(7, 7, 7, 7);
+//                tagView.setTextSize(10);
+//                tagView.setBackgroundResource(R.drawable.background_tag);
+                ((ViewGroup)tagView.getParent()).removeView(tagView);
                 holder.tags.addView(tagView);
             }
         }

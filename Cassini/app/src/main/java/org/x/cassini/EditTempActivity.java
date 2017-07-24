@@ -240,6 +240,7 @@ public class EditTempActivity extends AppCompatActivity {
                     indexButton.setText("" + lastIndex);
                     indexButton.setBackgroundResource(R.drawable.circle);
                     indexButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    indexButton.setGravity(Gravity.CENTER_HORIZONTAL);
                     indexButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                     indexButton.setTypeface(Typeface.DEFAULT_BOLD);
                     indexHolder = new LinearLayout(getApplicationContext());

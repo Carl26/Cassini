@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_marginStart="10dp"
-    android:id="@+id/tag_block_layout"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:id="@+id/tag_block_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    android:id="@+id/tag_block_title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginStart="5dp">
 
         <TextView
             android:id="@+id/tag_alphabet"
@@ -34,13 +30,4 @@
             android:layout_marginTop="30dp"
             android:layout_marginBottom="29dp"
             android:layout_marginRight="50dp" />
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/tag_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-    </android.support.v7.widget.RecyclerView>
 </LinearLayout>

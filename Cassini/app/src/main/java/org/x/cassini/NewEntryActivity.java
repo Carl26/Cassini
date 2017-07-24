@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +51,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String TAG = "NewEntry";
     private TextView time, location, mainText, toolbarTitle;
-    private Button BWeather, BEmotion, BExercise, BStar, BTag;
+    private ImageView BWeather, BEmotion, BExercise, BStar, BTag;
     private LinearLayout newEntryLayout;
     private ArrayList<Dimension> dimensionList;
     private ArrayList<String> dimensionInput;
@@ -111,8 +113,8 @@ public class NewEntryActivity extends AppCompatActivity {
 
         initToolbar();
         // establish database and read dimensions
-//        db = new DatabaseHelper(mContext,1);
         loadResources();
+//        db = new DatabaseHelper(mContext,1);
     }
 
     private void loadResources() {
@@ -204,11 +206,11 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void initButtons() {
-        BWeather = (Button) findViewById(R.id.new_entry_weather);
-        BEmotion = (Button) findViewById(R.id.new_entry_emotion);
-        BExercise = (Button) findViewById(R.id.new_entry_exercise);
-        BStar = (Button) findViewById(R.id.new_entry_star);
-        BTag = (Button) findViewById(R.id.new_entry_tag);
+        BWeather = (ImageView) findViewById(R.id.new_entry_weather);
+        BEmotion = (ImageView) findViewById(R.id.new_entry_emotion);
+        BExercise = (ImageView) findViewById(R.id.new_entry_exercise);
+        BStar = (ImageView) findViewById(R.id.new_entry_star);
+        BTag = (ImageView) findViewById(R.id.new_entry_tag);
         grid = (GridView) findViewById(R.id.new_entry_grid);
 //        weatherAdapter = new NewEntryGridAdapter(mContext, weatherIcons);
 //        grid.setAdapter(weatherAdapter);
@@ -223,7 +225,7 @@ public class NewEntryActivity extends AppCompatActivity {
                     if (!sTag.equals("")) { // user has entered something
                         tagList.add(sTag);
                         Log.d(TAG, "onFocusChange: added tag " + sTag);
-                        BTag.setBackgroundResource(R.drawable.ic_tag_full);
+                        BTag.setImageResource(R.drawable.ic_tag_filled);
                     } else {
                         Log.d(TAG, "onFocusChange: nothing to be added");
                     }
@@ -288,10 +290,10 @@ public class NewEntryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isStar == 0) { // not starred
-                    BStar.setBackgroundResource(R.drawable.ic_star_full);
+                    BStar.setImageResource(R.drawable.ic_star_full);
                     isStar = 1;
                 } else {
-                    BStar.setBackgroundResource(R.drawable.ic_star_empty);
+                    BStar.setImageResource(R.drawable.ic_star_empty);
                     isStar = 0;
                 }
             }
@@ -349,7 +351,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
     private void finishEditingTag() {
         if (tagList.isEmpty()) {
-            BTag.setBackgroundResource(R.drawable.ic_tag_empty);
+            BTag.setImageResource(R.drawable.ic_tag_empty);
         }
         tagGrid.setVisibility(View.GONE);
         tagField.setVisibility(View.GONE);
@@ -546,27 +548,27 @@ public class NewEntryActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // TODO save the selected weather profile to disk
                     switch (position) {
-                        case 0: BWeather.setBackgroundResource(R.drawable.ic_sunny);
+                        case 0: BWeather.setImageResource(R.drawable.ic_sunny);
                             grid.setVisibility(View.GONE);
                             intWeather = SUNNY;
                             break;
-                        case 1: BWeather.setBackgroundResource(R.drawable.ic_cloudy);
+                        case 1: BWeather.setImageResource(R.drawable.ic_cloudy);
                             grid.setVisibility(View.GONE);
                             intWeather = CLOUDY;
                             break;
-                        case 2: BWeather.setBackgroundResource(R.drawable.ic_rainy);
+                        case 2: BWeather.setImageResource(R.drawable.ic_rainy);
                             grid.setVisibility(View.GONE);
                             intWeather = RAINY;
                             break;
-                        case 3: BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
+                        case 3: BWeather.setImageResource(R.drawable.ic_heavy_rain);
                             grid.setVisibility(View.GONE);
                             intWeather = HEAVYRAIN;
                             break;
-                        case 4: BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
+                        case 4: BWeather.setImageResource(R.drawable.ic_thunderstorm);
                             grid.setVisibility(View.GONE);
                             intWeather = THUNDERSTORM;
                             break;
-                        case 5: BWeather.setBackgroundResource(R.drawable.ic_snow);
+                        case 5: BWeather.setImageResource(R.drawable.ic_snow);
                             grid.setVisibility(View.GONE);
                             intWeather = SNOW;
                             break;
@@ -582,27 +584,27 @@ public class NewEntryActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // TODO save the selected weather profile to disk
                     switch (position) {
-                        case 0: BEmotion.setBackgroundResource(R.drawable.ic_happy);
+                        case 0: BEmotion.setImageResource(R.drawable.ic_happy);
                             grid.setVisibility(View.GONE);
                             intEmotion = HAPPY;
                             break;
-                        case 1: BEmotion.setBackgroundResource(R.drawable.ic_sad);
+                        case 1: BEmotion.setImageResource(R.drawable.ic_sad);
                             grid.setVisibility(View.GONE);
                             intEmotion = SAD;
                             break;
-                        case 2: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
+                        case 2: BEmotion.setImageResource(R.drawable.ic_neutral);
                             grid.setVisibility(View.GONE);
                             intEmotion = NEUTRAL;
                             break;
-                        case 3: BEmotion.setBackgroundResource(R.drawable.ic_angry);
+                        case 3: BEmotion.setImageResource(R.drawable.ic_angry);
                             grid.setVisibility(View.GONE);
                             intEmotion = ANGRY;
                             break;
-                        case 4: BEmotion.setBackgroundResource(R.drawable.ic_embarrassed);
+                        case 4: BEmotion.setImageResource(R.drawable.ic_embarrassed);
                             grid.setVisibility(View.GONE);
                             intEmotion = EMBARRASSED;
                             break;
-                        case 5: BEmotion.setBackgroundResource(R.drawable.ic_kiss);
+                        case 5: BEmotion.setImageResource(R.drawable.ic_kiss);
                             grid.setVisibility(View.GONE);
                             intEmotion = KISS;
                             break;
@@ -619,27 +621,27 @@ public class NewEntryActivity extends AppCompatActivity {
                     // TODO save the selected weather profile to disk
                     switch (position) {
                         case 0:
-                            BExercise.setBackgroundResource(R.drawable.ic_walk);
+                            BExercise.setImageResource(R.drawable.ic_walk);
                             grid.setVisibility(View.GONE);
                             intExercise = WALK;
                             break;
                         case 1:
-                            BExercise.setBackgroundResource(R.drawable.ic_run);
+                            BExercise.setImageResource(R.drawable.ic_run);
                             grid.setVisibility(View.GONE);
                             intExercise = RUN;
                             break;
                         case 2:
-                            BExercise.setBackgroundResource(R.drawable.ic_ball);
+                            BExercise.setImageResource(R.drawable.ic_ball);
                             grid.setVisibility(View.GONE);
                             intExercise = BALL;
                             break;
                         case 3:
-                            BExercise.setBackgroundResource(R.drawable.ic_cycling);
+                            BExercise.setImageResource(R.drawable.ic_cycling);
                             grid.setVisibility(View.GONE);
                             intExercise = CYCLING;
                             break;
                         case 4:
-                            BExercise.setBackgroundResource(R.drawable.ic_swim);
+                            BExercise.setImageResource(R.drawable.ic_swim);
                             grid.setVisibility(View.GONE);
                             intExercise = SWIN;
                             break;
@@ -696,62 +698,62 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case SUNNY:
-                    BWeather.setBackgroundResource(R.drawable.ic_sunny);
+                    BWeather.setImageResource(R.drawable.ic_sunny);
                     break;
                 case CLOUDY:
-                    BWeather.setBackgroundResource(R.drawable.ic_cloudy);
+                    BWeather.setImageResource(R.drawable.ic_cloudy);
                     break;
                 case RAINY:
-                    BWeather.setBackgroundResource(R.drawable.ic_rainy);
+                    BWeather.setImageResource(R.drawable.ic_rainy);
                     break;
                 case HEAVYRAIN:
-                    BWeather.setBackgroundResource(R.drawable.ic_heavy_rain);
+                    BWeather.setImageResource(R.drawable.ic_heavy_rain);
                     break;
                 case THUNDERSTORM:
-                    BWeather.setBackgroundResource(R.drawable.ic_thunderstorm);
+                    BWeather.setImageResource(R.drawable.ic_thunderstorm);
                     break;
                 case SNOW:
-                    BWeather.setBackgroundResource(R.drawable.ic_snow);
+                    BWeather.setImageResource(R.drawable.ic_snow);
                     break;
             }
             // emotion
             switch (dbEmotion) {
                 case UNSET: break;
-                case HAPPY: BEmotion.setBackgroundResource(R.drawable.ic_happy);
+                case HAPPY: BEmotion.setImageResource(R.drawable.ic_happy);
                     break;
-                case SAD: BEmotion.setBackgroundResource(R.drawable.ic_sad);
+                case SAD: BEmotion.setImageResource(R.drawable.ic_sad);
                     break;
-                case NEUTRAL: BEmotion.setBackgroundResource(R.drawable.ic_neutral);
+                case NEUTRAL: BEmotion.setImageResource(R.drawable.ic_neutral);
                     break;
-                case ANGRY: BEmotion.setBackgroundResource(R.drawable.ic_angry);
+                case ANGRY: BEmotion.setImageResource(R.drawable.ic_angry);
                     break;
-                case EMBARRASSED: BEmotion.setBackgroundResource(R.drawable.ic_embarrassed);
+                case EMBARRASSED: BEmotion.setImageResource(R.drawable.ic_embarrassed);
                     break;
-                case KISS: BEmotion.setBackgroundResource(R.drawable.ic_kiss);
+                case KISS: BEmotion.setImageResource(R.drawable.ic_kiss);
                     break;
             }
             // exercise
             switch (dbExercise) {
                 case UNSET: break;
-                case WALK: BExercise.setBackgroundResource(R.drawable.ic_walk);
+                case WALK: BExercise.setImageResource(R.drawable.ic_walk);
                     break;
-                case RUN: BExercise.setBackgroundResource(R.drawable.ic_run);
+                case RUN: BExercise.setImageResource(R.drawable.ic_run);
                     break;
-                case BALL: BExercise.setBackgroundResource(R.drawable.ic_ball);
+                case BALL: BExercise.setImageResource(R.drawable.ic_ball);
                     break;
-                case CYCLING: BExercise.setBackgroundResource(R.drawable.ic_cycling);
+                case CYCLING: BExercise.setImageResource(R.drawable.ic_cycling);
                     break;
-                case SWIN: BExercise.setBackgroundResource(R.drawable.ic_swim);
+                case SWIN: BExercise.setImageResource(R.drawable.ic_swim);
                     break;
             }
             // star
             if (dbStar == 1) {
-                BStar.setBackgroundResource(R.drawable.ic_star_full);
+                BStar.setImageResource(R.drawable.ic_star_full);
             }
             // tag
             if (dbTagList != null && !dbTagList.isEmpty()) {
                 // tag list is not empty
-                BTag.setBackgroundResource(R.drawable.ic_tag_full);
+                BTag.setImageResource(R.drawable.ic_tag_full);
                 for (String tagItem : dbTagList) {
                     tagList.add(tagItem);
                 }

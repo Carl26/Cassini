@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -87,6 +88,7 @@ public class AllEntriesActivity extends AppCompatActivity {
         }
     }
 
+
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.all_entries_toolbar);
         setSupportActionBar(toolbar);
@@ -121,7 +123,8 @@ public class AllEntriesActivity extends AppCompatActivity {
                     inputStream.close();
                     int version = Integer.valueOf(receiveString);
                     db = new DatabaseHelper(this, version);
-                    Log.e(TAG, "loadConfig: db version is " + version);
+                    Log.d(TAG, "loadConfig: db version is " + version);
+
                     bufferedReader.close();
                     inputStreamReader.close();
                 }
@@ -158,7 +161,7 @@ public class AllEntriesActivity extends AppCompatActivity {
             mainText = res.getString(8);
             temp = new Storie(date, location, tagList, mainText);
             Log.d(TAG, "formStoriesArray: storie is " + date + " " + location + " " + tagList + " " + mainText);
-            stories.add(temp);
+            stories.add(0,temp);
         }
     }
 

@@ -21,6 +21,7 @@
             android:layout_weight="1"
             android:paddingStart="8dp"
             android:layout_marginStart="15dp"
+            android:fontFamily="sans-serif-light"
             android:layout_gravity="center_vertical"
             android:textSize="20sp"
             android:textColor="@color/black"/>
