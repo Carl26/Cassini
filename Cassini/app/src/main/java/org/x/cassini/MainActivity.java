@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         // initialize various components
         initTextViews();
         findViewById(R.id.mainpage_relative_layout).requestFocus();
-        testing();
+//        testing();
     }
 
     private void clearDb() {
@@ -51,59 +51,59 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: " + this.deleteDatabase("Storie.db"));
     }
 
-    private void testing() {
-        Button viewAll = (Button) findViewById(R.id.button_view_db);
-        viewAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Cursor res = db.getAllEntryData();
-                if (res.getCount() == 0) {
-                    showMessage("Error", "No data found!");
-                    return ;
-                }
-
-                StringBuffer buffer = new StringBuffer();
-                while (res.moveToNext()) {
-                    buffer.append("ID: " + res.getString(0) + "\n");
-                    buffer.append("Date: " + res.getString(1) + "\n");
-                    buffer.append("location: " + res.getString(2) + "\n");
-                    buffer.append("weather: " + res.getString(3) + "\n");
-                    buffer.append("emotion: " + res.getString(4) + "\n");
-                    buffer.append("exercise: " + res.getString(5) + "\n");
-                    buffer.append("star: " + res.getString(6) + "\n");
-                    buffer.append("tag: " + res.getString(7) + "\n");
-                    buffer.append("maintext: " + res.getString(8) + "\n");
-                    buffer.append("dimensionIndicator: " + res.getString(9) + "\n");
-                    buffer.append("d1: " + res.getString(10) + "\n\n");
-                }
-
-                // show all data
-                showMessage("Data", buffer.toString());
-            }
-        });
-
-        Button viewTags = (Button) findViewById(R.id.button_tag);
-        viewTags.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Cursor res = db.getAllTagData();
-                if (res.getCount() == 0) {
-                    showMessage("Error", "No data found!");
-                    return ;
-                }
-
-                StringBuffer buffer = new StringBuffer();
-                while (res.moveToNext()) {
-                    buffer.append("ID: " + res.getString(0) + "\n");
-                    buffer.append("Tag: " + res.getString(1) + "\n");
-                    buffer.append("Entry ID: " + res.getString(2) + "\n\n");
-                }
-
-                // show all data
-                showMessage("Data", buffer.toString());
-            }
-        });
-    }
+//    private void testing() {
+//        Button viewAll = (Button) findViewById(R.id.button_view_db);
+//        viewAll.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Cursor res = db.getAllEntryData();
+//                if (res.getCount() == 0) {
+//                    showMessage("Error", "No data found!");
+//                    return ;
+//                }
+//
+//                StringBuffer buffer = new StringBuffer();
+//                while (res.moveToNext()) {
+//                    buffer.append("ID: " + res.getString(0) + "\n");
+//                    buffer.append("Date: " + res.getString(1) + "\n");
+//                    buffer.append("location: " + res.getString(2) + "\n");
+//                    buffer.append("weather: " + res.getString(3) + "\n");
+//                    buffer.append("emotion: " + res.getString(4) + "\n");
+//                    buffer.append("exercise: " + res.getString(5) + "\n");
+//                    buffer.append("star: " + res.getString(6) + "\n");
+//                    buffer.append("tag: " + res.getString(7) + "\n");
+//                    buffer.append("maintext: " + res.getString(8) + "\n");
+//                    buffer.append("dimensionIndicator: " + res.getString(9) + "\n");
+//                    buffer.append("d1: " + res.getString(10) + "\n\n");
+//                }
+//
+//                // show all data
+//                showMessage("Data", buffer.toString());
+//            }
+//        });
+//
+//        Button viewTags = (Button) findViewById(R.id.button_tag);
+//        viewTags.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Cursor res = db.getAllTagData();
+//                if (res.getCount() == 0) {
+//                    showMessage("Error", "No data found!");
+//                    return ;
+//                }
+//
+//                StringBuffer buffer = new StringBuffer();
+//                while (res.moveToNext()) {
+//                    buffer.append("ID: " + res.getString(0) + "\n");
+//                    buffer.append("Tag: " + res.getString(1) + "\n");
+//                    buffer.append("Entry ID: " + res.getString(2) + "\n\n");
+//                }
+//
+//                // show all data
+//                showMessage("Data", buffer.toString());
+//            }
+//        });
+//    }
 
     public void showMessage(String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

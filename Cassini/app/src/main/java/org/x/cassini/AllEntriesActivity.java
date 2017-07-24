@@ -124,6 +124,7 @@ public class AllEntriesActivity extends AppCompatActivity {
                     int version = Integer.valueOf(receiveString);
                     db = new DatabaseHelper(this, version);
                     Log.d(TAG, "loadConfig: db version is " + version);
+
                     bufferedReader.close();
                     inputStreamReader.close();
                 }

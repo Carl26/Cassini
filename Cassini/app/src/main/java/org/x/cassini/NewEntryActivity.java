@@ -373,13 +373,14 @@ public class NewEntryActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        isResult = true;
+        Log.d(TAG, "onActivityResult: isResult is true");
         super.onActivityResult(requestCode, resultCode, data);
 //        Log.e(TAG, "onActivityResult: result here");
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 String modifiedText = data.getStringExtra("mainText");
                 mainText.setText(modifiedText);
-                isResult = true;
             }
         }
     }
@@ -411,6 +412,8 @@ public class NewEntryActivity extends AppCompatActivity {
 //        }
         if (isEditMode && !isResult) {
             loadDiary();
+        } else {
+            Log.e(TAG, "onResume: not loading diary");
         }
         mainText.requestFocus();
     }
@@ -443,6 +446,7 @@ public class NewEntryActivity extends AppCompatActivity {
                 dimensionInput.add(tempInput);
                 Log.d(TAG, "saveDiary: added input " + tempInput + " to " + tempDimension.getHeader());
             }
+            Log.d(TAG, "saveDiary: dimension id list size is " + dimensionIdList);
         } else {
             Log.e(TAG, "saveDiary: dimension list is empty");
         }
@@ -681,6 +685,7 @@ public class NewEntryActivity extends AppCompatActivity {
                 for (String columnName : dbIndicatorList) {
                     int position = Integer.valueOf(columnName.substring(1));
                     int index = 9 + position;
+                    Log.d(TAG, "loadDiary: dimension position is " + index);
                     dimensionPosition.add(position);
                     dimensionInput.add(cursor.getString(index));
                 }
@@ -761,16 +766,20 @@ public class NewEntryActivity extends AppCompatActivity {
                 try {
                     FileInputStream fis = new FileInputStream(file);
                     BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-                    String line;
+                    String line = br.readLine();
+                    Log.d(TAG, "loadDiary: db version is " + line);
                     int count = 0;
                     int inputIndex = 0;
                     for (int position : dimensionPosition) {
-                        count = position - count;
-                        for (int i = 0; i < count; i++) {
+//                        count = position;
+                        Log.d(TAG, "loadDiary: position is " + position + " count is " + count + " inputindex is " + inputIndex);
+                        for (int i = 0; i < position - count - 1; i++) {
                             // read unneeded lines
                             br.readLine();
+                            Log.e(TAG, "loadDiary: skipped one line");
                         }
                         line = br.readLine();
+                        Log.e(TAG, "loadDiary: dimension line is " + line);
                         int index = line.indexOf(":");
                         String dimensionId = line.substring(2, index);
                         String dimensionString = line.substring(index + 1);
@@ -790,10 +799,12 @@ public class NewEntryActivity extends AppCompatActivity {
                         dimensionIdList.add(tempId);
                         dimensionList.add(temp);
                         inputIndex++;
+                        count = position;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                Log.d(TAG, "loadDiary: dimension list after loading is " + dimensionList.size());
             }
         } else {
             Log.e(TAG, "loadDiary: unable to find entry" + sDate);

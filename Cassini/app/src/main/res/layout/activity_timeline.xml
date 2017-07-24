@@ -105,53 +105,53 @@
         android:layout_centerHorizontal="true"/>
 
     <RadioGroup
-            android:layout_width="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/timeline_radio_group_horizontal"
+        android:layout_below="@id/timeline_divider"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true">
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="1dp"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="10dp"
-            android:id="@+id/timeline_radio_group_horizontal"
-            android:layout_below="@id/timeline_divider"
-            android:orientation="horizontal"
-            android:layout_centerHorizontal="true">
+            android:checked="false"
+            android:id="@+id/timeline_rb_weather"
+            android:drawableRight="@drawable/ic_cloud_filed"
+            android:layout_margin="10dp"/>
 
-            <View
-                android:layout_width="20dp"
-                android:layout_height="1dp"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:id="@+id/timeline_rb_emotion"
+            android:drawableRight="@drawable/ic_happy"
+            android:layout_margin="10dp"/>
 
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:id="@+id/timeline_rb_weather"
-                android:drawableRight="@drawable/ic_cloud_filed"
-                android:layout_margin="10dp"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:id="@+id/timeline_rb_exercise"
+            android:drawableRight="@drawable/ic_exercise_filled"
+            android:layout_margin="10dp"/>
 
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:id="@+id/timeline_rb_emotion"
-                android:drawableRight="@drawable/ic_happy"
-                android:layout_margin="10dp"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:id="@+id/timeline_rb_exercise"
-                android:drawableRight="@drawable/ic_exercise_filled"
-                android:layout_margin="10dp"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:id="@+id/timeline_rb_tag"
-                android:drawableRight="@drawable/ic_tag_filled"
-                android:layout_margin="10dp"/>
-        </RadioGroup>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:id="@+id/timeline_rb_tag"
+            android:drawableRight="@drawable/ic_tag_filled"
+            android:layout_margin="10dp"/>
+    </RadioGroup>
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -165,25 +165,25 @@
             android:layout_marginStart="25dp"
             android:id="@+id/timeline_radio_group_vertical">
 
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:text="What have I learnt today?"
-                android:fontFamily="sans-serif-light"
-                android:textSize="18sp"
-                android:id="@+id/timeline_rb_learnt"
-                android:layout_margin="5dp"/>
+            <!--<RadioButton-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:checked="false"-->
+                <!--android:text="What have I learnt today?"-->
+                <!--android:fontFamily="sans-serif-light"-->
+                <!--android:textSize="18sp"-->
+                <!--android:id="@+id/timeline_rb_learnt"-->
+                <!--android:layout_margin="5dp"/>-->
 
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:text="What problem did I face today ?"
-                android:fontFamily="sans-serif-light"
-                android:textSize="18sp"
-                android:id="@+id/timeline_rb_problem"
-                android:layout_margin="5dp"/>
+            <!--<RadioButton-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:checked="false"-->
+                <!--android:text="What problem did I face today ?"-->
+                <!--android:fontFamily="sans-serif-light"-->
+                <!--android:textSize="18sp"-->
+                <!--android:id="@+id/timeline_rb_problem"-->
+                <!--android:layout_margin="5dp"/>-->
         </RadioGroup>
     </ScrollView>
 </RelativeLayout>

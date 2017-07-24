@@ -56,7 +56,7 @@
             android:id="@+id/main_timeline_view"
             android:background="@drawable/circle"
             android:layout_toEndOf="@id/divider_top"
-            android:text="Lenses"
+            android:text="Carousel"
             android:textColor="@color/colorPrimary"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -427,19 +427,19 @@
         <!--android:layout_alignParentStart="true"-->
         <!--android:layout_alignParentBottom="true" />-->
 
-    <Button
-        android:id="@+id/button_view_db"
-        android:text="View Db"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"/>
-    <Button
-        android:id="@+id/button_tag"
-        android:text="tag"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:layout_alignTop="@id/button_view_db"
-        android:layout_toEndOf="@id/button_view_db"/>
+    <!--<Button-->
+        <!--android:id="@+id/button_view_db"-->
+        <!--android:text="View Db"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_alignParentTop="true"/>-->
+    <!--<Button-->
+        <!--android:id="@+id/button_tag"-->
+        <!--android:text="tag"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_alignTop="@id/button_view_db"-->
+        <!--android:layout_toEndOf="@id/button_view_db"/>-->
 
 </android.support.percent.PercentRelativeLayout>

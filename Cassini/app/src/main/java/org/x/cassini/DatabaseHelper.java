@@ -74,18 +74,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (newVersion > oldVersion) {
             // add new dimension as column into entry table
-            String NEW_COLUMN_NAME = dimensionHolder;
-            db.execSQL("ALTER TABLE " + TABLE_ENTRY_NAME + "ADD COLUMN " + NEW_COLUMN_NAME + "TEXT");
+            int count = newVersion - oldVersion;
+            for (int i = 1; i <= count; i++) {
+                int columnId = oldVersion + i;
+                String NEW_COLUMN_NAME = "D" + columnId;
+                Log.d("DB", "onUpgrade: new column id is " + NEW_COLUMN_NAME);
+                db.execSQL("ALTER TABLE " + TABLE_ENTRY_NAME + " ADD COLUMN " + NEW_COLUMN_NAME + " TEXT");
+            }
         }
+        Log.e("DB", "onUpgrade: upgrade complete");
     }
 
     // upgrade db right after calling this
-    public void updateDimensions(String newDimension, int oldVersion, int newVersion) {
-        dimensionHolder = newDimension;
-    }
+//    public void updateDimensions(String newDimension, int oldVersion, int newVersion) {
+//        dimensionHolder = newDimension;
+//        Log.d("DB", "updateDimensions: old version is " + oldVersion + " new version is " + newVersion + " and new dimension is " + dimensionHolder);
+//    }
 
     public boolean insertData(String date, String location, int weather, int emotion, int exercise, int star,
-                        ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {
+                              ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {
         Log.d("DB", "loadDiary: loaded info " + " date " + date + " location " + location +
                 " weather " + weather + " emotion " + emotion + " exercise " + exercise + " star " + star +
                 " tags " + tagList + " maintext " + mainText + " dimension indicators " + dimensionData);
@@ -335,5 +342,61 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG like '%" + tagName + "%'", null);
         return res;
+    }
+
+    public ArrayList<ArrayList<String>> getTimeline(String startDate, String endDate, int dimensionId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String columnNeeded;
+        if (dimensionId == -4) {
+            columnNeeded = COL_WEATHER;
+        } else if (dimensionId == -4) {
+            columnNeeded = COL_EMOTION;
+        } else if (dimensionId == -4) {
+            columnNeeded = COL_EXERCISE;
+        } else if (dimensionId == -4) {
+            columnNeeded = COL_TAG;
+        } else {
+            columnNeeded = "D" + dimensionId;
+        }
+        Cursor res = db.rawQuery("select " + COL_ID + "," + COL_DATE + "," + columnNeeded + " from " + TABLE_ENTRY_NAME, null);
+        // find starting entry
+        long start = Long.valueOf(startDate);
+        long end = Long.valueOf(endDate);
+        int minId = -1, maxId;
+        ArrayList<String> resultInfo = new ArrayList<>();
+        ArrayList<String> resultDate = new ArrayList<>();
+        ArrayList<String> resultMonth = new ArrayList<>();
+        ArrayList<ArrayList<String>> resultBulk = new ArrayList<>();
+        while (res.moveToNext()) {
+            String date = res.getString(1);
+            String day = date.substring(0, 2);
+            String month = date.substring(3, 5);
+            String year = date.substring(6, 10);
+            String currentString = year + month + day;
+            long current = Long.valueOf(currentString);
+            if (current >= start && current <= end) {
+                // greater than lower range
+                // check if its the first
+                if (minId == -1) {
+                    minId = Integer.valueOf(res.getString(0));
+                    String info = res.getString(2);
+                    resultInfo.add(info);
+                    resultDate.add(day);
+                    resultMonth.add(month);
+                    Log.d("DB", "getTimeline: found the first " +  info + " with id " + minId + " at " + month + " " + day);
+                } else {
+                    maxId = Integer.valueOf(res.getString(0));
+                    String info = res.getString(2);
+                    resultInfo.add(info);
+                    resultDate.add(day);
+                    resultMonth.add(month);
+                    Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
+                }
+            }
+        }
+        resultBulk.add(resultMonth);
+        resultBulk.add(resultDate);
+        resultBulk.add(resultInfo);
+        return resultBulk;
     }
 }

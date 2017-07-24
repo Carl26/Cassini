@@ -70,7 +70,7 @@
             android:id="@+id/all_entries_list_time_date"
             android:gravity="center_horizontal"
             android:text="20"
-            android:textSize="35sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="@color/black"/>
         <TextView
@@ -80,7 +80,7 @@
             android:layout_below="@id/all_entries_list_time_date"
             android:text="May"
             android:gravity="center_horizontal"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:paddingBottom="5dp"
             android:layout_centerHorizontal="true"

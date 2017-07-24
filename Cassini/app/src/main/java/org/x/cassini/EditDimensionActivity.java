@@ -20,7 +20,7 @@ public class EditDimensionActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Button saveButton, activateButton;
     private EditText titleText;
-    private boolean isActivated = false, isExist = false;
+    private boolean isActivated = true, isExist = false;
     private RadioGroup typeBox;
 
     @Override

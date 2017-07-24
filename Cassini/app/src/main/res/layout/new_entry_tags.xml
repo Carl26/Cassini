@@ -8,6 +8,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/new_entry_tag_adapter_field"
         android:background="@drawable/background_tag"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textSize="12sp"
         android:textColor="@color/colorPrimaryDark"
         android:fontFamily="sans-serif-light"
