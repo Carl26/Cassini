@@ -17,7 +17,7 @@
             android:textStyle="bold"
             android:textColor="#ffffff"
             android:layout_gravity="center"
-            android:id="@+id/new_entry_toolbar_title" />
+            android:id="@+id/main_text_toolbar_title" />
     </android.support.v7.widget.Toolbar>
 
     <EditText

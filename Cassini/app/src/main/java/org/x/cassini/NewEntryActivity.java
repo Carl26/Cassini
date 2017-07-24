@@ -81,7 +81,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private static String TABLE_ENTRY_NAME = "entry_table";
     private File file;
     private ArrayList<String> dbTagList;
-    private String dbId;
+    private String dbId, toolbarTitleString;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -186,7 +186,8 @@ public class NewEntryActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.new_entry_toolbar);
         setSupportActionBar(toolbar);
         toolbarTitle = (TextView) findViewById(R.id.new_entry_toolbar_title);
-        toolbarTitle.setText(new SimpleDateFormat("MMMM dd, yyyy").format(currentDateInfo));
+        toolbarTitleString = new SimpleDateFormat("MMMM dd, yyyy").format(currentDateInfo);
+        toolbarTitle.setText(toolbarTitleString);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -361,6 +362,7 @@ public class NewEntryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
+                bundle.putString("title", toolbarTitleString);
                 bundle.putString("mainText", (String) mainText.getText());
                 Intent mainTextAct = new Intent(mContext, MainTextActivity.class);
                 mainTextAct.putExtras(bundle);
