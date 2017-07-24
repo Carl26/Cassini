@@ -381,17 +381,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     if (minId == -1) {
                         minId = Integer.valueOf(res.getString(0));
                         String info = res.getString(2);
-                        resultInfo.add(info);
-                        resultDate.add(day);
-                        resultMonth.add(month);
-                        Log.d("DB", "getTimeline: found the first " + info + " with id " + minId + " at " + month + " " + day);
+                        if (info != null && !info.equals("")) {
+                            resultInfo.add(info);
+                            resultDate.add(day);
+                            resultMonth.add(month);
+                            Log.d("DB", "getTimeline: found the first " + info + " with id " + minId + " at " + month + " " + day);
+                        } else {
+                            Log.d("DB", "getTimeline: null not first");
+                        }
                     } else {
                         maxId = Integer.valueOf(res.getString(0));
                         String info = res.getString(2);
-                        resultInfo.add(info);
-                        resultDate.add(day);
-                        resultMonth.add(month);
-                        Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
+                        if (info != null && !info.equals("")) {
+                            resultInfo.add(info);
+                            resultDate.add(day);
+                            resultMonth.add(month);
+                            Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
+                        } else {
+                            Log.d("DB", "getTimeline: found null entry");
+                        }
                     }
                 }
             } else {
