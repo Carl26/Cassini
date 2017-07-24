@@ -47,7 +47,8 @@ class NewEntryTagAdapter extends BaseAdapter {
         if (convertView == null) {
             grid = inflater.inflate(R.layout.new_entry_tags, null);
             tagItem = (TextView) grid.findViewById(R.id.new_entry_tag_adapter_field);
-            tagItem.setText(mTags.get(position));
+            String tagWithHash = "#" + mTags.get(position);
+            tagItem.setText(tagWithHash);
         } else {
             grid = convertView;
             Log.e(TAG, "getView: convertView is not null");

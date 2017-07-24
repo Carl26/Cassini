@@ -84,6 +84,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private File file;
     private ArrayList<String> dbTagList;
     private String dbId, toolbarTitleString;
+    private EditText editTagField;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -314,11 +315,13 @@ public class NewEntryActivity extends AppCompatActivity {
                             AlertDialog.Builder alert = new AlertDialog.Builder(NewEntryActivity.this);
                             String existingTag = tagList.get(position);
                             alert.setTitle("Edit tag");
-                            final EditText input = new EditText(NewEntryActivity.this);
-                            input.setMaxLines(1);
-                            input.setInputType(InputType.TYPE_CLASS_TEXT);
-                            input.setText(existingTag);
-                            alert.setView(input);
+                            editTagField = new EditText(NewEntryActivity.this);
+                            editTagField.setMaxLines(1);
+                            editTagField.setInputType(InputType.TYPE_CLASS_TEXT);
+                            editTagField.setText(existingTag);
+                            editTagField.setFocusable(true);
+                            editTagField.setFocusableInTouchMode(true);
+                            alert.setView(editTagField);
 
                             alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -330,7 +333,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
                             alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    String modifiedTag = input.getText().toString();
+                                    String modifiedTag = editTagField.getText().toString();
                                     if (!modifiedTag.equals("")) {
                                         tagList.set(position, modifiedTag);
                                         Toast.makeText(mContext, "Tag updated!", Toast.LENGTH_SHORT).show();
