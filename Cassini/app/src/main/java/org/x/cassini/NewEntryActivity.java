@@ -85,6 +85,7 @@ public class NewEntryActivity extends AppCompatActivity {
     private ArrayList<String> dbTagList;
     private String dbId, toolbarTitleString;
     private EditText editTagField;
+    private int focusedId = -1;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -241,6 +242,7 @@ public class NewEntryActivity extends AppCompatActivity {
                 } else {
                     tagField.setText("");
                     Log.d(TAG, "onFocusChange: focused");
+                    grid.setVisibility(View.GONE);
                 }
             }
         });
@@ -252,11 +254,16 @@ public class NewEntryActivity extends AppCompatActivity {
                     grid.setVisibility(View.VISIBLE);
                     Log.d(TAG, "onClick: Grid is visible");
                     initGrid(0);
+                    focusedId = 0;
                 } else {
-                    // TODO test click weather then click other buttons like exercise
-                    grid.setVisibility(View.GONE);
-                    Log.d(TAG, "onClick: Grid is gone");
+                    if (focusedId == 0 || focusedId == -1) {
+                        grid.setVisibility(View.GONE);
+                    } else {
+                        Log.e(TAG, "onClick: init grid with id " + focusedId);
+                        initGrid(0);
+                    }
                 }
+                tagField.setVisibility(View.GONE);
             }
         });
 
@@ -267,11 +274,16 @@ public class NewEntryActivity extends AppCompatActivity {
                     grid.setVisibility(View.VISIBLE);
                     Log.d(TAG, "onClick: Grid is visible");
                     initGrid(1);
+                    focusedId = 1;
                 } else {
-                    // TODO test click weather then click other buttons like exercise
-                    grid.setVisibility(View.GONE);
-                    Log.d(TAG, "onClick: Grid is gone");
+                    if (focusedId == 1 || focusedId == -1) {
+                        grid.setVisibility(View.GONE);
+                    } else {
+                        Log.e(TAG, "onClick: init grid with id " + focusedId);
+                        initGrid(1);
+                    }
                 }
+                tagField.setVisibility(View.GONE);
             }
         });
 
@@ -282,11 +294,16 @@ public class NewEntryActivity extends AppCompatActivity {
                     grid.setVisibility(View.VISIBLE);
                     Log.d(TAG, "onClick: Grid is visible");
                     initGrid(2);
+                    focusedId = 2;
                 } else {
-                    // TODO test click weather then click other buttons like exercise
-                    grid.setVisibility(View.GONE);
-                    Log.d(TAG, "onClick: Grid is gone");
+                    if (focusedId == 2 || focusedId == -1) {
+                        grid.setVisibility(View.GONE);
+                    } else {
+                        Log.e(TAG, "onClick: init grid with id " + focusedId);
+                        initGrid(2);
+                    }
                 }
+                tagField.setVisibility(View.GONE);
             }
         });
 
@@ -404,9 +421,9 @@ public class NewEntryActivity extends AppCompatActivity {
                         alert.show();
                     }
                 });
+                tagAdapter.notifyDataSetChanged();
             }
         }
-        tagAdapter.notifyDataSetChanged();
     }
 
     private void initBottomPart() {
@@ -591,6 +608,7 @@ public class NewEntryActivity extends AppCompatActivity {
     }
 
     private void initGrid(int type) {
+
         if (type == 0) { // 0 for weather
             weatherAdapter = new NewEntryGridAdapter(mContext, weatherIcons);
             grid.setAdapter(weatherAdapter);
