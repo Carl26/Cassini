@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,335 +8,438 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:id="@+id/mainpage_relative_layout"
+    android:background="@drawable/road"
     tools:context="org.x.cassini.MainActivity">
 
     <TextView
-        android:id="@+id/main_title"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:text="Stories"
-        android:gravity="center"
-        android:background="#434343"
-        android:textColor="#ffffff"
-        android:fontFamily="cursive"
-        android:textSize="24dp"
-        android:layout_alignParentEnd="true"/>
+            android:id="@+id/main_title"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="Storie"
+            android:gravity="center"
+            android:background="#434343"
+            android:textColor="#ffffff"
+            android:fontFamily="cursive"
+            android:textSize="24dp"
+            android:layout_alignParentEnd="true"/>
 
-    <View
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_gravity="center"
-        android:layout_below="@id/main_title"
-        android:background="@android:color/darker_gray"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:orientation="horizontal"
-        android:layout_below="@id/main_title"
-        android:id="@+id/main_layout_all_entries">
-
-        <ImageView
-            android:id="@+id/main_all_entries_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="15dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/listview" />
-
+        app:layout_heightPercent="35%"
+        android:id="@+id/first_row"
+        android:layout_below="@id/main_title">
+        <View
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/divider_top"
+            android:background="@android:color/transparent"/>
         <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:id="@+id/main_all_entries"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="0dp"
-            android:text="All Entries"
-            android:textSize="14dp" />
-
-        <ImageView
-            android:id="@+id/main_goTo2"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="14dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/go_to" />
-
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_gravity="center"
-        android:layout_below="@id/main_layout_all_entries"
-        android:background="@android:color/darker_gray"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/main_layout_all_entries"
-        android:orientation="horizontal"
-        android:id="@+id/main_layout_timeline_view">
-
-        <ImageView
-            android:id="@+id/main_timeline_view_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="15dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/timelineview" />
+            android:background="@drawable/circle"
+            android:layout_toStartOf="@id/divider_top"
+            android:text="Entries"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
 
         <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:id="@+id/main_timeline_view"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="0dp"
-            android:text="Timeline View"
-            android:textSize="14dp" />
+            android:background="@drawable/circle"
+            android:layout_toEndOf="@id/divider_top"
+            android:text="Carousel"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
+    </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/main_goTo1"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="14dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/go_to" />
-
-    </LinearLayout>
-
-    <View
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_gravity="center"
-        android:layout_below="@id/main_layout_timeline_view"
-        android:background="@android:color/darker_gray"/>
-
-    <LinearLayout
-        android:id="@+id/main_layout_tags"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_below="@id/main_layout_timeline_view"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true">
-
-        <ImageView
-            android:id="@+id/main_tags_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="15dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/tag" />
-
+        app:layout_heightPercent="20%"
+        android:id="@+id/second_row"
+        android:layout_below="@id/first_row">
+        <View
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/divider_middle"
+            android:background="@android:color/transparent"/>
         <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:id="@+id/main_tags"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="0dp"
+            android:background="@drawable/circle"
+            android:layout_toStartOf="@id/divider_middle"
             android:text="Tags"
-            android:textSize="14dp" />
-
-        <ImageView
-            android:id="@+id/main_goTo3"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="14dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/go_to" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_gravity="center"
-        android:layout_below="@id/main_layout_tags"
-        android:background="@android:color/darker_gray"/>
-
-    <LinearLayout
-        android:id="@+id/main_layout_starred"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/main_layout_tags"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/main_starred_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="15dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/star_empty" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
 
         <TextView
-            android:id="@+id/main_starred"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="0dp"
-            android:text="Starred"
-            android:textSize="14dp" />
-
-        <ImageView
-            android:id="@+id/main_goTo4"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="14dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/go_to" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_gravity="center"
-        android:layout_below="@id/main_layout_starred"
-        android:background="@android:color/darker_gray"/>
-
-    <LinearLayout
-        android:id="@+id/main_layout_stories"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/main_layout_starred"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/main_stories_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="15dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/story" />
-
-        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:id="@+id/main_stories"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="0dp"
+            android:background="@drawable/circle_light_gray"
+            android:layout_toEndOf="@id/divider_middle"
             android:text="Stories"
-            android:textSize="14dp" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
+    </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/main_goTo5"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="14dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/go_to" />
-
-    </LinearLayout>
-
-    <View
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_gravity="center"
-        android:layout_below="@id/main_layout_stories"
-        android:background="@android:color/darker_gray"/>
-
-    <LinearLayout
-        android:id="@+id/main_layout_settings"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@id/main_layout_stories"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/main_settings_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="15dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/setting" />
+        app:layout_heightPercent="35%"
+        android:id="@+id/third_row"
+        android:layout_below="@id/second_row">
+        <View
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/divider_bottom"
+            android:background="@android:color/transparent"/>
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/main_settings"
+            android:background="@drawable/circle"
+            android:layout_toStartOf="@id/divider_bottom"
+            android:text="Settings"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
 
         <TextView
-            android:id="@+id/main_settings"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="0dp"
-            android:text="Settings"
-            android:textSize="14dp" />
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/main_new_entry"
+            android:background="@drawable/circle"
+            android:layout_toEndOf="@id/divider_bottom"
+            android:text="+"
+            android:textColor="@color/colorPrimary"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:gravity="center"/>
+    </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/main_goTo6"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="14dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/go_to" />
-    </LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_below="@id/main_title"-->
+        <!--android:id="@+id/main_layout_all_entries">-->
 
+        <!--<ImageView-->
+            <!--android:id="@+id/main_all_entries_icon"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="15dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/listview" />-->
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_below="@id/main_layout_settings"
-        android:background="@android:color/darker_gray"
-        android:id="@+id/view" />
+        <!--<TextView-->
+            <!--android:id="@+id/main_all_entries"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:paddingLeft="0dp"-->
+            <!--android:text="All Entries"-->
+            <!--android:textSize="14dp" />-->
 
-    <TextView
-        android:id="@+id/main_new_entry"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="+"
-        android:textSize="100sp"
-        android:textColor="#434343"
-        android:gravity="center"
-        android:layout_below="@id/main_layout_settings"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true" />
-
-    <Button
-        android:id="@+id/button_view_db"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/view"
-        android:layout_below="@+id/view"
-        android:layout_marginTop="11dp"
-        android:text="View DB" />
-
-    <Button
-        android:id="@+id/button_tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/button_view_db"
-        android:layout_marginStart="16dp"
-        android:layout_toEndOf="@+id/button_view_db"
-        android:text="tags" />
+        <!--<ImageView-->
+            <!--android:id="@+id/main_goTo2"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="14dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/go_to" />-->
 
 
-</RelativeLayout>
+    <!--</LinearLayout>-->
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_below="@id/main_layout_all_entries"-->
+        <!--android:background="@android:color/darker_gray"/>-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@id/main_layout_all_entries"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:id="@+id/main_layout_timeline_view">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_timeline_view_icon"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="15dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/timelineview" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/main_timeline_view"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:paddingLeft="0dp"-->
+            <!--android:text="Timeline View"-->
+            <!--android:textSize="14dp" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_goTo1"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="14dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/go_to" />-->
+
+    <!--</LinearLayout>-->
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_below="@id/main_layout_timeline_view"-->
+        <!--android:background="@android:color/darker_gray"/>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/main_layout_tags"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_below="@id/main_layout_timeline_view"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentEnd="true">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_tags_icon"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="15dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/tag" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/main_tags"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:paddingLeft="0dp"-->
+            <!--android:text="Tags"-->
+            <!--android:textSize="14dp" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_goTo3"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="14dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/go_to" />-->
+    <!--</LinearLayout>-->
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_below="@id/main_layout_tags"-->
+        <!--android:background="@android:color/darker_gray"/>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/main_layout_starred"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@id/main_layout_tags"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_starred_icon"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="15dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/star_empty" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/main_starred"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:paddingLeft="0dp"-->
+            <!--android:text="Starred"-->
+            <!--android:textSize="14dp" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_goTo4"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="14dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/go_to" />-->
+    <!--</LinearLayout>-->
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_below="@id/main_layout_starred"-->
+        <!--android:background="@android:color/darker_gray"/>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/main_layout_stories"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@id/main_layout_starred"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_stories_icon"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="15dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/story" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/main_stories"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:paddingLeft="0dp"-->
+            <!--android:text="Stories"-->
+            <!--android:textSize="14dp" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_goTo5"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="14dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/go_to" />-->
+
+    <!--</LinearLayout>-->
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_below="@id/main_layout_stories"-->
+        <!--android:background="@android:color/darker_gray"/>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/main_layout_settings"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_below="@id/main_layout_stories"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_settings_icon"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="15dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/setting" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/main_settings"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:paddingLeft="0dp"-->
+            <!--android:text="Settings"-->
+            <!--android:textSize="14dp" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/main_goTo6"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:padding="14dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/go_to" />-->
+    <!--</LinearLayout>-->
+
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_below="@id/main_layout_settings"-->
+        <!--android:background="@android:color/darker_gray"-->
+        <!--android:id="@+id/view" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/main_new_entry"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:text="+"-->
+        <!--android:textSize="100sp"-->
+        <!--android:textColor="#434343"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_below="@id/main_layout_settings"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentBottom="true" />-->
+
+    <!--<Button-->
+        <!--android:id="@+id/button_view_db"-->
+        <!--android:text="View Db"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_alignParentTop="true"/>-->
+    <!--<Button-->
+        <!--android:id="@+id/button_tag"-->
+        <!--android:text="tag"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_alignTop="@id/button_view_db"-->
+        <!--android:layout_toEndOf="@id/button_view_db"/>-->
+
+</android.support.percent.PercentRelativeLayout>

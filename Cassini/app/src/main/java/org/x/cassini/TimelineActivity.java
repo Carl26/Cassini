@@ -2,20 +2,37 @@ package org.x.cassini;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.IdRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 /**
  * Created by Guo Mingxuan on 2017/7/5 0005.
@@ -33,7 +50,12 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
     private Context mContext;
     private RadioGroup rgHorizontal, rgVertical;
     private int checkedButtonHorizontal = -1, checkedButtonVertical = -1;
-    private RadioButton rbWeather, rbEmotion, rbExercise, rbTag, rbLearn, rbProblem;
+    private RadioButton rbWeather, rbEmotion, rbExercise, rbTag;
+    private File file;
+    private int version;
+    private DatabaseHelper db;
+    private ArrayList<String> titleList, idList;
+    private ArrayList<Integer> viewIdList;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
@@ -66,37 +88,88 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
     private void generateTimeline() {
         Bundle bundle = new Bundle();
         String title = "";
+        int dimensionId = -10;
         if (checkedButtonHorizontal == -1) {
-            switch (checkedButtonVertical) {
-                case 0: title = rbLearn.getText().toString();
-                    break;
-                case 1: title = rbProblem.getText().toString();
-                    break;
-            }
+            int position = checkedButtonVertical - 1;
+            title = titleList.get(position);
+            dimensionId = Integer.valueOf(idList.get(position));
         } else {
             switch (checkedButtonHorizontal) {
                 case 0: title = "Weather";
+                    dimensionId = -4;
                     break;
                 case 1: title = "Emotion";
+                    dimensionId = -3;
                     break;
                 case 2: title = "Exercise";
+                    dimensionId = -2;
                     break;
                 case 3: title = "Tag";
+                    dimensionId = -1;
                     break;
             }
         }
         bundle.putString("title", title);
         Log.d(TAG, "generateTimeline: title is " + title);
-        // TODO put button info
         bundle.putInt("startDay", startDay);
         bundle.putInt("startMonth", startMonth);
         bundle.putInt("startYear", startYear);
         bundle.putInt("endDay", endDay);
         bundle.putInt("endMonth", endMonth);
         bundle.putInt("endYear", endYear);
+        bundle.putInt("dimensionId", dimensionId);
+        Log.d(TAG, "generateTimeline: dimension id is " + dimensionId);
+        Log.e(TAG, "generateTimeline: " + startDay + startMonth + startYear + " " + endDay + endMonth + endYear);
         Intent intent = new Intent(this, TimelinePreviewActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    private void loadDimensions() {
+        try {
+            file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config.txt");
+            FileInputStream inputStream = new FileInputStream(file);
+            titleList = new ArrayList<>();
+            idList = new ArrayList<>();
+            viewIdList = new ArrayList<>();
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                receiveString = bufferedReader.readLine();
+                inputStream.close();
+                version = Integer.valueOf(receiveString);
+                db = new DatabaseHelper(this, version);
+                Log.d(TAG, "loadConfig: db version is " + version);
+
+                int count = 1;
+                // only init dimensions if not in edit mode
+                while ((receiveString = bufferedReader.readLine()) != null) {
+                    Log.d(TAG, "loadResources: read dimension: " + receiveString);
+                    int index = receiveString.indexOf(":");
+                    String dimensionId = receiveString.substring(2, index);
+                    String dimensionString = receiveString.substring(index + 1);
+                    Log.d(TAG, "loadResources: id is " + dimensionId + " and dimension is " + dimensionString);
+                    titleList.add(dimensionString);
+                    idList.add(dimensionId);
+                    RadioButton dimensionButton = new RadioButton(getApplicationContext());
+                    dimensionButton.setText(dimensionString);
+                    dimensionButton.setTextSize(14);
+                    dimensionButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black));
+                    int viewId = count;
+                    dimensionButton.setId(viewId);
+                    viewIdList.add(viewId);
+                    rgVertical.addView(dimensionButton);
+                    count++;
+//                    Log.d(TAG, "loadDimensions: dimension list size is " + titleList.size() + " view id list size is " + viewIdList.size());
+                }
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e(TAG, "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e(TAG, "Can not read file: " + e.toString());
+        }
     }
 
     private void initComponents() {
@@ -107,8 +180,6 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
         rbEmotion = (RadioButton) findViewById(R.id.timeline_rb_emotion);
         rbExercise = (RadioButton) findViewById(R.id.timeline_rb_exercise);
         rbTag = (RadioButton) findViewById(R.id.timeline_rb_tag);
-        rbLearn = (RadioButton) findViewById(R.id.timeline_rb_learnt);
-        rbProblem = (RadioButton) findViewById(R.id.timeline_rb_problem);
 
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,14 +233,17 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
         rgHorizontal = (RadioGroup) findViewById(R.id.timeline_radio_group_horizontal);
         rgVertical = (RadioGroup) findViewById(R.id.timeline_radio_group_vertical);
 
+        loadDimensions();
+
         // only allow one selection from both radiogroups
         rgHorizontal.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                Log.d(TAG, "onCheckedChanged: checked button id is " + checkedId);
+                Log.d(TAG, "horizontal onCheckedChanged: checked button id is " + checkedId);
                 if (checkedButtonVertical != -1) {
                     rgVertical.clearCheck();
                     checkedButtonVertical = -1;
+                    Log.e(TAG, "onCheckedChanged: cleared vertical check");
                 }
                 switch (checkedId) {
                     case R.id.timeline_rb_weather: checkedButtonHorizontal = 0;
@@ -191,19 +265,16 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
         rgVertical.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                Log.d(TAG, "onCheckedChanged: checked button id is " + checkedId);
+                Log.d(TAG, "vertical onCheckedChanged: checked button id is " + checkedId);
                 if (checkedButtonHorizontal != -1) {
                     rgHorizontal.clearCheck();
                     checkedButtonHorizontal = -1;
+                    Log.e(TAG, "onCheckedChanged: cleared horizontal check");
                 }
-                // TODO need to find out how many dimensions are there
-                switch (checkedId) {
-                    case R.id.timeline_rb_learnt: checkedButtonVertical = 0;
-                        Log.d(TAG, "onCheckedChanged: learn button clicked");
-                        break;
-                    case R.id.timeline_rb_problem: checkedButtonVertical = 1;
-                        Log.d(TAG, "onCheckedChanged: problem button clicked");
-                        break;
+                Log.d(TAG, "onCheckedChanged: checked id is " + checkedId);
+                if (checkedId != -1) {
+                    int position = checkedId - 1;
+                    checkedButtonVertical = viewIdList.get(position);
                 }
             }
         });
@@ -221,13 +292,13 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
             startYear = year;
             startMonth = month;
             startDay = dayOfMonth;
-            Log.d(TAG, "onDateSelected: start date set");
+            Log.d(TAG, "onDateSelected: start date set " + startYear + startMonth + startDay);
         } else if (textViewId == R.id.timeline_to_date) {
             isEndDateSet = true;
             endYear = year;
             endMonth = month;
             endDay = dayOfMonth;
-            Log.d(TAG, "onDateSelected: end date set");
+            Log.d(TAG, "onDateSelected: end date set " + endYear + endMonth + endDay);
         }
     }
 

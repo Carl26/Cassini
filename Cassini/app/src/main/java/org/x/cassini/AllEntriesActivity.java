@@ -1,7 +1,11 @@
 package org.x.cassini;
 
+import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -14,14 +18,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,8 +49,10 @@ public class AllEntriesActivity extends AppCompatActivity {
     private String TAG = "AllEntries";
     private ArrayList<Storie> stories;
     private ListView list;
-    private File dir;
     private AllEntriesListAdapter listAdapter;
+    private DatabaseHelper db;
+    private boolean isResult = false;
+    private DBBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -52,10 +66,28 @@ public class AllEntriesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
-        formStoriesArray();
-        initList();
+        Log.e(TAG, "onResume");
+        loadData();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+    private void loadData() {
+        formStoriesArray();
+        if (stories != null) {
+            initList();
+        }
+        if (receiver == null) {
+            receiver = new DBBroadcastReceiver();
+            IntentFilter filter = new IntentFilter("org.x.cassini.DB_UPDATE");
+            registerReceiver(receiver, filter);
+        }
+    }
+
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.all_entries_toolbar);
@@ -73,68 +105,63 @@ public class AllEntriesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void formStoriesArray() {
+    private void loadConfig() {
         File sdCard = Environment.getExternalStorageDirectory();
-        dir = new File (sdCard.getAbsolutePath() + "/Cassini/");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        File[] files = dir.listFiles();
-        if (files == null) {
-            Toast.makeText(mContext, "No record found!", Toast.LENGTH_SHORT).show();
+        File savedFile = new File (sdCard.getAbsolutePath() + "/Cassini/config.txt");
+        Log.d(TAG, "loadConfig: config file path " + savedFile.getAbsolutePath() );
+        if (!savedFile.exists()) {
+            Log.e(TAG, "loadConfig: config file not found");
         } else {
-            ArrayList<File> fileList = new ArrayList<>();
-            fileList.addAll(Arrays.asList(files));
-            stories = new ArrayList<>();
-            Collections.sort(fileList, new Comparator<File>() {
-                @Override
-                public int compare(File f1, File f2) {
-                    long f1Date = Long.parseLong(f1.getName().substring(0, 14));
-                    long f2Date = Long.parseLong(f2.getName().substring(0, 14));
-                    return f1Date>f2Date?-1:
-                            f1Date<f2Date?1:0;
+            Log.d(TAG, "loadConfig: read config file");
+            try {
+                InputStream inputStream = new FileInputStream(savedFile);
+                if ( inputStream != null ) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String receiveString = "";
+                    receiveString = bufferedReader.readLine();
+                    inputStream.close();
+                    int version = Integer.valueOf(receiveString);
+                    db = new DatabaseHelper(this, version);
+                    Log.d(TAG, "loadConfig: db version is " + version);
+
+                    bufferedReader.close();
+                    inputStreamReader.close();
                 }
-            });
-            for (File file : fileList) {
-                String dateTime, mainText, location;
-                ArrayList<String> tagList = new ArrayList<>();
-                int count;
-                try {
-                    FileInputStream fis = new FileInputStream(file);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-                    // read date and time
-                    dateTime = br.readLine();
-                    Log.d(TAG, "formStoriesArray: " + dateTime);
-                    // read location;
-                    location = br.readLine();
-                    Log.d(TAG, "formStoriesArray: " + location);
-                    // skip weather to star
-                    for (int i = 0; i < 4; i++) {
-                        br.readLine();
-                    }
-                    // read tags
-                    count = Integer.valueOf(br.readLine());
-                    Log.d(TAG, "formStoriesArray: " + count);
-                    for (int j = 0; j < count; j++) {
-                        tagList.add(br.readLine());
-                        Log.d(TAG, "formStoriesArray: " + tagList.get(j));
-                    }
-                    // read main text
-                    count = Integer.valueOf(br.readLine());
-                    char[] textChar = new char[count];
-                    br.read(textChar, 0, count);
-                    mainText = new String(textChar);
-                    Log.d(TAG, "formStoriesArray: " + mainText);
-                    Storie temp = new Storie(mainText, location, dateTime, tagList);
-                    stories.add(temp);
-                    Log.d(TAG, "formStoriesArray: storie added");
-                    // close streams
-                    br.close();
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                inputStream.close();
             }
+            catch (FileNotFoundException e) {
+                Log.e(TAG, "File not found: " + e.toString());
+            } catch (IOException e) {
+                Log.e(TAG, "Can not read file: " + e.toString());
+            }
+        }
+    }
+
+    private void formStoriesArray() {
+        loadConfig();
+//        db = new DatabaseHelper(mContext,1);
+        Cursor res = db.getAllEntryData();
+
+        if (res.getCount() == 0) {
+            Toast.makeText(mContext, "No record found!", Toast.LENGTH_SHORT).show();
+            return ;
+        }
+        Storie temp;
+        String date, location, mainText, tagJson;
+        ArrayList<String> tagList;
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<String>>(){}.getType();
+        stories = new ArrayList<>();
+        while (res.moveToNext()) {
+            date = res.getString(1);
+            location = res.getString(2);
+            tagJson = res.getString(7);
+            tagList = gson.fromJson(tagJson, type);
+            mainText = res.getString(8);
+            temp = new Storie(date, location, tagList, mainText);
+            Log.d(TAG, "formStoriesArray: storie is " + date + " " + location + " " + tagList + " " + mainText);
+            stories.add(0,temp);
         }
     }
 
@@ -146,9 +173,10 @@ public class AllEntriesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Storie selected = stories.get(position);
-                String filename = selected.getmDateTime().replaceAll("[\\s\\/:]", "");
+                String sDate = selected.getmDateTime();
+                Log.d(TAG, "onItemClick: sent date is " + sDate);
                 Intent intent = new Intent(mContext, NewEntryActivity.class);
-                intent.putExtra("date", filename);
+                intent.putExtra("date", sDate);
                 startActivity(intent);
             }
         });
@@ -203,4 +231,28 @@ public class AllEntriesActivity extends AppCompatActivity {
             }
         });
     }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        Log.d(TAG, "onActivityResult: received edit entry result");
+//        if (requestCode == 1) {
+//            if (resultCode == RESULT_OK) {
+//                isResult = true;
+//            }
+//        }
+//    }
+
+    public class DBBroadcastReceiver extends BroadcastReceiver {
+        private String TAG = "DBBR";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("org.x.cassini.DB_UPDATE")) {
+                Log.d(TAG, "onReceive: received db update intent");
+                loadData();
+            }
+        }
+    }
+
 }

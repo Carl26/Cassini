@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * Created by Guo Mingxuan on 2017/6/8 0008.
@@ -17,15 +18,17 @@ import android.widget.EditText;
 public class MainTextActivity extends AppCompatActivity {
 
     private String TAG = "MainText";
-    private String receivedText;
+    private String receivedText, title;
     private Toolbar toolbar;
     private EditText mainBox;
+    private TextView toolbarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         Log.d(TAG, "Entered main text activity");
         receivedText = getIntent().getExtras().getString("mainText");
+        title = getIntent().getExtras().getString("title");
         Log.d(TAG, receivedText);
         setContentView(R.layout.activity_main_text);
 
@@ -44,6 +47,9 @@ public class MainTextActivity extends AppCompatActivity {
         if (!receivedText.equals("")) {
             mainBox.setText(receivedText);
         }
+
+        toolbarTitle = (TextView) findViewById(R.id.main_text_toolbar_title);
+        toolbarTitle.setText(title);
     }
 
     @Override

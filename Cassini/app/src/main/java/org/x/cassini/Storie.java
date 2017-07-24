@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 class Storie {
-    private String mMainText, mLocation, mDateTime;
+    private String mMainText, mLocation, mDateTime,mDay,mMonth;
     private ArrayList<String> mTagList;
     private int weather, emotion, exercise, star;
     private ArrayList<ArrayList<String>> dimensionData;
@@ -23,6 +23,13 @@ class Storie {
         this.exercise = exercise;
         this.star = star;
         this.dimensionData = dimensionData;
+    }
+
+    public Storie(String dateTime, String location, ArrayList<String> tagList, String mainText) {
+        mMainText = mainText;
+        mLocation = location;
+        mDateTime = dateTime;
+        mTagList = tagList;
     }
 
     public String getmMainText() {
@@ -97,6 +104,53 @@ class Storie {
         this.dimensionData = dimensionData;
     }
 
+    public String getmDay(){
+        return mDateTime.substring(0,2);
+    }
+
+    public String getmMonth() {
+        String month = mDateTime.substring(3,5);
+        String result = "";
+        switch (month) {
+            case "01":
+                result = "Jan";
+                break;
+            case "02":
+                result = "Feb";
+                break;
+            case "03":
+                result = "Mar";
+                break;
+            case "04":
+                result = "Apr";
+                break;
+            case "05":
+                result = "May";
+                break;
+            case "06":
+                result = "Jun";
+                break;
+            case "07":
+                result = "Jul";
+                break;
+            case "08":
+                result = "Aug";
+                break;
+            case "09":
+                result = "Sep";
+                break;
+            case "10":
+                result = "Oct";
+                break;
+            case "11":
+                result = "Nov";
+                break;
+            case "12":
+                result = "Dec";
+                break;
+        }
+        return result;
+    }
 
     @Override
     public boolean equals(Object o) {

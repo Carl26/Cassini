@@ -2,6 +2,7 @@ package org.x.cassini;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Guo Mingxuan on 2017/7/11 0011.
@@ -72,18 +74,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (newVersion > oldVersion) {
             // add new dimension as column into entry table
-            String NEW_COLUMN_NAME = dimensionHolder;
-            db.execSQL("ALTER TABLE " + TABLE_ENTRY_NAME + "ADD COLUMN " + NEW_COLUMN_NAME + "TEXT");
+            int count = newVersion - oldVersion;
+            for (int i = 1; i <= count; i++) {
+                int columnId = oldVersion + i;
+                String NEW_COLUMN_NAME = "D" + columnId;
+                Log.d("DB", "onUpgrade: new column id is " + NEW_COLUMN_NAME);
+                db.execSQL("ALTER TABLE " + TABLE_ENTRY_NAME + " ADD COLUMN " + NEW_COLUMN_NAME + " TEXT");
+            }
         }
+        Log.e("DB", "onUpgrade: upgrade complete");
     }
 
     // upgrade db right after calling this
-    public void updateDimensions(String newDimension, int oldVersion, int newVersion) {
-        dimensionHolder = newDimension;
-    }
+//    public void updateDimensions(String newDimension, int oldVersion, int newVersion) {
+//        dimensionHolder = newDimension;
+//        Log.d("DB", "updateDimensions: old version is " + oldVersion + " new version is " + newVersion + " and new dimension is " + dimensionHolder);
+//    }
 
     public boolean insertData(String date, String location, int weather, int emotion, int exercise, int star,
-                        ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {
+                              ArrayList<String> tagList, String mainText, ArrayList<ArrayList<String>> dimensionData) {
+        Log.d("DB", "loadDiary: loaded info " + " date " + date + " location " + location +
+                " weather " + weather + " emotion " + emotion + " exercise " + exercise + " star " + star +
+                " tags " + tagList + " maintext " + mainText + " dimension indicators " + dimensionData);
         SQLiteDatabase db = this.getWritableDatabase();
         boolean isSuccessful, isTagEmpty;
         Gson gson = new Gson();
@@ -97,12 +109,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_STAR, star);
         if (tagList.isEmpty()) {
             isTagEmpty = true;
-            contentValues.put(COL_TAG, "");
+            Log.d("DB", "insertData: tag is empty");
         } else {
             isTagEmpty = false;
-            String tag = gson.toJson(tagList);
-            contentValues.put(COL_TAG, tag);
+            Log.d("DB", "insertData: tag is not empty");
         }
+        String tag = gson.toJson(tagList);
+        contentValues.put(COL_TAG, tag);
         contentValues.put(COL_MAIN_TEXT, mainText);
         ArrayList<String> dimensionPointer = new ArrayList<>();
         for (ArrayList<String> pair : dimensionData) {
@@ -135,7 +148,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     String entryIdJson = gson.toJson(tempIdArray);
                     contentValuesForTags.put(COL_TAG, tagItem);
                     contentValuesForTags.put(COL_ENTRY_ID, entryIdJson);
-                    Log.d("DB", "insertData: added a new tag");
+                    Log.d("DB", "insertData: added a new tag " + tagItem);
                     tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
                 } else {
                     Log.d("DB", "insertData: tag found");
@@ -172,6 +185,134 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return isSuccessful;
     }
 
+    public boolean updateData(String id, String date, String location, int weather, int emotion, int exercise, int star,
+                              ArrayList<String> tagList, ArrayList<String> oldTagList,
+                              String mainText, ArrayList<ArrayList<String>> dimensionData) {
+        Log.d("DB", "update data: loaded info id " + id + " date " + date + " location " + location +
+                " weather " + weather + " emotion " + emotion + " exercise " + exercise + " star " + star +
+                " tags " + tagList + " old tagList " + oldTagList + " maintext " + mainText + " dimension indicators " + dimensionData);
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean isSuccessful, isTagEmpty;
+        Gson gson = new Gson();
+        // insert data into entry table
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_ID, id);
+        contentValues.put(COL_DATE, date);
+        contentValues.put(COL_LOCATION, location);
+        contentValues.put(COL_WEATHER, weather);
+        contentValues.put(COL_EMOTION, emotion);
+        contentValues.put(COL_EXERCISE, exercise);
+        contentValues.put(COL_STAR, star);
+        String tag = gson.toJson(tagList);
+        contentValues.put(COL_TAG, tag);
+        contentValues.put(COL_MAIN_TEXT, mainText);
+        ArrayList<String> dimensionPointer = new ArrayList<>();
+        for (ArrayList<String> pair : dimensionData) {
+            String COLUMN_HEADER = pair.get(0);
+            String data = pair.get(1);
+            // forming list of pointers
+            dimensionPointer.add(COLUMN_HEADER);
+            contentValues.put(COLUMN_HEADER, data);
+        }
+        String pointers = gson.toJson(dimensionPointer);
+        contentValues.put(COL_DIMENSION_POINTER, pointers);
+        Log.d("DB", "updateData: dimension pointers " + pointers);
+        int numberOfRows = db.update(TABLE_ENTRY_NAME, contentValues, COL_ID + " = ?", new String[] { id });
+        isSuccessful = (numberOfRows>0);
+
+        // update tag table if needed
+        ArrayList<String> deletedTags = new ArrayList<>();
+        ArrayList<String> newTags = new ArrayList<>();
+        long tagRes;
+        Type type = new TypeToken<ArrayList<String>>(){}.getType();
+        for (int i = 0; i < oldTagList.size(); i++) {
+            String item = oldTagList.get(i);
+            boolean toBeDeleted = true;
+            if (!tagList.contains(item)) {
+                deletedTags.add(item);
+                toBeDeleted = false;
+                Log.d("DB", "updateData: deleted tags added " + item);
+            }
+            if (toBeDeleted) {
+                boolean isDeleted = tagList.remove(item);
+                Log.d("DB", "updateData: is item " + item + " removed " + isDeleted);
+            }
+        }
+        for (String remainingItem : tagList) {
+            newTags.add(remainingItem);
+        }
+        for (String what : newTags) {
+            Log.d("DB", "updateData: new tag contains " + what);
+        }
+        // remove deleted tags
+        if (!deletedTags.isEmpty()) {
+            for (String deletedItem : deletedTags) {
+                String query = "Select * from " + TABLE_TAG_NAME + " where " + COL_TAG + " = '" + deletedItem + "'";
+                ContentValues contentValuesForTags = new ContentValues();
+                Cursor cursor = db.rawQuery(query, null);
+                cursor.moveToNext();
+                String tagId = cursor.getString(0);
+                Log.d("DB", "updateData: tag id " + tagId);
+                String tagName = cursor.getString(1);
+                Log.d("DB", "updateData: tag name " + tagName);
+                String tagEntryId = cursor.getString(2);
+                Log.d("DB", "updateData: tag entry id " + tagEntryId);
+                ArrayList<String> entryIdArray = gson.fromJson(tagEntryId, type);
+                entryIdArray.remove(id);
+                String newEntryId = gson.toJson(entryIdArray);
+                Log.d("DB", "insertData: new entry id " + newEntryId);
+
+                contentValuesForTags.put(COL_ID, tagId);
+                contentValuesForTags.put(COL_TAG, tagName);
+                contentValuesForTags.put(COL_ENTRY_ID, newEntryId);
+                int tagNumberOfRows = db.update(TABLE_TAG_NAME, contentValuesForTags, COL_ID + " = ?", new String[] { tagId });
+                tagRes = tagNumberOfRows;
+                cursor.close();
+                isSuccessful = isSuccessful && (tagRes != -1);
+            }
+        }
+        // add in new tags
+        if (!newTags.isEmpty()) {
+            for (String newTagItem : newTags) {
+                String query = "Select * from " + TABLE_TAG_NAME + " where " + COL_TAG + " = '" + newTagItem + "'";
+                Cursor cursor = db.rawQuery(query, null);
+                ContentValues contentValuesForTags = new ContentValues();
+                if (cursor.getCount() <= 0) {
+                    ArrayList<String> tempIdArray = new ArrayList<>();
+                    tempIdArray.add(id);
+                    String entryIdJson = gson.toJson(tempIdArray);
+                    contentValuesForTags.put(COL_TAG, newTagItem);
+                    contentValuesForTags.put(COL_ENTRY_ID, entryIdJson);
+                    Log.d("DB", "updateData: added a new tag " + newTagItem);
+                    tagRes = db.insert(TABLE_TAG_NAME, null, contentValuesForTags);
+                } else {
+                    Log.d("DB", "updateData: tag found");
+                    cursor.moveToNext();
+                    String tagId = cursor.getString(0);
+                    Log.d("DB", "updateData: tag id " + tagId);
+//                    // adding new tag into existing filed
+                    String tagName = cursor.getString(1);
+                    Log.d("DB", "updateData: tag name " + tagName);
+                    // adding new entry into existing field
+                    String tagEntryId = cursor.getString(2);
+                    Log.d("DB", "insertData: tag entry id " + tagEntryId);
+                    ArrayList<String> entryIdArray = gson.fromJson(tagEntryId, type);
+                    entryIdArray.add(id);
+                    String newEntryId = gson.toJson(entryIdArray);
+                    Log.d("DB", "updateData: new entry id " + newEntryId);
+
+                    contentValuesForTags.put(COL_ID, tagId);
+                    contentValuesForTags.put(COL_TAG, tagName);
+                    contentValuesForTags.put(COL_ENTRY_ID, newEntryId);
+                    tagRes = db.update(TABLE_TAG_NAME, contentValuesForTags, COL_ID + " = ?", new String[] { tagId });
+                }
+                cursor.close();
+                isSuccessful = isSuccessful && (tagRes != -1);
+            }
+        }
+        return isSuccessful;
+    }
+
     public Cursor getAllEntryData() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME, null);
@@ -182,5 +323,120 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_TAG_NAME, null);
         return res;
+    }
+
+
+    public Cursor getEntry(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery(query, null);
+        return res;
+    }
+
+    public Cursor getTagList(char alphabet){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select TAG from " + TABLE_TAG_NAME + " where TAG like '" + alphabet + "%'", null);
+        return res;
+    }
+
+    public Cursor getTagEntries(String tagName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME + " where TAG like '%" + tagName + "%'", null);
+        return res;
+    }
+
+    public ArrayList<ArrayList<String>> getTimeline(String startDate, String endDate, int dimensionId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String columnNeeded;
+        if (dimensionId == -4) {
+            columnNeeded = COL_WEATHER;
+        } else if (dimensionId == -3) {
+            columnNeeded = COL_EMOTION;
+        } else if (dimensionId == -2) {
+            columnNeeded = COL_EXERCISE;
+        } else if (dimensionId == -1) {
+            columnNeeded = COL_TAG;
+        } else {
+            columnNeeded = "D" + dimensionId;
+        }
+        Cursor res = db.rawQuery("select " + COL_ID + "," + COL_DATE + "," + columnNeeded + " from " + TABLE_ENTRY_NAME, null);
+        // find starting entry
+        long start = Long.valueOf(startDate);
+        long end = Long.valueOf(endDate);
+        int minId = -1, maxId;
+        ArrayList<String> resultInfo = new ArrayList<>();
+        ArrayList<String> resultDate = new ArrayList<>();
+        ArrayList<String> resultMonth = new ArrayList<>();
+        ArrayList<ArrayList<String>> resultBulk = new ArrayList<>();
+        Gson gson = new Gson();
+        String emptyJson = gson.toJson(new ArrayList<String>());
+        while (res.moveToNext()) {
+            String date = res.getString(1);
+            String day = date.substring(0, 2);
+            String month = date.substring(3, 5);
+            String year = date.substring(6, 10);
+            String currentString = year + month + day;
+            long current = Long.valueOf(currentString);
+            if (dimensionId >= -1) {
+                if (current >= start && current <= end) {
+                    // greater than lower range
+                    // check if its the first
+                    if (minId == -1) {
+                        minId = Integer.valueOf(res.getString(0));
+                        String info = res.getString(2);
+                        if (info != null && !info.equals("") && !info.equalsIgnoreCase(emptyJson)) {
+                            resultInfo.add(info);
+                            resultDate.add(day);
+                            resultMonth.add(month);
+                            Log.d("DB", "getTimeline: found the first " + info + " with id " + minId + " at " + month + " " + day);
+                        } else {
+                            Log.d("DB", "getTimeline: null not first");
+                        }
+                    } else {
+                        maxId = Integer.valueOf(res.getString(0));
+                        String info = res.getString(2);
+                        if (info != null && !info.equals("") && !info.equalsIgnoreCase(emptyJson)) {
+                            resultInfo.add(info);
+                            resultDate.add(day);
+                            resultMonth.add(month);
+                            Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
+                        } else {
+                            Log.d("DB", "getTimeline: found null entry");
+                        }
+                    }
+                }
+            } else {
+                if (current >= start && current <= end) {
+                    // greater than lower range
+                    // check if its the first
+                    if (minId == -1) {
+                        minId = Integer.valueOf(res.getString(0));
+                        String info = res.getString(2);
+                        if (Integer.valueOf(info) != -1) {
+                            resultInfo.add(info);
+                            resultDate.add(day);
+                            resultMonth.add(month);
+                            Log.d("DB", "getTimeline: found the first " + info + " with id " + minId + " at " + month + " " + day);
+                        } else {
+                            Log.d("DB", "getTimeline: dimension id " + dimensionId + " at " + month + " " + day + " is not set");
+                        }
+                    } else {
+                        maxId = Integer.valueOf(res.getString(0));
+                        String info = res.getString(2);
+                        if (Integer.valueOf(info) != -1) {
+                            resultInfo.add(info);
+                            resultDate.add(day);
+                            resultMonth.add(month);
+                            Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
+                        } else {
+                            Log.d("DB", "getTimeline: dimension id " + dimensionId + " at " + month + " " + day + " is not set");
+                        }
+                    }
+                }
+            }
+        }
+        resultBulk.add(resultMonth);
+        resultBulk.add(resultDate);
+        resultBulk.add(resultInfo);
+        return resultBulk;
     }
 }

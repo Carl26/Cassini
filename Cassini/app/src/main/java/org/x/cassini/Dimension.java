@@ -1,6 +1,8 @@
 package org.x.cassini;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,6 +24,10 @@ public class Dimension extends LinearLayout {
     private String input, id;
     private EditText textFiled;
     private TextView header;
+    private static int ACTIVE = 1, INACTIVE = 0;
+    private static int TEXT = 0, NUMBER = 1;
+    private int type;
+    private boolean isActivated = false;
 
 //    public Dimension(Context context) {
 //        super(context);
@@ -75,5 +81,35 @@ public class Dimension extends LinearLayout {
 
     public String getDimensionId() {
         return id;
+    }
+
+    public void setColor(int color) {
+        if (color == ACTIVE) {
+            header.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+        } else if (color == INACTIVE) {
+            header.setTextColor(ContextCompat.getColor(getContext(), R.color.gray));
+        }
+    }
+
+    public void setType(int type) {
+        if (type == TEXT) {
+            this.type = TEXT;
+            textFiled.setInputType(InputType.TYPE_CLASS_TEXT);
+        } else if (type == NUMBER) {
+            this.type = NUMBER;
+            textFiled.setInputType(InputType.TYPE_CLASS_NUMBER);
+        }
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setIsActivated(boolean isActivated) {
+        this.isActivated = isActivated;
+    }
+
+    public boolean getIsActivated() {
+        return isActivated;
     }
 }
