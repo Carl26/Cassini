@@ -348,11 +348,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String columnNeeded;
         if (dimensionId == -4) {
             columnNeeded = COL_WEATHER;
-        } else if (dimensionId == -4) {
+        } else if (dimensionId == -3) {
             columnNeeded = COL_EMOTION;
-        } else if (dimensionId == -4) {
+        } else if (dimensionId == -2) {
             columnNeeded = COL_EXERCISE;
-        } else if (dimensionId == -4) {
+        } else if (dimensionId == -1) {
             columnNeeded = COL_TAG;
         } else {
             columnNeeded = "D" + dimensionId;
@@ -373,23 +373,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String year = date.substring(6, 10);
             String currentString = year + month + day;
             long current = Long.valueOf(currentString);
-            if (current >= start && current <= end) {
-                // greater than lower range
-                // check if its the first
-                if (minId == -1) {
-                    minId = Integer.valueOf(res.getString(0));
-                    String info = res.getString(2);
-                    resultInfo.add(info);
-                    resultDate.add(day);
-                    resultMonth.add(month);
-                    Log.d("DB", "getTimeline: found the first " +  info + " with id " + minId + " at " + month + " " + day);
-                } else {
-                    maxId = Integer.valueOf(res.getString(0));
-                    String info = res.getString(2);
-                    resultInfo.add(info);
-                    resultDate.add(day);
-                    resultMonth.add(month);
-                    Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
+            if (dimensionId >= -1) {
+                if (current >= start && current <= end) {
+                    // greater than lower range
+                    // check if its the first
+                    if (minId == -1) {
+                        minId = Integer.valueOf(res.getString(0));
+                        String info = res.getString(2);
+                        resultInfo.add(info);
+                        resultDate.add(day);
+                        resultMonth.add(month);
+                        Log.d("DB", "getTimeline: found the first " + info + " with id " + minId + " at " + month + " " + day);
+                    } else {
+                        maxId = Integer.valueOf(res.getString(0));
+                        String info = res.getString(2);
+                        resultInfo.add(info);
+                        resultDate.add(day);
+                        resultMonth.add(month);
+                        Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
+                    }
+                }
+            } else {
+                if (current >= start && current <= end) {
+                    // greater than lower range
+                    // check if its the first
+                    if (minId == -1) {
+                        minId = Integer.valueOf(res.getString(0));
+                        String info = res.getString(2);
+                        if (Integer.valueOf(info) != -1) {
+                            resultInfo.add(info);
+                            resultDate.add(day);
+                            resultMonth.add(month);
+                            Log.d("DB", "getTimeline: found the first " + info + " with id " + minId + " at " + month + " " + day);
+                        } else {
+                            Log.d("DB", "getTimeline: dimension id " + dimensionId + " at " + month + " " + day + " is not set");
+                        }
+                    } else {
+                        maxId = Integer.valueOf(res.getString(0));
+                        String info = res.getString(2);
+                        if (Integer.valueOf(info) != -1) {
+                            resultInfo.add(info);
+                            resultDate.add(day);
+                            resultMonth.add(month);
+                            Log.d("DB", "getTimeline: current included " + info + " id is " + maxId + " at " + month + " " + day);
+                        } else {
+                            Log.d("DB", "getTimeline: dimension id " + dimensionId + " at " + month + " " + day + " is not set");
+                        }
+                    }
                 }
             }
         }

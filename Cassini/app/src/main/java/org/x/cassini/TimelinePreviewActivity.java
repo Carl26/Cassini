@@ -101,13 +101,14 @@ public class TimelinePreviewActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         ArrayList<ArrayList<String>> result = db.getTimeline(startDate, endDate, dimensionId);
-        if (result.isEmpty()) {
+        if (result.isEmpty() || result.get(0).isEmpty()) {
             Log.e(TAG, "onCreate: no record found");
             Toast.makeText(getApplicationContext(), "No data found for the selected!", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "onCreate: " + result);
             list = (ListView) findViewById(R.id.timeline_preview_list);
-            adapter = new TimelinePreviewListAdapter(getApplication(), result);
+            Log.d(TAG, "initList: id here is " + dimensionId);
+            adapter = new TimelinePreviewListAdapter(getApplication(), result, dimensionId);
             list.setAdapter(adapter);
 //            adapter.notifyDataSetChanged();
         }
