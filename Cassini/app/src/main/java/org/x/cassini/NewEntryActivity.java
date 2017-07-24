@@ -217,6 +217,9 @@ public class NewEntryActivity extends AppCompatActivity {
 //        grid.setAdapter(weatherAdapter);
 //        weatherAdapter.notifyDataSetChanged();
         tagGrid = (GridView) findViewById(R.id.new_entry_tag_grid);
+//        if (tagList != null && !tagList.isEmpty()) {
+//            tagGrid.setVisibility(View.VISIBLE);
+//        }
         tagField = (EditText) findViewById(R.id.new_entry_tag_field);
         tagField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -356,8 +359,54 @@ public class NewEntryActivity extends AppCompatActivity {
         if (tagList.isEmpty()) {
             BTag.setImageResource(R.drawable.ic_tag_empty);
         }
-        tagGrid.setVisibility(View.GONE);
+//        tagGrid.setVisibility(View.GONE);
         tagField.setVisibility(View.GONE);
+        if (tagAdapter == null) {
+            if (!tagList.isEmpty()) {
+                tagGrid.setVisibility(View.VISIBLE);
+                tagAdapter = new NewEntryTagAdapter(mContext, tagList);
+                tagGrid.setAdapter(tagAdapter);
+                tagGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(NewEntryActivity.this);
+                        String existingTag = tagList.get(position);
+                        alert.setTitle("Edit tag");
+                        editTagField = new EditText(NewEntryActivity.this);
+                        editTagField.setMaxLines(1);
+                        editTagField.setInputType(InputType.TYPE_CLASS_TEXT);
+                        editTagField.setText(existingTag);
+                        editTagField.setFocusable(true);
+                        editTagField.setFocusableInTouchMode(true);
+                        alert.setView(editTagField);
+
+                        alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                tagList.remove(position);
+                                Toast.makeText(mContext, "Tag deleted!", Toast.LENGTH_SHORT).show();
+                                finishEditingTag();
+                            }
+                        });
+
+                        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String modifiedTag = editTagField.getText().toString();
+                                if (!modifiedTag.equals("")) {
+                                    tagList.set(position, modifiedTag);
+                                    Toast.makeText(mContext, "Tag updated!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    tagList.remove(position);
+                                    Toast.makeText(mContext, "Tag deleted!", Toast.LENGTH_SHORT).show();
+                                }
+                                finishEditingTag();
+                            }
+                        });
+                        alert.show();
+                    }
+                });
+            }
+        }
+        tagAdapter.notifyDataSetChanged();
     }
 
     private void initBottomPart() {
@@ -760,6 +809,53 @@ public class NewEntryActivity extends AppCompatActivity {
                 for (String tagItem : dbTagList) {
                     tagList.add(tagItem);
                 }
+                tagGrid.setVisibility(View.VISIBLE);
+                if (tagAdapter == null) {
+                    if (!tagList.isEmpty()) {
+                        tagGrid.setVisibility(View.VISIBLE);
+                        tagAdapter = new NewEntryTagAdapter(mContext, tagList);
+                        tagGrid.setAdapter(tagAdapter);
+                        tagGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                                AlertDialog.Builder alert = new AlertDialog.Builder(NewEntryActivity.this);
+                                String existingTag = tagList.get(position);
+                                alert.setTitle("Edit tag");
+                                editTagField = new EditText(NewEntryActivity.this);
+                                editTagField.setMaxLines(1);
+                                editTagField.setInputType(InputType.TYPE_CLASS_TEXT);
+                                editTagField.setText(existingTag);
+                                editTagField.setFocusable(true);
+                                editTagField.setFocusableInTouchMode(true);
+                                alert.setView(editTagField);
+
+                                alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        tagList.remove(position);
+                                        Toast.makeText(mContext, "Tag deleted!", Toast.LENGTH_SHORT).show();
+                                        finishEditingTag();
+                                    }
+                                });
+
+                                alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        String modifiedTag = editTagField.getText().toString();
+                                        if (!modifiedTag.equals("")) {
+                                            tagList.set(position, modifiedTag);
+                                            Toast.makeText(mContext, "Tag updated!", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            tagList.remove(position);
+                                            Toast.makeText(mContext, "Tag deleted!", Toast.LENGTH_SHORT).show();
+                                        }
+                                        finishEditingTag();
+                                    }
+                                });
+                                alert.show();
+                            }
+                        });
+                    }
+                }
+                tagAdapter.notifyDataSetChanged();
             }
             // main text
             mainText.setText(dbMainText);

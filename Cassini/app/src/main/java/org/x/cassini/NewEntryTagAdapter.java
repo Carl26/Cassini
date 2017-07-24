@@ -24,6 +24,10 @@ class NewEntryTagAdapter extends BaseAdapter {
         mTags = tags;
     }
 
+    class ViewHolder {
+        TextView tag;
+    }
+
     @Override
     public int getCount() {
         return mTags.size();
@@ -43,16 +47,19 @@ class NewEntryTagAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View grid;
-        TextView tagItem;
+        ViewHolder holder;
         if (convertView == null) {
             grid = inflater.inflate(R.layout.new_entry_tags, null);
-            tagItem = (TextView) grid.findViewById(R.id.new_entry_tag_adapter_field);
-            String tagWithHash = "#" + mTags.get(position);
-            tagItem.setText(tagWithHash);
+            holder = new ViewHolder();
+            holder.tag = (TextView) grid.findViewById(R.id.new_entry_tag_adapter_field);
+            grid.setTag(holder);
         } else {
             grid = convertView;
-            Log.e(TAG, "getView: convertView is not null");
+            holder = (ViewHolder) grid.getTag();
+            holder.tag.setText("");
         }
+        String tagWithHash = "#" + mTags.get(position);
+        holder.tag.setText(tagWithHash);
         return grid;
     }
 }
