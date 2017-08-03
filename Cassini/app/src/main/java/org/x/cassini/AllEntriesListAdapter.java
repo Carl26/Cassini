@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ class AllEntriesListAdapter extends BaseAdapter {
     private ArrayList<Storie> stories;
     private String TAG = "AEListAdapter";
     private SparseBooleanArray mSelectedItems;
+    private boolean isMultiple = false;
 
     public AllEntriesListAdapter(Context context, ArrayList<Storie> stories) {
         mContext = context;
@@ -37,6 +39,7 @@ class AllEntriesListAdapter extends BaseAdapter {
     class ViewHolder {
         TextView main, location, date, month;
         LinearLayout tags;
+        CheckBox checkBox;
     }
 
     @Override
@@ -54,6 +57,11 @@ class AllEntriesListAdapter extends BaseAdapter {
         return 0;
     }
 
+    public void setIsMultiple(boolean isMultiple) {
+        this.isMultiple = isMultiple;
+        notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -61,6 +69,7 @@ class AllEntriesListAdapter extends BaseAdapter {
         ViewHolder holder;
         Storie storie;
         ArrayList<String> tagList;
+        ArrayList<Boolean> selectedItems = ((AllEntriesActivity) mContext).getSelectedItems();
         if (convertView == null) {
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.all_entries_rows, null);
@@ -70,6 +79,7 @@ class AllEntriesListAdapter extends BaseAdapter {
             holder.date = (TextView) view.findViewById(R.id.all_entries_list_time_date);
             holder.month = (TextView) view.findViewById(R.id.all_entries_list_time_month);
             holder.tags = (LinearLayout) view.findViewById(R.id.all_entries_list_tags);
+            holder.checkBox = (CheckBox) view.findViewById(R.id.all_entries_checkbox);
             view.setTag(holder);
         } else {
             view = convertView;
@@ -79,6 +89,7 @@ class AllEntriesListAdapter extends BaseAdapter {
             holder.date.setText("");
             holder.month.setText("");
             holder.tags.removeAllViews();
+//            holder.checkBox.setVisibility(View.GONE);
         }
         storie = stories.get(position);
         tagList = storie.getmTagList();
@@ -101,32 +112,14 @@ class AllEntriesListAdapter extends BaseAdapter {
                 holder.tags.addView(tagView);
             }
         }
-        return view;
-    }
-
-    public void remove(Storie item) {
-        stories.remove(item);
-    }
-
-    public void toggleSelection(int position) {
-        if (!mSelectedItems.get(position)) { // not selected before
-            mSelectedItems.put(position, true);
+        if (isMultiple) {
+            holder.checkBox.setVisibility(View.VISIBLE);
         } else {
-            mSelectedItems.delete(position);
+            holder.checkBox.setVisibility(View.GONE);
         }
-        notifyDataSetChanged();
-    }
-
-    public int getSelectedCount() {
-        return mSelectedItems.size();
-    }
-
-    public SparseBooleanArray getmSelectedItems() {
-        return mSelectedItems;
-    }
-
-    public void clearSelection() {
-        mSelectedItems = new SparseBooleanArray();
-        notifyDataSetChanged();
+        if (selectedItems != null) {
+            holder.checkBox.setChecked(selectedItems.get(position));
+        }
+        return view;
     }
 }
