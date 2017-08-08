@@ -86,7 +86,9 @@ public class AllEntriesActivity extends AppCompatActivity {
         }
         if (receiver == null) {
             receiver = new DBBroadcastReceiver();
-            IntentFilter filter = new IntentFilter("org.x.cassini.DB_UPDATE");
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("org.x.cassini.DB_UPDATE");
+            filter.addAction("org.x.cassini.DB_DELETE");
             registerReceiver(receiver, filter);
         }
     }
@@ -226,6 +228,19 @@ public class AllEntriesActivity extends AppCompatActivity {
                             for (int i = 0; i < selectionList.size(); i++) {
                                 if (selectionList.get(i)) {
                                     Log.d(TAG, "onClick: deleting item " + i);
+                                    Storie tempDelete = stories.get(i);
+                                    String dateDelete = tempDelete.getmDateTime();
+                                    ArrayList<String> tagListDelete = tempDelete.getmTagList();
+                                    boolean isDeleted = db.deleteData(dateDelete, tagListDelete);
+                                    Log.d(TAG, "onClick: is deleted " + isDeleted);
+//                                    // refresh list
+//                                    loadData();
+                                    if (isDeleted) {
+                                        Log.d(TAG, "onClick: sending delete intent");
+                                        Intent intentForUpdate = new Intent();
+                                        intentForUpdate.setAction("org.x.cassini.DB_DELETE");
+                                        sendBroadcast(intentForUpdate);
+                                    }
                                 }
                             }
                             onBackPressed();
@@ -266,6 +281,9 @@ public class AllEntriesActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("org.x.cassini.DB_UPDATE")) {
                 Log.d(TAG, "onReceive: received db update intent");
+                loadData();
+            } else if (intent.getAction().equals("org.x.cassini.DB_DELETE")) {
+                Log.d(TAG, "onReceive: received db delete intent");
                 loadData();
             }
         }
