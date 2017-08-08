@@ -3,6 +3,7 @@
     package="org.x.cassini">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -49,5 +50,10 @@
         <activity android:name=".EditDimensionActivity" />
         <activity android:name=".SettingsActivity"></activity>
 
+        <service
+            android:name=".FetchAddressIntentService"
+            android:exported="false"/>
+
     </application>
+
 </manifest>

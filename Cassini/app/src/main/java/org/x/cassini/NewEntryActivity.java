@@ -3,12 +3,18 @@ package org.x.cassini;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Geocoder;
+import android.location.Location;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.AlertDialog;
+import android.os.Handler;
+import android.os.ResultReceiver;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -25,6 +31,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -86,6 +95,11 @@ public class NewEntryActivity extends AppCompatActivity {
     private String dbId, toolbarTitleString;
     private EditText editTagField;
     private int focusedId = -1;
+    private FusedLocationProviderClient mFusedLocationClient;
+    protected Location mLastLocation;
+    private AddressResultReceiver mResultReceiver;
+    private String mLocation;
+
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -94,6 +108,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
         Log.d(TAG, "Entered onCreate");
         mContext = getApplication();
+
         // initialize various components
         initIntArrays();
         initTextView();
@@ -205,6 +220,36 @@ public class NewEntryActivity extends AppCompatActivity {
         location = (TextView) findViewById(R.id.new_entry_location);
         currentDateInfo = calendar.getTime();
         time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        mLastLocation = location;
+                        Log.d(TAG,"latitude is " + mLastLocation.getLatitude());
+
+                        // In some rare cases the location returned can be null
+                        if (location == null) {
+                            return;
+                        }
+
+                        // Start service and update UI to reflect new location
+                        startIntentService();
+                    }
+                });
+        Log.d(TAG,"location is " + mLocation);
+        location.setText(mLocation);
     }
 
     private void initButtons() {
@@ -927,6 +972,27 @@ public class NewEntryActivity extends AppCompatActivity {
             }
         } else {
             Log.e(TAG, "loadDiary: unable to find entry" + sDate);
+        }
+    }
+
+    protected void startIntentService() {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(FetchAddressIntentService.Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, mLastLocation);
+        startService(intent);
+    }
+
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            mLocation = resultData.getString(FetchAddressIntentService.Constants.RESULT_DATA_KEY);
         }
     }
 }

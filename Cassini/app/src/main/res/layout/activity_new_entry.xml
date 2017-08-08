@@ -187,8 +187,7 @@
                     android:layout_gravity="center_horizontal"
                     android:gravity="center_horizontal"
                     android:textSize="10sp"
-                    android:paddingLeft="10dp"
-                    android:text="Singapore"/>
+                    android:paddingLeft="10dp"/>
             </LinearLayout>
 
         </LinearLayout>
