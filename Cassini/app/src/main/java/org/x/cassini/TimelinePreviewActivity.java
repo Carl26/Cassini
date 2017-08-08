@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ public class TimelinePreviewActivity extends AppCompatActivity {
     private TimelinePreviewListAdapter adapter;
     private TextView toolbarTitle;
     private Toolbar toolbar;
+    private Button exportBtn;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
@@ -125,5 +128,14 @@ public class TimelinePreviewActivity extends AppCompatActivity {
 
         toolbarTitle = (TextView) findViewById(R.id.timeline_preview_toolbar_title);
         toolbarTitle.setText(title);
+
+        exportBtn = (Button) findViewById(R.id.timeline_preview_export);
+        exportBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO export timeline to storie
+
+            }
+        });
     }
 }
