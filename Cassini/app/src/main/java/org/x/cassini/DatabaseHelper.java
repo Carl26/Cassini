@@ -313,6 +313,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return isSuccessful;
     }
 
+    public boolean deleteData(String date, ArrayList<String> tagList) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Type type = new TypeToken<ArrayList<String>>(){}.getType();
+        Gson gson = new Gson();
+        boolean isDeleted;
+        // delete in entry table
+        Cursor mCursor = db.rawQuery("Select " + COL_ID + " from " + TABLE_ENTRY_NAME + " where " + COL_DATE + " = '" + date + "'", null);
+        mCursor.moveToNext();
+        String id = mCursor.getString(0);
+        Log.d("DB", "deleteData: deleting id " + id);
+        mCursor.close();
+        isDeleted = db.delete(TABLE_ENTRY_NAME, COL_DATE + " = ?", new String[] { date }) > 0;
+        // delete in tag table
+        for (String tag : tagList) {
+            String query = "Select * from " + TABLE_TAG_NAME + " where " + COL_TAG + " = '" + tag + "'";
+            ContentValues contentValuesForTags = new ContentValues();
+            Cursor cursor = db.rawQuery(query, null);
+            cursor.moveToNext();
+            String tagId = cursor.getString(0);
+            Log.d("DB", "deleteData: tag id " + tagId);
+            String tagName = cursor.getString(1);
+            Log.d("DB", "deleteData: tag name " + tagName);
+            String tagEntryId = cursor.getString(2);
+            Log.d("DB", "deleteData: tag entry id " + tagEntryId);
+            ArrayList<String> entryIdArray = gson.fromJson(tagEntryId, type);
+            entryIdArray.remove(id);
+            String newEntryId = gson.toJson(entryIdArray);
+            Log.d("DB", "deleteData: new entry id " + newEntryId);
+
+            contentValuesForTags.put(COL_ID, tagId);
+            contentValuesForTags.put(COL_TAG, tagName);
+            contentValuesForTags.put(COL_ENTRY_ID, newEntryId);
+            int tagNumberOfRows = db.update(TABLE_TAG_NAME, contentValuesForTags, COL_ID + " = ?", new String[] { tagId });
+            cursor.close();
+            isDeleted = isDeleted && (tagNumberOfRows != -1);
+        }
+        return isDeleted;
+    }
+
     public Cursor getAllEntryData() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME, null);

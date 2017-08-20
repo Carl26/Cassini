@@ -105,7 +105,7 @@ class TagsViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         else {
             VHTag tagHolder = (VHTag) holder;
-            tagHolder.tagName.setText(mTagList.get(position));
+            tagHolder.tagName.setText("#" + mTagList.get(position));
         }
     }
 

@@ -23,17 +23,15 @@ import java.util.ArrayList;
  * Created by Guo Mingxuan on 2017/6/23 0023.
  */
 
-class AllEntriesListAdapter extends BaseAdapter {
+class TagEntriesListAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Storie> stories;
-    private String TAG = "AEListAdapter";
-    private SparseBooleanArray mSelectedItems;
+    private String TAG = "TEListAdapter";
     private boolean isMultiple = false;
 
-    public AllEntriesListAdapter(Context context, ArrayList<Storie> stories) {
+    public TagEntriesListAdapter(Context context, ArrayList<Storie> stories) {
         mContext = context;
         this.stories = stories;
-        mSelectedItems = new SparseBooleanArray();
     }
 
     class ViewHolder {
@@ -69,7 +67,7 @@ class AllEntriesListAdapter extends BaseAdapter {
         ViewHolder holder;
         Storie storie;
         ArrayList<String> tagList;
-        ArrayList<Boolean> selectedItems = ((AllEntriesActivity) mContext).getSelectedItems();
+        ArrayList<Boolean> selectedItems = ((TagEntriesActivity) mContext).getSelectedItems();
         if (convertView == null) {
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.all_entries_rows, null);
@@ -89,12 +87,10 @@ class AllEntriesListAdapter extends BaseAdapter {
             holder.date.setText("");
             holder.month.setText("");
             holder.tags.removeAllViews();
-//            holder.checkBox.setVisibility(View.GONE);
         }
         storie = stories.get(position);
         tagList = storie.getmTagList();
         holder.main.setText(storie.getmMainText());
-//        Log.e(TAG, "getView: main text is " + storie.getmMainText());
         holder.location.setText(storie.getmLocation());
         holder.date.setText(storie.getmDay());
         holder.month.setText(storie.getmMonth());
@@ -103,11 +99,7 @@ class AllEntriesListAdapter extends BaseAdapter {
             for (String tag : tagList) {
                 View v = inflater.inflate(R.layout.all_entries_row_tag,null);
                 TextView tagView = (TextView) v.findViewById(R.id.tag_item);
-                tagView.setText("#" + tag);
-//                tagView.setTextColor(view.getResources().getColor(R.color.black));
-//                tagView.setPadding(7, 7, 7, 7);
-//                tagView.setTextSize(10);
-//                tagView.setBackgroundResource(R.drawable.background_tag);
+                tagView.setText(tag);
                 ((ViewGroup)tagView.getParent()).removeView(tagView);
                 holder.tags.addView(tagView);
             }

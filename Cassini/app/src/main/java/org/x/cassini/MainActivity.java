@@ -2,9 +2,15 @@ package org.x.cassini;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,11 +36,13 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "MainPage";
     private TextView  newEntry, allEntries, timelineView, tags, stories, settings;
     private DatabaseHelper db;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext = getApplication();
 //        clearDb();
         loadConfig();
 //        db = new DatabaseHelper(getApplicationContext(),1);
@@ -44,6 +52,37 @@ public class MainActivity extends AppCompatActivity {
         initTextViews();
         findViewById(R.id.mainpage_relative_layout).requestFocus();
 //        testing();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        setBackground();
+    }
+
+    public void setBackground() {
+        Bitmap bMap = getThumbnail("Wallpaper.png");
+        if(bMap == null) {
+            return;
+        }
+        else {
+            Drawable d = new BitmapDrawable(getResources(), bMap);
+            findViewById(R.id.mainpage_relative_layout).setBackground(d);
+        }
+    }
+
+
+    public Bitmap getThumbnail(String filename) {
+        Bitmap thumbnail = null;
+        try {
+            File filePath = mContext.getFileStreamPath(filename);
+            FileInputStream fi = new FileInputStream(filePath);
+            thumbnail = BitmapFactory.decodeStream(fi);
+        } catch (Exception ex) {
+            Log.e("getThumbnail() on intSt", ex.getMessage());
+        }
+        return thumbnail;
     }
 
     private void clearDb() {

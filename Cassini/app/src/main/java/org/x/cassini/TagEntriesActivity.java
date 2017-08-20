@@ -1,7 +1,9 @@
 package org.x.cassini;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,25 +49,37 @@ public class TagEntriesActivity extends AppCompatActivity {
     private DatabaseHelper db;
     private String mTag;
     private ListView list;
-    private AllEntriesListAdapter listAdapter;
+    private TagEntriesListAdapter listAdapter;
+    private ArrayList<Boolean> selectionList;
+    private Button btnDelete;
+    private boolean isMultiple = false;
+    private DBBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag_entries);
-        mContext = getApplication();
+        mContext = this;
         mTag = getIntent().getStringExtra("Tag");
 
         initToolbar();
+    }
+
+    public ArrayList<Boolean> getSelectedItems() {
+        return selectionList;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "OnResume");
+        loadData();
+    }
 
-        formEntriesList(mTag);
-        initEntriesList();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 
     private void initToolbar() {
@@ -72,7 +88,7 @@ public class TagEntriesActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+        btnDelete = (Button) findViewById(R.id.tag_entries_delete_button);
         TextView title = (TextView) toolbar.findViewById(R.id.tag_entries_toolbar_title);
         title.setText(mTag);
 
@@ -83,6 +99,17 @@ public class TagEntriesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         onBackPressed();
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isMultiple) {
+            isMultiple = false;
+            listAdapter.setIsMultiple(isMultiple);
+            btnDelete.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void loadConfig() {
@@ -117,6 +144,20 @@ public class TagEntriesActivity extends AppCompatActivity {
         }
     }
 
+    private void loadData() {
+        formEntriesList(mTag);
+        if (mTagEntries != null) {
+            initEntriesList();
+        }
+        if (receiver == null) {
+            receiver = new TagEntriesActivity.DBBroadcastReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("org.x.cassini.DB_UPDATE");
+            filter.addAction("org.x.cassini.DB_DELETE");
+            registerReceiver(receiver, filter);
+        }
+    }
+
     private void formEntriesList(String tag) {
         loadConfig();
 //        db = new DatabaseHelper(mContext, 1);
@@ -148,68 +189,95 @@ public class TagEntriesActivity extends AppCompatActivity {
 
     private void initEntriesList() {
         list = (ListView) findViewById(R.id.tag_entries_list);
-        listAdapter = new AllEntriesListAdapter(mContext, mTagEntries);
+        listAdapter = new TagEntriesListAdapter(mContext, mTagEntries);
         list.setAdapter(listAdapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Storie selected = mTagEntries.get(position);
                 String sDate = selected.getmDateTime();
-                Log.d(TAG, "onItemClick: sent date is " + sDate);
-                Intent intent = new Intent(mContext, NewEntryActivity.class);
-                intent.putExtra("date", sDate);
-                startActivity(intent);
+                if (!isMultiple) {
+                    Log.d(TAG, "onItemClick: sent date is " + sDate);
+                    Intent intent = new Intent(mContext, NewEntryActivity.class);
+                    intent.putExtra("date", sDate);
+                    startActivity(intent);
+                } else {
+                    CheckBox checkBox = (CheckBox) view.findViewById(R.id.all_entries_checkbox);
+                    if (checkBox.isChecked()) {
+                        Log.d(TAG, "onItemClick: unchecking the item");
+                        checkBox.setChecked(false);
+                        selectionList.set(position, false);
+                        Log.d(TAG, "onItemClick: uncheck position " + position);
+                    } else {
+                        Log.d(TAG, "onItemClick: checking the item");
+                        checkBox.setChecked(true);
+                        selectionList.set(position, true);
+                        Log.d(TAG, "onItemClick: check position " + position);
+                    }
+                    listAdapter.notifyDataSetChanged();
+                }
             }
         });
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemLongClick: long click received");
-                list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-                list.setItemsCanFocus(false);
-                list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-                    @Override
-                    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                        final int count = list.getCheckedItemCount();
-                        getSupportActionBar().setTitle(count + " selected");
-                        listAdapter.toggleSelection(position);
-                    }
-
-                    @Override
-                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        mode.getMenuInflater().inflate(R.menu.menu_all_entries, menu);
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        if (item.getItemId() == R.id.menu_delete) {
-                            SparseBooleanArray selection = listAdapter.getmSelectedItems();
-                            for (int i = 0; i < selection.size(); i++) {
-                                if (selection.get(i)) {
-                                    Storie toRemove = listAdapter.getItem(i);
-                                    listAdapter.remove(toRemove);
+                if (!isMultiple) {
+                    btnDelete.setVisibility(View.VISIBLE);
+                    btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "onClick: deleting selected items");
+                            for (int i = 0; i < selectionList.size(); i++) {
+                                if (selectionList.get(i)) {
+                                    Log.d(TAG, "onClick: deleting item " + i);
+                                    Storie tempDelete = mTagEntries.get(i);
+                                    String dateDelete = tempDelete.getmDateTime();
+                                    ArrayList<String> tagListDelete = tempDelete.getmTagList();
+                                    boolean isDeleted = db.deleteData(dateDelete, tagListDelete);
+                                    Log.d(TAG, "onClick: is deleted " + isDeleted);
+//                                    // refresh list
+//                                    loadData();
+                                    if (isDeleted) {
+                                        Log.d(TAG, "onClick: sending delete intent");
+                                        Intent intentForUpdate = new Intent();
+                                        intentForUpdate.setAction("org.x.cassini.DB_DELETE");
+                                        sendBroadcast(intentForUpdate);
+                                    }
                                 }
                             }
-                            mode.finish();
-                            return true;
-                        } else {
-                            return false;
+                            onBackPressed();
                         }
+                    });
+                    selectionList = new ArrayList<Boolean>();
+                    for (int i = 0; i < mTagEntries.size(); i++) {
+                        selectionList.add(false);
                     }
-
-                    @Override
-                    public void onDestroyActionMode(ActionMode mode) {
-                        listAdapter.clearSelection();
-                    }
-                });
+                    isMultiple = true;
+                    listAdapter.setIsMultiple(isMultiple);
+                    CheckBox box = (CheckBox) view.findViewById(R.id.all_entries_checkbox);
+                    box.setChecked(true);
+                    selectionList.set(position, true);
+                } else {
+                    Log.d(TAG, "onItemLongClick: no effect since alr in multiple mode");
+                }
                 return true;
             }
         });
+    }
+
+    public class DBBroadcastReceiver extends BroadcastReceiver {
+        private String TAG = "DBBR";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("org.x.cassini.DB_UPDATE")) {
+                Log.d(TAG, "onReceive: received db update intent");
+                loadData();
+            } else if (intent.getAction().equals("org.x.cassini.DB_DELETE")) {
+                Log.d(TAG, "onReceive: received db delete intent");
+                loadData();
+            }
+        }
     }
 }

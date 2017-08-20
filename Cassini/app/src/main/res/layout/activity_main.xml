@@ -23,12 +23,13 @@
             android:textColor="#ffffff"
             android:fontFamily="cursive"
             android:textSize="24dp"
+            android:visibility="gone"
             android:layout_alignParentEnd="true"/>
 
 
     <RelativeLayout
         android:layout_width="match_parent"
-        app:layout_heightPercent="35%"
+        app:layout_heightPercent="40%"
         android:id="@+id/first_row"
         android:layout_below="@id/main_title">
         <View
@@ -104,7 +105,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        app:layout_heightPercent="35%"
+        app:layout_heightPercent="40%"
         android:id="@+id/third_row"
         android:layout_below="@id/second_row">
         <View

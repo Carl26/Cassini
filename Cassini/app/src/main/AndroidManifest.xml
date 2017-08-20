@@ -3,7 +3,7 @@
     package="org.x.cassini">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -39,21 +39,23 @@
             <!-- </intent-filter> -->
         </activity>
         <activity android:name=".TimelineActivity" />
-        <activity android:name=".TagsViewActivity" >
+        <activity android:name=".TagsViewActivity">
             <intent-filter>
-                <action android:name="org.x.cassini.DB_UPDATE"></action>
+                <action android:name="org.x.cassini.DB_UPDATE" />
             </intent-filter>
         </activity>
         <activity android:name=".TimelinePreviewActivity" />
         <activity android:name=".EditTempActivity" />
         <activity android:name=".TagEntriesActivity" />
         <activity android:name=".EditDimensionActivity" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity" />
 
         <service
-            android:name=".FetchAddressIntentService"
-            android:exported="false"/>
+            android:name=".NewEntryActivity$FetchAddressIntentService"
+            android:exported="false" />
 
+        <activity android:name=".SetFontAct" />
+        <activity android:name=".SetBackgroundAct"></activity>
     </application>
 
 </manifest>

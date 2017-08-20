@@ -37,7 +37,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/dimension_edittext"
             android:background="@android:color/transparent"
-            android:fontFamily="sans-serif-light"
             android:layout_marginTop="10dp"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"

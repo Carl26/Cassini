@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -11,12 +11,13 @@
 
         <TextView
             android:id="@+id/timeline_preview_toolbar_title"
-            android:layout_width="wrap_content"
+            android:layout_width="180dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:textAlignment="center"
             android:text="Lens view"
             android:textColor="#ffffff"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:fontFamily="sans-serif"/>
 
@@ -29,8 +30,21 @@
         android:background="@android:color/transparent"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:layout_below="@+id/timeline_preview_toolbar">
 
     </ListView>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/timeline_preview_export"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/timeline_preview_list"
+        android:layout_alignParentEnd="true"
+        android:text="@string/export"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:background="@null"/>
+
+</RelativeLayout>
