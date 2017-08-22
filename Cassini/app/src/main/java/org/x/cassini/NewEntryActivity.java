@@ -226,7 +226,9 @@ public class NewEntryActivity extends AppCompatActivity {
         time = (TextView) findViewById(R.id.new_entry_time);
         location = (TextView) findViewById(R.id.new_entry_location);
         currentDateInfo = calendar.getTime();
-        time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
+        if (!isEditMode) {
+            time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
+        }
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -808,6 +810,8 @@ public class NewEntryActivity extends AppCompatActivity {
             Log.d(TAG, "loadDiary: loaded info " + "id " + dbId + " date " + dbDate + " location " + dbLocation +
                     " weather " + dbWeather + " emotion " + dbEmotion + " exercise " + dbExercise + " star " + dbStar +
                     " tags " + dbTags + " maintext " + dbMainText + " dimension indicators " + dbDimensionIndicator);
+            time.setText(dbDate);
+            location.setText(dbLocation);
             // parse tags Json into ArrayList
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<String>>() {
