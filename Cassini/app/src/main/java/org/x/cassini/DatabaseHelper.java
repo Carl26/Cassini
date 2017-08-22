@@ -39,6 +39,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String TABLE_TAG_NAME = "tag_table";
     private static String COL_ENTRY_ID = "ENTRY_ID";
 
+    // for export table
+    private static String TABLE_EXPORT_NAME = "export_table";
+    private static String COL_INFO = "INFO";
+    private static String COL_DIMENSION_ID = "DIMENSION_ID";
+
     private String dimensionHolder = "";
 
     // read version from config file or input version + 1 as new version for dimension update
@@ -66,8 +71,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL_TAG + " TEXT, "
                 + COL_ENTRY_ID + " TEXT)";
 
+        String CREATE_TABLE_EXPORT = "CREATE TABLE IF NOT EXISTS " + TABLE_EXPORT_NAME
+                + "(" + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COL_DIMENSION_ID + " INTEGER, "
+                + COL_INFO + " TEXT)";
+
         db.execSQL(CREATE_TABLE_ENTRY);
         db.execSQL(CREATE_TABLE_TAG);
+        db.execSQL(CREATE_TABLE_EXPORT);
     }
 
     @Override
@@ -83,6 +94,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         Log.e("DB", "onUpgrade: upgrade complete");
+    }
+
+    public int saveData(int dimensionId, String info) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // check whether the info is already set in db
+        String findDuplicate = "Select * from " + TABLE_EXPORT_NAME + " where " + COL_INFO + " = ? and " + COL_DIMENSION_ID + " = ? ";
+        String idString = "" + dimensionId;
+        Cursor cursor = db.rawQuery(findDuplicate, new String[] {info, idString});
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            // found duplicate
+            return 0;
+        } else {
+            cursor.close();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(COL_DIMENSION_ID, dimensionId);
+            contentValues.put(COL_INFO, info);
+            long res = db.insert(TABLE_EXPORT_NAME, null, contentValues);
+            if (res != -1) {
+                // success
+                return 1;
+            } else {
+                // failed
+                return -1;
+            }
+        }
     }
 
     // upgrade db right after calling this
@@ -313,6 +350,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return isSuccessful;
     }
 
+    public boolean deleteStories(String dimensionId, String info) {
+        Log.d("DB", "deleteStories: received id and info are " + dimensionId + " " + info);
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean isDeleted;
+        String deleteQuery = COL_DIMENSION_ID + " = ? and " + COL_INFO + " = ?";
+        int rows = db.delete(TABLE_EXPORT_NAME, deleteQuery, new String[] {dimensionId, info});
+        isDeleted = (rows > 0);
+        return isDeleted;
+    }
+
     public boolean deleteData(String date, ArrayList<String> tagList) {
         SQLiteDatabase db = this.getWritableDatabase();
         Type type = new TypeToken<ArrayList<String>>(){}.getType();
@@ -355,6 +402,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllEntryData() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME, null);
+        return res;
+    }
+
+    public Cursor getAllStoriesData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_EXPORT_NAME, null);
         return res;
     }
 

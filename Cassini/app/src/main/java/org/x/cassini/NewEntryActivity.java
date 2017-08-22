@@ -226,7 +226,9 @@ public class NewEntryActivity extends AppCompatActivity {
         time = (TextView) findViewById(R.id.new_entry_time);
         location = (TextView) findViewById(R.id.new_entry_location);
         currentDateInfo = calendar.getTime();
-        time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
+        if (!isEditMode) {
+            time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
+        }
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -252,7 +254,7 @@ public class NewEntryActivity extends AppCompatActivity {
                         }
 
                         // Start service and update UI to reflect new location
-                        startIntentService();
+//                        startIntentService();
                     }
                 });
         Log.d(TAG, "location is " + mLocation);
@@ -808,6 +810,8 @@ public class NewEntryActivity extends AppCompatActivity {
             Log.d(TAG, "loadDiary: loaded info " + "id " + dbId + " date " + dbDate + " location " + dbLocation +
                     " weather " + dbWeather + " emotion " + dbEmotion + " exercise " + dbExercise + " star " + dbStar +
                     " tags " + dbTags + " maintext " + dbMainText + " dimension indicators " + dbDimensionIndicator);
+            time.setText(dbDate);
+            location.setText(dbLocation);
             // parse tags Json into ArrayList
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<String>>() {
@@ -833,21 +837,27 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case SUNNY:
+                    intWeather = SUNNY;
                     BWeather.setImageResource(R.drawable.ic_sunny);
                     break;
                 case CLOUDY:
+                    intWeather = CLOUDY;
                     BWeather.setImageResource(R.drawable.ic_cloudy);
                     break;
                 case RAINY:
+                    intWeather = RAINY;
                     BWeather.setImageResource(R.drawable.ic_rainy);
                     break;
                 case HEAVYRAIN:
+                    intWeather = HEAVYRAIN;
                     BWeather.setImageResource(R.drawable.ic_heavy_rain);
                     break;
                 case THUNDERSTORM:
+                    intWeather = THUNDERSTORM;
                     BWeather.setImageResource(R.drawable.ic_thunderstorm);
                     break;
                 case SNOW:
+                    intWeather = SNOW;
                     BWeather.setImageResource(R.drawable.ic_snow);
                     break;
             }
@@ -856,21 +866,27 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case HAPPY:
+                    intEmotion = HAPPY;
                     BEmotion.setImageResource(R.drawable.ic_happy);
                     break;
                 case SAD:
+                    intEmotion = SAD;
                     BEmotion.setImageResource(R.drawable.ic_sad);
                     break;
                 case NEUTRAL:
+                    intEmotion = NEUTRAL;
                     BEmotion.setImageResource(R.drawable.ic_neutral);
                     break;
                 case ANGRY:
+                    intEmotion = ANGRY;
                     BEmotion.setImageResource(R.drawable.ic_angry);
                     break;
                 case EMBARRASSED:
+                    intEmotion = EMBARRASSED;
                     BEmotion.setImageResource(R.drawable.ic_embarrassed);
                     break;
                 case KISS:
+                    intEmotion = KISS;
                     BEmotion.setImageResource(R.drawable.ic_kiss);
                     break;
             }
@@ -879,23 +895,29 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case WALK:
+                    intExercise = WALK;
                     BExercise.setImageResource(R.drawable.ic_walk);
                     break;
                 case RUN:
+                    intExercise = RUN;
                     BExercise.setImageResource(R.drawable.ic_run);
                     break;
                 case BALL:
+                    intExercise = BALL;
                     BExercise.setImageResource(R.drawable.ic_ball);
                     break;
                 case CYCLING:
+                    intExercise = CYCLING;
                     BExercise.setImageResource(R.drawable.ic_cycling);
                     break;
                 case SWIN:
+                    intExercise = SWIN;
                     BExercise.setImageResource(R.drawable.ic_swim);
                     break;
             }
             // star
             if (dbStar == 1) {
+                isStar = 1;
                 BStar.setImageResource(R.drawable.ic_star_full);
             }
             // tag

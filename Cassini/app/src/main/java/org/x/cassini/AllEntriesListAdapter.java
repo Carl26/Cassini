@@ -27,13 +27,11 @@ class AllEntriesListAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Storie> stories;
     private String TAG = "AEListAdapter";
-    private SparseBooleanArray mSelectedItems;
     private boolean isMultiple = false;
 
     public AllEntriesListAdapter(Context context, ArrayList<Storie> stories) {
         mContext = context;
         this.stories = stories;
-        mSelectedItems = new SparseBooleanArray();
     }
 
     class ViewHolder {
@@ -97,7 +95,7 @@ class AllEntriesListAdapter extends BaseAdapter {
 //        Log.e(TAG, "getView: main text is " + storie.getmMainText());
         holder.location.setText(storie.getmLocation());
         holder.date.setText(storie.getmDay());
-        holder.month.setText(storie.getmMonth());
+        holder.month.setText(storie.getmMonth().substring(0, 3));
         // add tags programmatically to the right of location
         if (tagList != null) {
             for (String tag : tagList) {

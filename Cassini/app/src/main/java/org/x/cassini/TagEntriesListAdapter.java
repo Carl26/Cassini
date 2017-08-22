@@ -93,7 +93,7 @@ class TagEntriesListAdapter extends BaseAdapter {
         holder.main.setText(storie.getmMainText());
         holder.location.setText(storie.getmLocation());
         holder.date.setText(storie.getmDay());
-        holder.month.setText(storie.getmMonth());
+        holder.month.setText(storie.getmMonth().substring(0, 3));
         // add tags programmatically to the right of location
         if (tagList != null) {
             for (String tag : tagList) {

@@ -48,8 +48,8 @@
         <activity android:name=".EditTempActivity" />
         <activity android:name=".TagEntriesActivity" />
         <activity android:name=".EditDimensionActivity" />
+        <activity android:name=".StoriesActivity"/>
         <activity android:name=".SettingsActivity" />
-
         <service
             android:name=".NewEntryActivity$FetchAddressIntentService"
             android:exported="false" />
