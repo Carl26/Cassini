@@ -159,6 +159,7 @@ public class StoriesActivity extends AppCompatActivity {
         Cursor res = db.getAllStoriesData();
 
         if (res.getCount() == 0) {
+            list.setVisibility(View.GONE);
             Toast.makeText(mContext, "No record found!", Toast.LENGTH_SHORT).show();
             return ;
         }
@@ -259,19 +260,14 @@ public class StoriesActivity extends AppCompatActivity {
                             for (int i = 0; i < selectionList.size(); i++) {
                                 if (selectionList.get(i)) {
                                     Log.d(TAG, "onClick: deleting item " + i);
-//                                    Storie tempDelete = stories.get(i);
-//                                    String dateDelete = tempDelete.getmDateTime();
-//                                    ArrayList<String> tagListDelete = tempDelete.getmTagList();
-//                                    boolean isDeleted = db.deleteData(dateDelete, tagListDelete);
-//                                    Log.d(TAG, "onClick: is deleted " + isDeleted);
-////                                    // refresh list
-////                                    loadData();
-//                                    if (isDeleted) {
-//                                        Log.d(TAG, "onClick: sending delete intent");
-//                                        Intent intentForUpdate = new Intent();
-//                                        intentForUpdate.setAction("org.x.cassini.DB_DELETE");
-//                                        sendBroadcast(intentForUpdate);
-//                                    }
+                                    boolean isDeleted = db.deleteStories(idList.get(i), infoList.get(i));
+                                    Log.d(TAG, "onClick: is deleted " + isDeleted);
+                                    if (isDeleted) {
+                                        Log.d(TAG, "onClick: sending delete intent");
+                                        Intent intentForUpdate = new Intent();
+                                        intentForUpdate.setAction("org.x.cassini.DB_DELETE");
+                                        sendBroadcast(intentForUpdate);
+                                    }
                                 }
                             }
                             onBackPressed();

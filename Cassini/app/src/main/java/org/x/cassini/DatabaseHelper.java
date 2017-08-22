@@ -350,6 +350,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return isSuccessful;
     }
 
+    public boolean deleteStories(String dimensionId, String info) {
+        Log.d("DB", "deleteStories: received id and info are " + dimensionId + " " + info);
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean isDeleted;
+        String deleteQuery = COL_DIMENSION_ID + " = ? and " + COL_INFO + " = ?";
+        int rows = db.delete(TABLE_EXPORT_NAME, deleteQuery, new String[] {dimensionId, info});
+        isDeleted = (rows > 0);
+        return isDeleted;
+    }
+
     public boolean deleteData(String date, ArrayList<String> tagList) {
         SQLiteDatabase db = this.getWritableDatabase();
         Type type = new TypeToken<ArrayList<String>>(){}.getType();
