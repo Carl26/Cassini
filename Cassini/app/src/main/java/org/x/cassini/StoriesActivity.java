@@ -277,10 +277,11 @@ public class StoriesActivity extends AppCompatActivity {
                             onBackPressed();
                         }
                     });
-                    selectionList = new ArrayList<Boolean>();
+                    selectionList = new ArrayList<>();
                     for (int i = 0; i < infoList.size(); i++) {
                         selectionList.add(false);
                     }
+                    Log.d(TAG, "onItemLongClick: successfully init selection list");
                     isMultiple = true;
                     listAdapter.setIsMultiple(isMultiple);
                     CheckBox box = (CheckBox) view.findViewById(R.id.stories_row_checkbox);

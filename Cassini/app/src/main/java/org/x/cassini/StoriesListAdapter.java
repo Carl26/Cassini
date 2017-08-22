@@ -68,6 +68,7 @@ class StoriesListAdapter extends BaseAdapter {
             holder.title = (TextView) view.findViewById(R.id.stories_row_title);
             holder.period = (TextView) view.findViewById(R.id.stories_row_time_period);
             holder.checkBox = (CheckBox) view.findViewById(R.id.stories_row_checkbox);
+            view.setTag(holder);
         } else {
             view = convertView;
             holder = (StoriesListAdapter.ViewHolder) view.getTag();
