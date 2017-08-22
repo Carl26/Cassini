@@ -11,12 +11,13 @@
 
         <TextView
             android:id="@+id/timeline_preview_toolbar_title"
-            android:layout_width="wrap_content"
+            android:layout_width="180dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:textAlignment="center"
             android:text="Lens view"
             android:textColor="#ffffff"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:fontFamily="sans-serif"/>
 

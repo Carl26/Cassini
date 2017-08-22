@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/settings_layout"
     tools:context="org.x.cassini.SettingsActivity">
 
     <android.support.v7.widget.Toolbar
@@ -61,7 +62,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/settings_account"
+        android:id="@+id/settings_password"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:layout_marginStart="15dp"
@@ -73,8 +74,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="9"
-            android:text="My Account"
-            android:textColor="@color/gray"
+            android:text="Set Password"
+            android:textColor="@color/colorPrimaryDark"
             android:gravity="center_vertical"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -96,7 +97,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/settings_password"
+        android:id="@+id/settings_font"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:layout_marginStart="15dp"
@@ -108,8 +109,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="9"
-            android:text="Set Password"
-            android:textColor="@color/gray"
+            android:text="Change Font"
+            android:textColor="@color/colorPrimaryDark"
             android:gravity="center_vertical"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -143,7 +144,7 @@
             android:layout_margin="10dp"
             android:layout_weight="9"
             android:text="Set Wallpaper"
-            android:textColor="@color/gray"
+            android:textColor="@color/colorPrimaryDark"
             android:gravity="center_vertical"
             android:textSize="20sp"
             android:textStyle="bold"/>

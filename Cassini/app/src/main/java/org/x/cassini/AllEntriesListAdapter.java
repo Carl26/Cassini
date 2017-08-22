@@ -103,7 +103,7 @@ class AllEntriesListAdapter extends BaseAdapter {
             for (String tag : tagList) {
                 View v = inflater.inflate(R.layout.all_entries_row_tag,null);
                 TextView tagView = (TextView) v.findViewById(R.id.tag_item);
-                tagView.setText(tag);
+                tagView.setText("#" + tag);
 //                tagView.setTextColor(view.getResources().getColor(R.color.black));
 //                tagView.setPadding(7, 7, 7, 7);
 //                tagView.setTextSize(10);

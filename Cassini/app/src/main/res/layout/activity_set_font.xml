@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="org.x.cassini.SetFontAct">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp" 
+                android:id="@+id/settings_font_mono"
+                android:fontFamily="monospace"
+                android:text="MonoSpace"
+                android:textSize="30sp"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/settings_font_roboto_regular"
+                android:fontFamily="sans-serif"
+                android:text="Roboto Regular"
+                android:textSize="30sp"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/settings_font_roboto_condensed"
+                android:fontFamily="sans-serif-condensed"
+                android:text="Roboto Condensed"
+                android:textSize="30sp"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/settings_font_roboto_light"
+                android:fontFamily="sans-serif-light"
+                android:text="Roboto Light"
+                android:textSize="30sp"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/settings_font_roboto_thin"
+                android:fontFamily="sans-serif-thin"
+                android:text="Roboto Thin"
+                android:textSize="30sp"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/settings_font_gothic"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Gothics"
+                android:textSize="30sp"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/settings_font_serif"
+                android:fontFamily="serif"
+                android:text="NotoSerif Regular"
+                android:textSize="30sp"
+                android:gravity="center"/>
+            
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
