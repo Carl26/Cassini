@@ -99,8 +99,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int saveData(int dimensionId, String info) {
         SQLiteDatabase db = this.getWritableDatabase();
         // check whether the info is already set in db
-        String findDuplicate = "Select * from " + TABLE_EXPORT_NAME + " where " + COL_INFO + " = '" + info + "'";
-        Cursor cursor = db.rawQuery(findDuplicate, null);
+        String findDuplicate = "Select * from " + TABLE_EXPORT_NAME + " where " + COL_INFO + " = ? and " + COL_DIMENSION_ID + " = ? ";
+        String idString = "" + dimensionId;
+        Cursor cursor = db.rawQuery(findDuplicate, new String[] {info, idString});
         if (cursor.getCount() > 0) {
             cursor.close();
             // found duplicate

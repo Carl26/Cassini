@@ -19,14 +19,13 @@ import java.util.ArrayList;
 
 class StoriesListAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<String> infoList, idList, titleList;
+    private ArrayList<String> infoList, titleList;
     private String TAG = "StoriesListAdapter";
     private boolean isMultiple = false;
 
-    public StoriesListAdapter(Context context, ArrayList<String> infoList, ArrayList<String> idList, ArrayList<String> titleList) {
+    public StoriesListAdapter(Context context, ArrayList<String> infoList, ArrayList<String> titleList) {
         mContext = context;
         this.infoList = infoList;
-        this.idList = idList;
         this.titleList = titleList;
     }
 
@@ -60,7 +59,7 @@ class StoriesListAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view;
         StoriesListAdapter.ViewHolder holder;
-        String id, info;
+        String info;
         ArrayList<Boolean> selectedItems = ((StoriesActivity) mContext).getSelectedItems();
         if (convertView == null) {
             holder = new StoriesListAdapter.ViewHolder();
@@ -76,19 +75,20 @@ class StoriesListAdapter extends BaseAdapter {
             holder.period.setText("");
 //            holder.checkBox.setVisibility(View.GONE);
         }
-        id = idList.get(position);
-        switch (id) {
-            case "-4": holder.title.setText("Weather");
-                break;
-            case "-3": holder.title.setText("Emotion");
-                break;
-            case "-2": holder.title.setText("Exercise");
-                break;
-            case "-1": holder.title.setText("Tag");
-                break;
-            default: holder.title.setText(titleList.get(Integer.valueOf(id)));
-                break;
-        }
+//        id = idList.get(position);
+//        switch (id) {
+//            case "-4": holder.title.setText("Weather");
+//                break;
+//            case "-3": holder.title.setText("Emotion");
+//                break;
+//            case "-2": holder.title.setText("Exercise");
+//                break;
+//            case "-1": holder.title.setText("Tag");
+//                break;
+//            default: holder.title.setText(titleList.get(Integer.valueOf(id)));
+//                break;
+//        }
+        holder.title.setText(titleList.get(position));
         Log.d(TAG, "getView: title is " + holder.title.getText().toString());
         info = infoList.get(position);
         String infoString = "From " + info.substring(0, 2) + "/" + info.substring(2, 4) + "/" + info.substring(4, 6)

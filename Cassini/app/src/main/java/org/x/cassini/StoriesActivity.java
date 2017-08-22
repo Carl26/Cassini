@@ -43,7 +43,7 @@ public class StoriesActivity extends AppCompatActivity {
     private String TAG = "StoriesActivity";
     private DBBroadcastReceiver receiver;
     private DatabaseHelper db;
-    private ArrayList<String> titleList, idList, infoList;
+    private ArrayList<String> titleList, idList, infoList, adapterTitleList;
     private boolean isMultiple = false;
     private ArrayList<Boolean> selectionList;
     private StoriesListAdapter listAdapter;
@@ -164,10 +164,25 @@ public class StoriesActivity extends AppCompatActivity {
         }
         infoList = new ArrayList<>();
         idList = new ArrayList<>();
-        String dimensionId, infoString;
+        adapterTitleList = new ArrayList<>();
+        String dimensionId, infoString, titleListForAdapter;
         while (res.moveToNext()) {
             dimensionId = res.getString(1);
             infoString = res.getString(2);
+            int dId = Integer.valueOf(dimensionId) - 1;
+            switch (dId) {
+                case -4: titleListForAdapter = "Weather";
+                    break;
+                case -3: titleListForAdapter = "Emotion";
+                    break;
+                case -2: titleListForAdapter = "Exercise";
+                    break;
+                case -1: titleListForAdapter = "Tag";
+                    break;
+                default: titleListForAdapter = titleList.get(dId);
+                    break;
+            }
+            adapterTitleList.add(titleListForAdapter);
             idList.add(dimensionId);
             infoList.add(infoString);
         }
@@ -202,12 +217,12 @@ public class StoriesActivity extends AppCompatActivity {
 
     private void initList() {
         list = (ListView) findViewById(R.id.stories_list);
-        listAdapter = new StoriesListAdapter(mContext, infoList, idList, titleList);
+        listAdapter = new StoriesListAdapter(mContext, infoList, adapterTitleList);
         list.setAdapter(listAdapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedTitle = titleList.get(position);
+                String selectedTitle = adapterTitleList.get(position);
                 String selectedDimensionId = idList.get(position);
                 String selectedInfo = infoList.get(position);
                 if (!isMultiple) {
