@@ -143,6 +143,7 @@ public class TimelinePreviewActivity extends AppCompatActivity {
             exportBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d(TAG, "onClick: save data with " + dimensionId + " " + exportString);
                     int resultCode = db.saveData(dimensionId, exportString);
                     Log.d(TAG, "onClick: export successful? " + resultCode);
                     if (resultCode == 0) {

@@ -165,24 +165,25 @@ public class StoriesActivity extends AppCompatActivity {
         infoList = new ArrayList<>();
         idList = new ArrayList<>();
         adapterTitleList = new ArrayList<>();
-        String dimensionId, infoString, titleListForAdapter;
+        String dimensionId, infoString, respectiveTitle;
         while (res.moveToNext()) {
             dimensionId = res.getString(1);
             infoString = res.getString(2);
-            int dId = Integer.valueOf(dimensionId) - 1;
+            int dId = Integer.valueOf(dimensionId);
             switch (dId) {
-                case -4: titleListForAdapter = "Weather";
+                case -4: respectiveTitle = "Weather";
                     break;
-                case -3: titleListForAdapter = "Emotion";
+                case -3: respectiveTitle = "Emotion";
                     break;
-                case -2: titleListForAdapter = "Exercise";
+                case -2: respectiveTitle = "Exercise";
                     break;
-                case -1: titleListForAdapter = "Tag";
+                case -1: respectiveTitle = "Tag";
                     break;
-                default: titleListForAdapter = titleList.get(dId);
+                default: respectiveTitle = titleList.get(dId - 1);
                     break;
             }
-            adapterTitleList.add(titleListForAdapter);
+            Log.d(TAG, "formStoriesArray: one title is " + respectiveTitle);
+            adapterTitleList.add(respectiveTitle);
             idList.add(dimensionId);
             infoList.add(infoString);
         }

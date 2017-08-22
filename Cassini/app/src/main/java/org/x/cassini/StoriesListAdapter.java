@@ -91,8 +91,8 @@ class StoriesListAdapter extends BaseAdapter {
         holder.title.setText(titleList.get(position));
         Log.d(TAG, "getView: title is " + holder.title.getText().toString());
         info = infoList.get(position);
-        String infoString = "From " + info.substring(0, 2) + "/" + info.substring(2, 4) + "/" + info.substring(4, 6)
-                + " to " + info.substring(6, 8) + "/" + info.substring(8, 10) + "/" + info.substring(10);
+        String infoString = "From " + info.substring(0, 4) + "/" + info.substring(4, 6) + "/" + info.substring(6, 8)
+                + " to " + info.substring(8, 12) + "/" + info.substring(12, 14) + "/" + info.substring(14);
         Log.d(TAG, "getView: info string formed is " + infoString);
         holder.period.setText(infoString);
         if (isMultiple) {
