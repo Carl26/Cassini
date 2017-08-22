@@ -27,13 +27,11 @@ class AllEntriesListAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Storie> stories;
     private String TAG = "AEListAdapter";
-    private SparseBooleanArray mSelectedItems;
     private boolean isMultiple = false;
 
     public AllEntriesListAdapter(Context context, ArrayList<Storie> stories) {
         mContext = context;
         this.stories = stories;
-        mSelectedItems = new SparseBooleanArray();
     }
 
     class ViewHolder {

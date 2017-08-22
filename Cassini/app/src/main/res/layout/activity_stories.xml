@@ -26,7 +26,8 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:background="@null"
-            android:id="@+id/stories_delete_button"/>
+            android:id="@+id/stories_delete_button"
+            android:visibility="gone"/>
     </android.support.v7.widget.Toolbar>
 
     <ListView

@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 Intent storiesAct = new Intent(getApplicationContext(), StoriesActivity.class);
+                startActivity(storiesAct);
             }
         });
 

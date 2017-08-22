@@ -101,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // check whether the info is already set in db
         String findDuplicate = "Select * from " + TABLE_EXPORT_NAME + " where " + COL_INFO + " = '" + info + "'";
         Cursor cursor = db.rawQuery(findDuplicate, null);
-        if (cursor.getCount() <= 0) {
+        if (cursor.getCount() > 0) {
             cursor.close();
             // found duplicate
             return 0;
@@ -391,6 +391,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllEntryData() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_ENTRY_NAME, null);
+        return res;
+    }
+
+    public Cursor getAllStoriesData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_EXPORT_NAME, null);
         return res;
     }
 
