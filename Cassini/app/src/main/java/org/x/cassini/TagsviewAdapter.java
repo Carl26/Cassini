@@ -94,7 +94,7 @@ class TagsViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder.getItemViewType() == 0) {
             VHAlphabet alphabetHolder = (VHAlphabet) holder;
             alphabetHolder.tagAlphabet.setText(mTagList.get(position));
-            if (contains(mAlphabetIndex,position+1)) {
+            if (contains(mAlphabetIndex,position + 1)) {
                 alphabetHolder.tagAlphabet.setVisibility(View.GONE);
                 alphabetHolder.divider.setVisibility(View.GONE);
             }

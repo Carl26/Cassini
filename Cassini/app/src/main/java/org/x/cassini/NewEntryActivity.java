@@ -63,7 +63,7 @@ import org.x.cassini.AddressResultReceiver.Receiver;
  * Created by Guo Mingxuan on 2017/6/7 0007.
  */
 
-public class NewEntryActivity extends AppCompatActivity implements Receiver {
+public class NewEntryActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private String TAG = "NewEntry";
@@ -1011,7 +1011,7 @@ public class NewEntryActivity extends AppCompatActivity implements Receiver {
     protected void startIntentService() {
         Intent intent = new Intent(this, FetchAddressIntentService.class);
         mResultReceiver = new AddressResultReceiver(new Handler());
-        mResultReceiver.setReceiver(this);
+//        mResultReceiver.setReceiver(this);
         intent.putExtra(FetchAddressIntentService.Constants.RECEIVER, mResultReceiver);
         Log.d(TAG,"location is " + mLocation);
         intent.putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, mLastLocation);
