@@ -837,21 +837,27 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case SUNNY:
+                    intWeather = SUNNY;
                     BWeather.setImageResource(R.drawable.ic_sunny);
                     break;
                 case CLOUDY:
+                    intWeather = CLOUDY;
                     BWeather.setImageResource(R.drawable.ic_cloudy);
                     break;
                 case RAINY:
+                    intWeather = RAINY;
                     BWeather.setImageResource(R.drawable.ic_rainy);
                     break;
                 case HEAVYRAIN:
+                    intWeather = HEAVYRAIN;
                     BWeather.setImageResource(R.drawable.ic_heavy_rain);
                     break;
                 case THUNDERSTORM:
+                    intWeather = THUNDERSTORM;
                     BWeather.setImageResource(R.drawable.ic_thunderstorm);
                     break;
                 case SNOW:
+                    intWeather = SNOW;
                     BWeather.setImageResource(R.drawable.ic_snow);
                     break;
             }
@@ -860,21 +866,27 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case HAPPY:
+                    intEmotion = HAPPY;
                     BEmotion.setImageResource(R.drawable.ic_happy);
                     break;
                 case SAD:
+                    intEmotion = SAD;
                     BEmotion.setImageResource(R.drawable.ic_sad);
                     break;
                 case NEUTRAL:
+                    intEmotion = NEUTRAL;
                     BEmotion.setImageResource(R.drawable.ic_neutral);
                     break;
                 case ANGRY:
+                    intEmotion = ANGRY;
                     BEmotion.setImageResource(R.drawable.ic_angry);
                     break;
                 case EMBARRASSED:
+                    intEmotion = EMBARRASSED;
                     BEmotion.setImageResource(R.drawable.ic_embarrassed);
                     break;
                 case KISS:
+                    intEmotion = KISS;
                     BEmotion.setImageResource(R.drawable.ic_kiss);
                     break;
             }
@@ -883,23 +895,29 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case WALK:
+                    intExercise = WALK;
                     BExercise.setImageResource(R.drawable.ic_walk);
                     break;
                 case RUN:
+                    intExercise = RUN;
                     BExercise.setImageResource(R.drawable.ic_run);
                     break;
                 case BALL:
+                    intExercise = BALL;
                     BExercise.setImageResource(R.drawable.ic_ball);
                     break;
                 case CYCLING:
+                    intExercise = CYCLING;
                     BExercise.setImageResource(R.drawable.ic_cycling);
                     break;
                 case SWIN:
+                    intExercise = SWIN;
                     BExercise.setImageResource(R.drawable.ic_swim);
                     break;
             }
             // star
             if (dbStar == 1) {
+                isStar = 1;
                 BStar.setImageResource(R.drawable.ic_star_full);
             }
             // tag
