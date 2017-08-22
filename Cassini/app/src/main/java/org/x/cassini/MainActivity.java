@@ -220,12 +220,7 @@ public class MainActivity extends AppCompatActivity {
         stories.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast myToast = Toast.makeText(
-                        getApplicationContext(),
-                        "This feature will be available in the next release. The best things are yet to come!",
-                        Toast.LENGTH_LONG
-                );
-                myToast.show();
+                Intent storiesAct = new Intent(getApplicationContext(), StoriesActivity.class);
             }
         });
 

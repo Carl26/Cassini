@@ -48,6 +48,6 @@
         <activity android:name=".TagEntriesActivity" />
         <activity android:name=".EditDimensionActivity" />
         <activity android:name=".SettingsActivity"></activity>
-
+        <activity android:name=".StoriesActivity"/>
     </application>
 </manifest>

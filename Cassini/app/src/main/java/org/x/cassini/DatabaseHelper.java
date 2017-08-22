@@ -39,6 +39,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String TABLE_TAG_NAME = "tag_table";
     private static String COL_ENTRY_ID = "ENTRY_ID";
 
+    // for export table
+    private static String TABLE_EXPORT_NAME = "export_table";
+    private static String COL_INFO = "INFO";
+    private static String COL_DIMENSION_ID = "DIMENSION_ID";
+
     private String dimensionHolder = "";
 
     // read version from config file or input version + 1 as new version for dimension update
@@ -66,8 +71,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL_TAG + " TEXT, "
                 + COL_ENTRY_ID + " TEXT)";
 
+        String CREATE_TABLE_EXPORT = "CREATE TABLE IF NOT EXISTS " + TABLE_EXPORT_NAME
+                + "(" + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COL_DIMENSION_ID + " INTEGER, "
+                + COL_INFO + " TEXT)";
+
         db.execSQL(CREATE_TABLE_ENTRY);
         db.execSQL(CREATE_TABLE_TAG);
+        db.execSQL(CREATE_TABLE_EXPORT);
     }
 
     @Override
@@ -83,6 +94,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         Log.e("DB", "onUpgrade: upgrade complete");
+    }
+
+    public int saveData(int dimensionId, String info) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // check whether the info is already set in db
+        String findDuplicate = "Select * from " + TABLE_EXPORT_NAME + " where " + COL_INFO + " = '" + info + "'";
+        Cursor cursor = db.rawQuery(findDuplicate, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            // found duplicate
+            return 0;
+        } else {
+            cursor.close();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(COL_DIMENSION_ID, dimensionId);
+            contentValues.put(COL_INFO, info);
+            long res = db.insert(TABLE_EXPORT_NAME, null, contentValues);
+            if (res != -1) {
+                // success
+                return 1;
+            } else {
+                // failed
+                return -1;
+            }
+        }
     }
 
     // upgrade db right after calling this
