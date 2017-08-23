@@ -1,17 +1,27 @@
 package org.x.cassini;
 
+import android.app.IntentService;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.AlertDialog;
+import android.os.Handler;
+import android.os.ResultReceiver;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +35,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -41,6 +54,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.x.cassini.AddressResultReceiver.Receiver;
 
 /**
  * Created by Guo Mingxuan on 2017/6/7 0007.
@@ -86,6 +103,11 @@ public class NewEntryActivity extends AppCompatActivity {
     private String dbId, toolbarTitleString;
     private EditText editTagField;
     private int focusedId = -1;
+    private FusedLocationProviderClient mFusedLocationClient;
+    protected Location mLastLocation;
+    private AddressResultReceiver mResultReceiver;
+    private String mLocation;
+
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
@@ -94,6 +116,7 @@ public class NewEntryActivity extends AppCompatActivity {
 
         Log.d(TAG, "Entered onCreate");
         mContext = getApplication();
+
         // initialize various components
         initIntArrays();
         initTextView();
@@ -126,10 +149,10 @@ public class NewEntryActivity extends AppCompatActivity {
         dimensionList = new ArrayList<>();
         dimensionIdList = new ArrayList<>();
         try {
-            file = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config.txt");
+            file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Cassini/config.txt");
             FileInputStream inputStream = new FileInputStream(file);
 
-            if ( inputStream != null ) {
+            if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String receiveString = "";
@@ -178,8 +201,7 @@ public class NewEntryActivity extends AppCompatActivity {
                     }
                 }
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Log.e("main activity", "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e("main activity", "Can not read file: " + e.toString());
@@ -204,7 +226,39 @@ public class NewEntryActivity extends AppCompatActivity {
         time = (TextView) findViewById(R.id.new_entry_time);
         location = (TextView) findViewById(R.id.new_entry_location);
         currentDateInfo = calendar.getTime();
-        time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
+        if (!isEditMode) {
+            time.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(currentDateInfo));
+        }
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        mLastLocation = location;
+//                        Log.d(TAG, "latitude is " + mLastLocation.getLatitude());
+
+                        // In some rare cases the location returned can be null
+                        if (location == null) {
+                            return;
+                        }
+
+                        // Start service and update UI to reflect new location
+//                        startIntentService();
+                    }
+                });
+//        Log.d(TAG, "location is " + mLocation);
+        location.setText(mLocation);
     }
 
     private void initButtons() {
@@ -237,7 +291,7 @@ public class NewEntryActivity extends AppCompatActivity {
                     finishEditingTag();
                     // return to unfocused state
                     mainText.requestFocus();
-                    InputMethodManager imm = (InputMethodManager)getSystemService(mContext.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(mContext.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mainText.getWindowToken(), 0);
                 } else {
                     tagField.setText("");
@@ -618,27 +672,33 @@ public class NewEntryActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // TODO save the selected weather profile to disk
                     switch (position) {
-                        case 0: BWeather.setImageResource(R.drawable.ic_sunny);
+                        case 0:
+                            BWeather.setImageResource(R.drawable.ic_sunny);
                             grid.setVisibility(View.GONE);
                             intWeather = SUNNY;
                             break;
-                        case 1: BWeather.setImageResource(R.drawable.ic_cloudy);
+                        case 1:
+                            BWeather.setImageResource(R.drawable.ic_cloudy);
                             grid.setVisibility(View.GONE);
                             intWeather = CLOUDY;
                             break;
-                        case 2: BWeather.setImageResource(R.drawable.ic_rainy);
+                        case 2:
+                            BWeather.setImageResource(R.drawable.ic_rainy);
                             grid.setVisibility(View.GONE);
                             intWeather = RAINY;
                             break;
-                        case 3: BWeather.setImageResource(R.drawable.ic_heavy_rain);
+                        case 3:
+                            BWeather.setImageResource(R.drawable.ic_heavy_rain);
                             grid.setVisibility(View.GONE);
                             intWeather = HEAVYRAIN;
                             break;
-                        case 4: BWeather.setImageResource(R.drawable.ic_thunderstorm);
+                        case 4:
+                            BWeather.setImageResource(R.drawable.ic_thunderstorm);
                             grid.setVisibility(View.GONE);
                             intWeather = THUNDERSTORM;
                             break;
-                        case 5: BWeather.setImageResource(R.drawable.ic_snow);
+                        case 5:
+                            BWeather.setImageResource(R.drawable.ic_snow);
                             grid.setVisibility(View.GONE);
                             intWeather = SNOW;
                             break;
@@ -654,27 +714,33 @@ public class NewEntryActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // TODO save the selected weather profile to disk
                     switch (position) {
-                        case 0: BEmotion.setImageResource(R.drawable.ic_happy);
+                        case 0:
+                            BEmotion.setImageResource(R.drawable.ic_happy);
                             grid.setVisibility(View.GONE);
                             intEmotion = HAPPY;
                             break;
-                        case 1: BEmotion.setImageResource(R.drawable.ic_sad);
+                        case 1:
+                            BEmotion.setImageResource(R.drawable.ic_sad);
                             grid.setVisibility(View.GONE);
                             intEmotion = SAD;
                             break;
-                        case 2: BEmotion.setImageResource(R.drawable.ic_neutral);
+                        case 2:
+                            BEmotion.setImageResource(R.drawable.ic_neutral);
                             grid.setVisibility(View.GONE);
                             intEmotion = NEUTRAL;
                             break;
-                        case 3: BEmotion.setImageResource(R.drawable.ic_angry);
+                        case 3:
+                            BEmotion.setImageResource(R.drawable.ic_angry);
                             grid.setVisibility(View.GONE);
                             intEmotion = ANGRY;
                             break;
-                        case 4: BEmotion.setImageResource(R.drawable.ic_embarrassed);
+                        case 4:
+                            BEmotion.setImageResource(R.drawable.ic_embarrassed);
                             grid.setVisibility(View.GONE);
                             intEmotion = EMBARRASSED;
                             break;
-                        case 5: BEmotion.setImageResource(R.drawable.ic_kiss);
+                        case 5:
+                            BEmotion.setImageResource(R.drawable.ic_kiss);
                             grid.setVisibility(View.GONE);
                             intEmotion = KISS;
                             break;
@@ -725,28 +791,31 @@ public class NewEntryActivity extends AppCompatActivity {
         Log.d(TAG, "loadDiary: load diary of " + sDate);
         if (db == null) {
             Log.e(TAG, "loadDiary: DB is not initialized");
-            return ;
+            return;
         }
         String findEntryQuery = "SELECT * FROM " + TABLE_ENTRY_NAME + " WHERE " + COL_DATE + "=" + "'" + sDate + "'";
         Cursor cursor = db.getEntry(findEntryQuery);
         if (cursor != null) {
             cursor.moveToNext();
             dbId = cursor.getString(0);
-            String dbDate =cursor.getString(1);
-            String dbLocation =cursor.getString(2);
-            int dbWeather =cursor.getInt(3);
-            int dbEmotion =cursor.getInt(4);
-            int dbExercise =cursor.getInt(5);
-            int dbStar =cursor.getInt(6);
-            String dbTags =cursor.getString(7);
-            String dbMainText =cursor.getString(8);
-            String dbDimensionIndicator =cursor.getString(9);
+            String dbDate = cursor.getString(1);
+            String dbLocation = cursor.getString(2);
+            int dbWeather = cursor.getInt(3);
+            int dbEmotion = cursor.getInt(4);
+            int dbExercise = cursor.getInt(5);
+            int dbStar = cursor.getInt(6);
+            String dbTags = cursor.getString(7);
+            String dbMainText = cursor.getString(8);
+            String dbDimensionIndicator = cursor.getString(9);
             Log.d(TAG, "loadDiary: loaded info " + "id " + dbId + " date " + dbDate + " location " + dbLocation +
                     " weather " + dbWeather + " emotion " + dbEmotion + " exercise " + dbExercise + " star " + dbStar +
                     " tags " + dbTags + " maintext " + dbMainText + " dimension indicators " + dbDimensionIndicator);
+            time.setText(dbDate);
+            location.setText(dbLocation);
             // parse tags Json into ArrayList
             Gson gson = new Gson();
-            Type type = new TypeToken<ArrayList<String>>(){}.getType();
+            Type type = new TypeToken<ArrayList<String>>() {
+            }.getType();
             dbTagList = gson.fromJson(dbTags, type);
             // parse dimension indicators json to arraylist
             ArrayList<String> dbIndicatorList = gson.fromJson(dbDimensionIndicator, type);
@@ -768,56 +837,87 @@ public class NewEntryActivity extends AppCompatActivity {
                 case UNSET:
                     break;
                 case SUNNY:
+                    intWeather = SUNNY;
                     BWeather.setImageResource(R.drawable.ic_sunny);
                     break;
                 case CLOUDY:
+                    intWeather = CLOUDY;
                     BWeather.setImageResource(R.drawable.ic_cloudy);
                     break;
                 case RAINY:
+                    intWeather = RAINY;
                     BWeather.setImageResource(R.drawable.ic_rainy);
                     break;
                 case HEAVYRAIN:
+                    intWeather = HEAVYRAIN;
                     BWeather.setImageResource(R.drawable.ic_heavy_rain);
                     break;
                 case THUNDERSTORM:
+                    intWeather = THUNDERSTORM;
                     BWeather.setImageResource(R.drawable.ic_thunderstorm);
                     break;
                 case SNOW:
+                    intWeather = SNOW;
                     BWeather.setImageResource(R.drawable.ic_snow);
                     break;
             }
             // emotion
             switch (dbEmotion) {
-                case UNSET: break;
-                case HAPPY: BEmotion.setImageResource(R.drawable.ic_happy);
+                case UNSET:
                     break;
-                case SAD: BEmotion.setImageResource(R.drawable.ic_sad);
+                case HAPPY:
+                    intEmotion = HAPPY;
+                    BEmotion.setImageResource(R.drawable.ic_happy);
                     break;
-                case NEUTRAL: BEmotion.setImageResource(R.drawable.ic_neutral);
+                case SAD:
+                    intEmotion = SAD;
+                    BEmotion.setImageResource(R.drawable.ic_sad);
                     break;
-                case ANGRY: BEmotion.setImageResource(R.drawable.ic_angry);
+                case NEUTRAL:
+                    intEmotion = NEUTRAL;
+                    BEmotion.setImageResource(R.drawable.ic_neutral);
                     break;
-                case EMBARRASSED: BEmotion.setImageResource(R.drawable.ic_embarrassed);
+                case ANGRY:
+                    intEmotion = ANGRY;
+                    BEmotion.setImageResource(R.drawable.ic_angry);
                     break;
-                case KISS: BEmotion.setImageResource(R.drawable.ic_kiss);
+                case EMBARRASSED:
+                    intEmotion = EMBARRASSED;
+                    BEmotion.setImageResource(R.drawable.ic_embarrassed);
+                    break;
+                case KISS:
+                    intEmotion = KISS;
+                    BEmotion.setImageResource(R.drawable.ic_kiss);
                     break;
             }
             // exercise
             switch (dbExercise) {
-                case UNSET: break;
-                case WALK: BExercise.setImageResource(R.drawable.ic_walk);
+                case UNSET:
                     break;
-                case RUN: BExercise.setImageResource(R.drawable.ic_run);
+                case WALK:
+                    intExercise = WALK;
+                    BExercise.setImageResource(R.drawable.ic_walk);
                     break;
-                case BALL: BExercise.setImageResource(R.drawable.ic_ball);
+                case RUN:
+                    intExercise = RUN;
+                    BExercise.setImageResource(R.drawable.ic_run);
                     break;
-                case CYCLING: BExercise.setImageResource(R.drawable.ic_cycling);
+                case BALL:
+                    intExercise = BALL;
+                    BExercise.setImageResource(R.drawable.ic_ball);
                     break;
-                case SWIN: BExercise.setImageResource(R.drawable.ic_swim);
+                case CYCLING:
+                    intExercise = CYCLING;
+                    BExercise.setImageResource(R.drawable.ic_cycling);
+                    break;
+                case SWIN:
+                    intExercise = SWIN;
+                    BExercise.setImageResource(R.drawable.ic_swim);
                     break;
             }
             // star
             if (dbStar == 1) {
+                isStar = 1;
                 BStar.setImageResource(R.drawable.ic_star_full);
             }
             // tag
@@ -927,6 +1027,125 @@ public class NewEntryActivity extends AppCompatActivity {
             }
         } else {
             Log.e(TAG, "loadDiary: unable to find entry" + sDate);
+        }
+    }
+
+    protected void startIntentService() {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        mResultReceiver = new AddressResultReceiver(new Handler());
+//        mResultReceiver.setReceiver(this);
+        intent.putExtra(FetchAddressIntentService.Constants.RECEIVER, mResultReceiver);
+        Log.d(TAG,"location is " + mLocation);
+        intent.putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, mLastLocation);
+        startService(intent);
+        Log.d(TAG,"intent sent");
+    }
+
+//    class AddressResultReceiver extends ResultReceiver {
+//        public AddressResultReceiver(Handler handler) {
+//            super(handler);
+//        }
+//
+//        @Override
+//        protected void onReceiveResult(int resultCode, Bundle resultData) {
+//            Log.d(TAG,"On Receive Result");
+//            mLocation = resultData.getString(FetchAddressIntentService.Constants.RESULT_DATA_KEY);
+//            Log.d(TAG,"mlocation is " + mLocation);
+//        }
+//    }
+
+
+    public static class FetchAddressIntentService extends IntentService {
+
+        protected ResultReceiver mReceiver;
+
+        /**
+         * Creates an IntentService.  Invoked by your subclass's constructor.
+         *
+         * @param name Used to name the worker thread, important only for debugging.
+         */
+        public FetchAddressIntentService(String name) {
+            super(name);
+        }
+
+        public FetchAddressIntentService() {
+            super("FetchAddressIntentService");
+        }
+
+
+        public final class Constants {
+            public static final int SUCCESS_RESULT = 0;
+            public static final int FAILURE_RESULT = 1;
+            public static final String PACKAGE_NAME =
+                    "org.x.cassini";
+            public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
+            public static final String RESULT_DATA_KEY = PACKAGE_NAME +
+                    ".RESULT_DATA_KEY";
+            public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME +
+                    ".LOCATION_DATA_EXTRA";
+        }
+
+        @Override
+        protected void onHandleIntent(@Nullable Intent intent) {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+            String errorMessage = "";
+
+            // Get the location passed to this service through an extra.
+            Location location = intent.getParcelableExtra(
+                    Constants.LOCATION_DATA_EXTRA);
+
+            // ...
+
+            List<Address> addresses = null;
+
+            try {
+                addresses = geocoder.getFromLocation(
+                        location.getLatitude(),
+                        location.getLongitude(),
+                        // In this sample, get just a single address.
+                        1);
+            } catch (IOException ioException) {
+                // Catch network or other I/O problems.
+                errorMessage = getString(R.string.service_not_available);
+//                Log.e(TAG, errorMessage, ioException);
+            } catch (IllegalArgumentException illegalArgumentException) {
+                // Catch invalid latitude or longitude values.
+                errorMessage = getString(R.string.invalid_lat_long_used);
+//                Log.e(TAG, errorMessage + ". " +
+//                        "Latitude = " + location.getLatitude() +
+//                        ", Longitude = " +
+//                        location.getLongitude(), illegalArgumentException);
+//            }
+
+            // Handle case where no address was found.
+            if (addresses == null || addresses.size() == 0) {
+                if (errorMessage.isEmpty()) {
+                    errorMessage = getString(R.string.no_address_found);
+//                    Log.e(TAG, errorMessage);
+                }
+                deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
+            } else {
+                Address address = addresses.get(0);
+                ArrayList<String> addressFragments = new ArrayList<String>();
+
+                // Fetch the address lines using getAddressLine,
+                // join them, and send them to the thread.
+                for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                    addressFragments.add(address.getAddressLine(i));
+                }
+//                Log.i(TAG, getString(R.string.address_found));
+                deliverResultToReceiver(Constants.SUCCESS_RESULT,
+                        TextUtils.join(System.getProperty("line.separator"),
+                                addressFragments));
+            }
+        }}
+
+
+        private void deliverResultToReceiver(int resultCode, String message) {
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.RESULT_DATA_KEY, message);
+            mReceiver.send(resultCode, bundle);
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.x.cassini;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +37,10 @@ public class TimelinePreviewActivity extends AppCompatActivity {
     private TimelinePreviewListAdapter adapter;
     private TextView toolbarTitle;
     private Toolbar toolbar;
+    private Button exportBtn;
+    private Context mContext;
+    private String exportString;
+    private boolean isFromStories = false;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
@@ -41,6 +48,7 @@ public class TimelinePreviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timeline_preview);
         initList();
         initToolbar();
+        mContext = this;
     }
 
     @Override
@@ -59,6 +67,7 @@ public class TimelinePreviewActivity extends AppCompatActivity {
         endYear = data.getInt("endYear");
         dimensionId = data.getInt("dimensionId");
         title = data.getString("title");
+        isFromStories = data.getBoolean("stories");
         String startDate, endDate, startMonthStr, endMonthStr, startDayStr, endDayStr;
         if (startMonth < 10) {
             startMonthStr = "0" + startMonth;
@@ -100,6 +109,7 @@ public class TimelinePreviewActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        exportString = startDate + endDate;
         ArrayList<ArrayList<String>> result = db.getTimeline(startDate, endDate, dimensionId);
         if (result.isEmpty() || result.get(0).isEmpty()) {
             Log.e(TAG, "onCreate: no record found");
@@ -125,5 +135,26 @@ public class TimelinePreviewActivity extends AppCompatActivity {
 
         toolbarTitle = (TextView) findViewById(R.id.timeline_preview_toolbar_title);
         toolbarTitle.setText(title);
+
+        exportBtn = (Button) findViewById(R.id.timeline_preview_export);
+        if (isFromStories) {
+            exportBtn.setVisibility(View.GONE);
+        } else {
+            exportBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "onClick: save data with " + dimensionId + " " + exportString);
+                    int resultCode = db.saveData(dimensionId, exportString);
+                    Log.d(TAG, "onClick: export successful? " + resultCode);
+                    if (resultCode == 0) {
+                        Toast.makeText(mContext, "Storie already exported!", Toast.LENGTH_SHORT).show();
+                    } else if (resultCode == -1) {
+                        Toast.makeText(mContext, "Failed to export to Stories!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, "Exported to Stories!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 }

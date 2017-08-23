@@ -120,6 +120,7 @@ public class TimelineActivity extends AppCompatActivity implements DatePickerFra
         bundle.putInt("dimensionId", dimensionId);
         Log.d(TAG, "generateTimeline: dimension id is " + dimensionId);
         Log.e(TAG, "generateTimeline: " + startDay + startMonth + startYear + " " + endDay + endMonth + endYear);
+        bundle.putBoolean("stories", false);
         Intent intent = new Intent(this, TimelinePreviewActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);

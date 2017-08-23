@@ -10,7 +10,8 @@
     android:layout_marginTop="15dp"
     android:layout_marginBottom="15dp"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:descendantFocusability="blocksDescendants">
 
     <TextView
         app:layout_widthPercent = "85%"
@@ -35,18 +36,19 @@
         android:layout_below="@id/all_entries_list_main_text"
         android:layout_alignStart="@id/all_entries_list_main_text"
         android:id="@+id/all_entries_list_left">
-        <TextView
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/all_entries_list_location"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="10sp"
-            android:fontFamily="sans-serif-light"
-            android:textColor="#58B2DC"
-            android:gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="5dp"/>
+        <!--<TextView-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/all_entries_list_location"-->
+            <!--android:maxLines="1"-->
+            <!--android:ellipsize="end"-->
+            <!--android:textSize="10sp"-->
+            <!--android:fontFamily="sans-serif-light"-->
+            <!--android:text="@string/SG"-->
+            <!--android:textColor="#58B2DC"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:layout_marginStart="10dp"-->
+            <!--android:layout_marginEnd="5dp"/>-->
         <LinearLayout
             android:layout_width="200dp"
             android:layout_height="wrap_content"
@@ -72,7 +74,7 @@
             android:gravity="center_horizontal"
             android:text="20"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
         <TextView
             android:layout_width="match_parent"
@@ -81,11 +83,22 @@
             android:layout_below="@id/all_entries_list_time_date"
             android:text="May"
             android:gravity="center_horizontal"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:paddingBottom="5dp"
             android:layout_centerHorizontal="true"
             android:textColor="@color/black"/>
 
     </RelativeLayout>
+
+    <CheckBox
+        android:id="@+id/all_entries_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"
+        android:buttonTint="@color/black"
+        android:scaleX="0.7"
+        android:scaleY="0.7"/>
 </android.support.percent.PercentRelativeLayout>

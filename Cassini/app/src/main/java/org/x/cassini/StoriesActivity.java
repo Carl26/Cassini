@@ -5,23 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -35,44 +29,46 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import static android.R.id.list;
+/**
+ * Created by Guo Mingxuan on 2017/8/18 0018.
+ */
 
-public class TagEntriesActivity extends AppCompatActivity {
-
-    private Context mContext;
-    private String TAG = "TagEntriesActivity";
-    private ArrayList<Storie> mTagEntries;
+public class StoriesActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    private DatabaseHelper db;
-    private String mTag;
+    private Button deleteBtn;
+    private Context mContext;
     private ListView list;
-    private TagEntriesListAdapter listAdapter;
-    private ArrayList<Boolean> selectionList;
-    private Button btnDelete;
-    private boolean isMultiple = false;
+    private String TAG = "StoriesActivity";
     private DBBroadcastReceiver receiver;
+    private DatabaseHelper db;
+    private ArrayList<String> titleList, idList, infoList, adapterTitleList;
+    private boolean isMultiple = false;
+    private ArrayList<Boolean> selectionList;
+    private StoriesListAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tag_entries);
+        setContentView(R.layout.activity_stories);
         mContext = this;
-        mTag = getIntent().getStringExtra("Tag");
-
-        initToolbar();
+        initComponents();
     }
 
-    public ArrayList<Boolean> getSelectedItems() {
-        return selectionList;
+    private void initComponents() {
+        toolbar = (Toolbar) findViewById(R.id.stories_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        deleteBtn = (Button) findViewById(R.id.stories_delete_button);
+        list = (ListView) findViewById(R.id.stories_list);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "OnResume");
+        Log.e(TAG, "onResume");
         loadData();
     }
 
@@ -82,17 +78,22 @@ public class TagEntriesActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
-    private void initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.tag_entries_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        btnDelete = (Button) findViewById(R.id.tag_entries_delete_button);
-        TextView title = (TextView) toolbar.findViewById(R.id.tag_entries_toolbar_title);
-        title.setText(mTag);
+    private void loadData() {
+        formStoriesArray();
+        if (infoList != null) {
+            initList();
+        }
+        if (receiver == null) {
+            receiver = new StoriesActivity.DBBroadcastReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("org.x.cassini.DB_UPDATE");
+            filter.addAction("org.x.cassini.DB_DELETE");
+            registerReceiver(receiver, filter);
+        }
+    }
 
-        Log.d(TAG, "initToolbar");
+    public ArrayList<Boolean> getSelectedItems() {
+        return selectionList;
     }
 
     @Override
@@ -106,7 +107,7 @@ public class TagEntriesActivity extends AppCompatActivity {
         if (isMultiple) {
             isMultiple = false;
             listAdapter.setIsMultiple(isMultiple);
-            btnDelete.setVisibility(View.GONE);
+            deleteBtn.setVisibility(View.GONE);
         } else {
             super.onBackPressed();
         }
@@ -131,6 +132,14 @@ public class TagEntriesActivity extends AppCompatActivity {
                     int version = Integer.valueOf(receiveString);
                     db = new DatabaseHelper(this, version);
                     Log.d(TAG, "loadConfig: db version is " + version);
+                    titleList = new ArrayList<>();
+                    while ((receiveString = bufferedReader.readLine()) != null) {
+                        Log.d(TAG, "loadResources: read dimension: " + receiveString);
+                        int index = receiveString.indexOf(":");
+                        String dimensionString = receiveString.substring(index + 1);
+                        Log.d(TAG, "loadResources: dimension is " + dimensionString);
+                        titleList.add(dimensionString);
+                    }
                     bufferedReader.close();
                     inputStreamReader.close();
                 }
@@ -144,65 +153,85 @@ public class TagEntriesActivity extends AppCompatActivity {
         }
     }
 
-    private void loadData() {
-        formEntriesList(mTag);
-        if (mTagEntries != null) {
-            initEntriesList();
-        }
-        if (receiver == null) {
-            receiver = new TagEntriesActivity.DBBroadcastReceiver();
-            IntentFilter filter = new IntentFilter();
-            filter.addAction("org.x.cassini.DB_UPDATE");
-            filter.addAction("org.x.cassini.DB_DELETE");
-            registerReceiver(receiver, filter);
-        }
-    }
-
-    private void formEntriesList(String tag) {
+    private void formStoriesArray() {
         loadConfig();
-//        db = new DatabaseHelper(mContext, 1);
-        Cursor res = db.getTagEntries(tag);
+//        db = new DatabaseHelper(mContext,1);
+        Cursor res = db.getAllStoriesData();
 
         if (res.getCount() == 0) {
+            list.setVisibility(View.GONE);
             Toast.makeText(mContext, "No record found!", Toast.LENGTH_SHORT).show();
-            return;
+            return ;
         }
-
-        Storie temp;
-        String date, location, mainText, tagJson;
-        ArrayList<String> tagList;
-        Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<String>>() {
-        }.getType();
-        mTagEntries = new ArrayList<>();
+        infoList = new ArrayList<>();
+        idList = new ArrayList<>();
+        adapterTitleList = new ArrayList<>();
+        String dimensionId, infoString, respectiveTitle;
         while (res.moveToNext()) {
-            date = res.getString(1);
-            location = res.getString(2);
-            tagJson = res.getString(7);
-            tagList = gson.fromJson(tagJson, type);
-            mainText = res.getString(8);
-            temp = new Storie(date, location, tagList, mainText);
-            mTagEntries.add(0,temp);
+            dimensionId = res.getString(1);
+            infoString = res.getString(2);
+            int dId = Integer.valueOf(dimensionId);
+            switch (dId) {
+                case -4: respectiveTitle = "Weather";
+                    break;
+                case -3: respectiveTitle = "Emotion";
+                    break;
+                case -2: respectiveTitle = "Exercise";
+                    break;
+                case -1: respectiveTitle = "Tag";
+                    break;
+                default: respectiveTitle = titleList.get(dId - 1);
+                    break;
+            }
+            Log.d(TAG, "formStoriesArray: one title is " + respectiveTitle);
+            adapterTitleList.add(respectiveTitle);
+            idList.add(dimensionId);
+            infoList.add(infoString);
         }
-
+        res.close();
     }
 
-    private void initEntriesList() {
-        list = (ListView) findViewById(R.id.tag_entries_list);
-        listAdapter = new TagEntriesListAdapter(mContext, mTagEntries);
+    private void generateTimeline(String title, String id, String info) {
+        Bundle bundle = new Bundle();
+        int dimensionId = Integer.valueOf(id);
+        bundle.putString("title", title);
+        Log.d(TAG, "generateTimeline: title is " + title);
+        int startDay = Integer.valueOf(info.substring(4, 6));
+        int startMonth = Integer.valueOf(info.substring(2, 4));
+        int startYear = Integer.valueOf(info.substring(0, 2));
+        int endDay = Integer.valueOf(info.substring(10));
+        int endMonth = Integer.valueOf(info.substring(8, 10));
+        int endYear = Integer.valueOf(info.substring(6, 8));
+        bundle.putInt("startDay", startDay);
+        bundle.putInt("startMonth", startMonth);
+        bundle.putInt("startYear", startYear);
+        bundle.putInt("endDay", endDay);
+        bundle.putInt("endMonth", endMonth);
+        bundle.putInt("endYear", endYear);
+        bundle.putInt("dimensionId", dimensionId);
+        bundle.putBoolean("stories", true);
+        Log.d(TAG, "generateTimeline: dimension id is " + dimensionId);
+        Log.e(TAG, "generateTimeline: " + startDay + startMonth + startYear + " " + endDay + endMonth + endYear);
+        Intent intent = new Intent(this, TimelinePreviewActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    private void initList() {
+        list = (ListView) findViewById(R.id.stories_list);
+        listAdapter = new StoriesListAdapter(mContext, infoList, adapterTitleList);
         list.setAdapter(listAdapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Storie selected = mTagEntries.get(position);
-                String sDate = selected.getmDateTime();
+                String selectedTitle = adapterTitleList.get(position);
+                String selectedDimensionId = idList.get(position);
+                String selectedInfo = infoList.get(position);
                 if (!isMultiple) {
-                    Log.d(TAG, "onItemClick: sent date is " + sDate);
-                    Intent intent = new Intent(mContext, NewEntryActivity.class);
-                    intent.putExtra("date", sDate);
-                    startActivity(intent);
+                    Log.d(TAG, "onItemClick: position is " + position);
+                    generateTimeline(selectedTitle, selectedDimensionId, selectedInfo);
                 } else {
-                    CheckBox checkBox = (CheckBox) view.findViewById(R.id.all_entries_checkbox);
+                    CheckBox checkBox = (CheckBox) view.findViewById(R.id.stories_row_checkbox);
                     if (checkBox.isChecked()) {
                         Log.d(TAG, "onItemClick: unchecking the item");
                         checkBox.setChecked(false);
@@ -223,21 +252,16 @@ public class TagEntriesActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemLongClick: long click received");
                 if (!isMultiple) {
-                    btnDelete.setVisibility(View.VISIBLE);
-                    btnDelete.setOnClickListener(new View.OnClickListener() {
+                    deleteBtn.setVisibility(View.VISIBLE);
+                    deleteBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Log.d(TAG, "onClick: deleting selected items");
                             for (int i = 0; i < selectionList.size(); i++) {
                                 if (selectionList.get(i)) {
                                     Log.d(TAG, "onClick: deleting item " + i);
-                                    Storie tempDelete = mTagEntries.get(i);
-                                    String dateDelete = tempDelete.getmDateTime();
-                                    ArrayList<String> tagListDelete = tempDelete.getmTagList();
-                                    boolean isDeleted = db.deleteData(dateDelete, tagListDelete);
+                                    boolean isDeleted = db.deleteStories(idList.get(i), infoList.get(i));
                                     Log.d(TAG, "onClick: is deleted " + isDeleted);
-//                                    // refresh list
-//                                    loadData();
                                     if (isDeleted) {
                                         Log.d(TAG, "onClick: sending delete intent");
                                         Intent intentForUpdate = new Intent();
@@ -249,13 +273,14 @@ public class TagEntriesActivity extends AppCompatActivity {
                             onBackPressed();
                         }
                     });
-                    selectionList = new ArrayList<Boolean>();
-                    for (int i = 0; i < mTagEntries.size(); i++) {
+                    selectionList = new ArrayList<>();
+                    for (int i = 0; i < infoList.size(); i++) {
                         selectionList.add(false);
                     }
+                    Log.d(TAG, "onItemLongClick: successfully init selection list");
                     isMultiple = true;
                     listAdapter.setIsMultiple(isMultiple);
-                    CheckBox box = (CheckBox) view.findViewById(R.id.all_entries_checkbox);
+                    CheckBox box = (CheckBox) view.findViewById(R.id.stories_row_checkbox);
                     box.setChecked(true);
                     selectionList.set(position, true);
                 } else {
@@ -265,6 +290,17 @@ public class TagEntriesActivity extends AppCompatActivity {
             }
         });
     }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        Log.d(TAG, "onActivityResult: received edit entry result");
+//        if (requestCode == 1) {
+//            if (resultCode == RESULT_OK) {
+//                isResult = true;
+//            }
+//        }
+//    }
 
     public class DBBroadcastReceiver extends BroadcastReceiver {
         private String TAG = "DBBR";
@@ -280,4 +316,5 @@ public class TagEntriesActivity extends AppCompatActivity {
             }
         }
     }
+
 }

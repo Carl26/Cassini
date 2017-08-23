@@ -2,6 +2,7 @@ package org.x.cassini;
 
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -84,11 +85,13 @@ public class EditDimensionActivity extends AppCompatActivity {
             public void onClick(View v) {
                 isActivated = !isActivated;
                 if (isActivated) {
-                    activateButton.setBackgroundTintList(ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.holo_red_light));
+//                    activateButton.setBackgroundTintList(ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.holo_red_light));
+                    ViewCompat.setBackgroundTintList(activateButton, ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.holo_red_light));
                     activateButton.setText(R.string.deactivate);
                     Toast.makeText(getApplicationContext(), "Fragment activated!", Toast.LENGTH_SHORT).show();
                 } else {
-                    activateButton.setBackgroundTintList(ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.darker_gray));
+//                    activateButton.setBackgroundTintList(ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.darker_gray));
+                    ViewCompat.setBackgroundTintList(activateButton, ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.darker_gray));
                     activateButton.setText(R.string.activate);
                     Toast.makeText(getApplicationContext(), "Fragment deactivated!", Toast.LENGTH_SHORT).show();
                 }
@@ -118,7 +121,8 @@ public class EditDimensionActivity extends AppCompatActivity {
             }
             if (!isActivated) {
                 Log.d(TAG, "loadIntent: button set to activate");
-                activateButton.setBackgroundTintList(ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.darker_gray));
+//                activateButton.setBackgroundTintList(ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.darker_gray));
+                ViewCompat.setBackgroundTintList(activateButton, ContextCompat.getColorStateList(EditDimensionActivity.this, android.R.color.darker_gray));
                 activateButton.setText(R.string.activate);
             }
             isExist = true;

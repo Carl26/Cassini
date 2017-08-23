@@ -39,6 +39,7 @@ public class TagsViewActivity extends AppCompatActivity {
     private TagsViewAdapter mAdapter;
     private RecyclerView mtagListLayout;
     private DatabaseHelper db;
+    private BroadcastReceiver br;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +52,16 @@ public class TagsViewActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(br);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-
-
-        BroadcastReceiver br = new BroadcastReceiver() {
+        br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 loadConfig();

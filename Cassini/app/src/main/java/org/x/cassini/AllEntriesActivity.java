@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -53,13 +54,15 @@ public class AllEntriesActivity extends AppCompatActivity {
     private DatabaseHelper db;
     private boolean isResult = false;
     private DBBroadcastReceiver receiver;
+    private boolean isMultiple = false;
+    private ArrayList<Boolean> selectionList;
+    private Button btnDelete;
 
     @Override
     protected void onCreate(Bundle onSavedInstance) {
         super.onCreate(onSavedInstance);
         setContentView(R.layout.activity_all_entries);
-        mContext = getApplication();
-
+        mContext = this;
         initToolbar();
     }
 
@@ -83,11 +86,16 @@ public class AllEntriesActivity extends AppCompatActivity {
         }
         if (receiver == null) {
             receiver = new DBBroadcastReceiver();
-            IntentFilter filter = new IntentFilter("org.x.cassini.DB_UPDATE");
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("org.x.cassini.DB_UPDATE");
+            filter.addAction("org.x.cassini.DB_DELETE");
             registerReceiver(receiver, filter);
         }
     }
 
+    public ArrayList<Boolean> getSelectedItems() {
+        return selectionList;
+    }
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.all_entries_toolbar);
@@ -95,7 +103,7 @@ public class AllEntriesActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+        btnDelete = (Button) findViewById(R.id.all_entries_delete);
         Log.d(TAG, "Title is " + getSupportActionBar().getTitle());
     }
 
@@ -103,6 +111,17 @@ public class AllEntriesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         onBackPressed();
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isMultiple) {
+            isMultiple = false;
+            listAdapter.setIsMultiple(isMultiple);
+            btnDelete.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void loadConfig() {
@@ -174,59 +193,71 @@ public class AllEntriesActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Storie selected = stories.get(position);
                 String sDate = selected.getmDateTime();
-                Log.d(TAG, "onItemClick: sent date is " + sDate);
-                Intent intent = new Intent(mContext, NewEntryActivity.class);
-                intent.putExtra("date", sDate);
-                startActivity(intent);
+                if (!isMultiple) {
+                    Log.d(TAG, "onItemClick: sent date is " + sDate);
+                    Intent intent = new Intent(mContext, NewEntryActivity.class);
+                    intent.putExtra("date", sDate);
+                    startActivity(intent);
+                } else {
+                    CheckBox checkBox = (CheckBox) view.findViewById(R.id.all_entries_checkbox);
+                    if (checkBox.isChecked()) {
+                        Log.d(TAG, "onItemClick: unchecking the item");
+                        checkBox.setChecked(false);
+                        selectionList.set(position, false);
+                        Log.d(TAG, "onItemClick: uncheck position " + position);
+                    } else {
+                        Log.d(TAG, "onItemClick: checking the item");
+                        checkBox.setChecked(true);
+                        selectionList.set(position, true);
+                        Log.d(TAG, "onItemClick: check position " + position);
+                    }
+                    listAdapter.notifyDataSetChanged();
+                }
             }
         });
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemLongClick: long click received");
-                list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-                list.setItemsCanFocus(false);
-                list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-                    @Override
-                    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                        final int count = list.getCheckedItemCount();
-                        getSupportActionBar().setTitle(count + " selected");
-                        listAdapter.toggleSelection(position);
-                    }
-
-                    @Override
-                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        mode.getMenuInflater().inflate(R.menu.menu_all_entries, menu);
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        if (item.getItemId() == R.id.menu_delete) {
-                            SparseBooleanArray selection = listAdapter.getmSelectedItems();
-                            for (int i = 0; i < selection.size(); i++) {
-                                if (selection.get(i)) {
-                                    Storie toRemove = listAdapter.getItem(i);
-                                    listAdapter.remove(toRemove);
+                if (!isMultiple) {
+                    btnDelete.setVisibility(View.VISIBLE);
+                    btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "onClick: deleting selected items");
+                            for (int i = 0; i < selectionList.size(); i++) {
+                                if (selectionList.get(i)) {
+                                    Log.d(TAG, "onClick: deleting item " + i);
+                                    Storie tempDelete = stories.get(i);
+                                    String dateDelete = tempDelete.getmDateTime();
+                                    ArrayList<String> tagListDelete = tempDelete.getmTagList();
+                                    boolean isDeleted = db.deleteData(dateDelete, tagListDelete);
+                                    Log.d(TAG, "onClick: is deleted " + isDeleted);
+//                                    // refresh list
+//                                    loadData();
+                                    if (isDeleted) {
+                                        Log.d(TAG, "onClick: sending delete intent");
+                                        Intent intentForUpdate = new Intent();
+                                        intentForUpdate.setAction("org.x.cassini.DB_DELETE");
+                                        sendBroadcast(intentForUpdate);
+                                    }
                                 }
                             }
-                            mode.finish();
-                            return true;
-                        } else {
-                            return false;
+                            onBackPressed();
                         }
+                    });
+                    selectionList = new ArrayList<Boolean>();
+                    for (int i = 0; i < stories.size(); i++) {
+                        selectionList.add(false);
                     }
-
-                    @Override
-                    public void onDestroyActionMode(ActionMode mode) {
-                        listAdapter.clearSelection();
-                    }
-                });
+                    isMultiple = true;
+                    listAdapter.setIsMultiple(isMultiple);
+                    CheckBox box = (CheckBox) view.findViewById(R.id.all_entries_checkbox);
+                    box.setChecked(true);
+                    selectionList.set(position, true);
+                } else {
+                    Log.d(TAG, "onItemLongClick: no effect since alr in multiple mode");
+                }
                 return true;
             }
         });
@@ -250,6 +281,9 @@ public class AllEntriesActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("org.x.cassini.DB_UPDATE")) {
                 Log.d(TAG, "onReceive: received db update intent");
+                loadData();
+            } else if (intent.getAction().equals("org.x.cassini.DB_DELETE")) {
+                Log.d(TAG, "onReceive: received db delete intent");
                 loadData();
             }
         }
