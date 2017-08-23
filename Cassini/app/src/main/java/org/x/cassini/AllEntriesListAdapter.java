@@ -73,7 +73,7 @@ class AllEntriesListAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.all_entries_rows, null);
             // setup textviews
             holder.main = (TextView) view.findViewById(R.id.all_entries_list_main_text);
-            holder.location = (TextView) view.findViewById(R.id.all_entries_list_location);
+//            holder.location = (TextView) view.findViewById(R.id.all_entries_list_location);
             holder.date = (TextView) view.findViewById(R.id.all_entries_list_time_date);
             holder.month = (TextView) view.findViewById(R.id.all_entries_list_time_month);
             holder.tags = (LinearLayout) view.findViewById(R.id.all_entries_list_tags);
@@ -83,7 +83,7 @@ class AllEntriesListAdapter extends BaseAdapter {
             view = convertView;
             holder = (ViewHolder) view.getTag();
             holder.main.setText("");
-            holder.location.setText("");
+//            holder.location.setText("");
             holder.date.setText("");
             holder.month.setText("");
             holder.tags.removeAllViews();
@@ -93,7 +93,7 @@ class AllEntriesListAdapter extends BaseAdapter {
         tagList = storie.getmTagList();
         holder.main.setText(storie.getmMainText());
 //        Log.e(TAG, "getView: main text is " + storie.getmMainText());
-        holder.location.setText(storie.getmLocation());
+//        holder.location.setText(storie.getmLocation());
         holder.date.setText(storie.getmDay());
         holder.month.setText(storie.getmMonth().substring(0, 3));
         // add tags programmatically to the right of location

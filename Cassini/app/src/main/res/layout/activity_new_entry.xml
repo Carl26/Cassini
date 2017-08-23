@@ -155,7 +155,7 @@
                     android:layout_margin="10dp"
                     android:padding="20dp"
                     android:backgroundTint="#ffffff"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     android:fontFamily="sans-serif-light"
                     android:lineSpacingExtra="1dp"
                     android:textColor="@color/black"

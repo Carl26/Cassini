@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dp"
-        android:textSize="17sp"
+        android:textSize="14sp"
         android:text="@string/placehold_text"
         android:id="@+id/stories_row_title"
         android:textColor="@color/black"

@@ -118,15 +118,14 @@ public class SettingsActivity extends AppCompatActivity {
         setWallpaper = (LinearLayout) findViewById(R.id.settings_wallpaper);
         setWallpaper.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(intent, SELECT_PICTURE);
+            public void onClick(View v){
+                Toast myToast = Toast.makeText(
+                        getApplicationContext(),
+                        "This feature will be available in the next release. The best things are yet to come!",
+                        Toast.LENGTH_LONG
+                );
+                myToast.show();
             }
-
         });
 
 
@@ -137,9 +136,14 @@ public class SettingsActivity extends AppCompatActivity {
     {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
+                Log.d(TAG, "onActivityResult: is data null " + data);
                 Uri selectedImageUri = data.getData();
+                Log.d(TAG, "onActivityResult: is uri null " + selectedImageUri);
                 selectedImagePath = getPath(selectedImageUri);
+//                selectedImagePath = selectedImageUri.getPath();
+                Log.d(TAG, "onActivityResult: " + selectedImagePath);
                 try {
+                    Log.d(TAG, "onActivityResult: " + selectedImagePath);
                     FileInputStream fileis = new FileInputStream(selectedImagePath);
                     BufferedInputStream bufferedstream = new BufferedInputStream(fileis);
                     byte[] bMapArray = new byte[bufferedstream.available()];

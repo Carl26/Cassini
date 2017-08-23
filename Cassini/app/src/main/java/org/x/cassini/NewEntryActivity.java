@@ -246,7 +246,7 @@ public class NewEntryActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Location location) {
                         mLastLocation = location;
-                        Log.d(TAG, "latitude is " + mLastLocation.getLatitude());
+//                        Log.d(TAG, "latitude is " + mLastLocation.getLatitude());
 
                         // In some rare cases the location returned can be null
                         if (location == null) {
@@ -257,7 +257,7 @@ public class NewEntryActivity extends AppCompatActivity {
 //                        startIntentService();
                     }
                 });
-        Log.d(TAG, "location is " + mLocation);
+//        Log.d(TAG, "location is " + mLocation);
         location.setText(mLocation);
     }
 
