@@ -93,7 +93,7 @@ class TimelinePreviewListAdapter extends BaseAdapter {
             String monthText = new DateFormatSymbols().getMonths()[Integer.valueOf(monthList.get(position)) - 1];
             holder.main.setText(mainText);
             holder.day.setText(dayText);
-            holder.month.setText(monthText);
+            holder.month.setText(monthText.substring(0,3));
         } else if (dimensionId == -1) {
             Log.d("TP", "getView: load text layout");
             if (convertView == null) {
