@@ -34,6 +34,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/stories_toolbar"
+        android:background="@android:color/transparent"
+        android:dividerHeight="12dp"
+        android:layout_marginTop="12dp"
+        android:divider="@android:color/transparent"
+        android:padding="5dp"
         android:id="@+id/stories_list">
     </ListView>
 </RelativeLayout>

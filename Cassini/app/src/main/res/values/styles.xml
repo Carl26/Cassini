@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
         <item name="android:editTextStyle">@style/RobotoEditTextStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_back_button_3</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_back_4</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="actionMenuTextColor">@color/colorPrimary</item>
         <item name="android:actionMenuTextColor">@color/colorPrimary</item>
@@ -46,48 +46,48 @@
 
 
 
-    <style name="MonoTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
-        <item name="android:editTextStyle">@style/MonoEditTextStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_back_button_3</item>
-        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
-        <item name="actionMenuTextColor">@color/colorPrimary</item>
-        <item name="android:actionMenuTextColor">@color/colorPrimary</item>
-    </style>
+    <!--<style name="MonoTheme" parent="Theme.AppCompat.Light.NoActionBar">-->
+        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <!--<item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>-->
+        <!--<item name="android:editTextStyle">@style/MonoEditTextStyle</item>-->
+        <!--<item name="android:homeAsUpIndicator">@drawable/ic_back_button_3</item>-->
+        <!--<item name="android:textViewStyle">@style/RobotoTextViewStyle</item>-->
+        <!--<item name="actionMenuTextColor">@color/colorPrimary</item>-->
+        <!--<item name="android:actionMenuTextColor">@color/colorPrimary</item>-->
+    <!--</style>-->
 
-    <style name="MonoTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">monospace</item>
-    </style>
+    <!--<style name="MonoTextViewStyle" parent="android:Widget.TextView">-->
+        <!--<item name="android:fontFamily">monospace</item>-->
+    <!--</style>-->
 
-    <style name="MonoEditTextStyle" parent="android:Widget.Holo.Button">
-        <item name="android:fontFamily">monospace</item>
-    </style>
+    <!--<style name="MonoEditTextStyle" parent="android:Widget.Holo.Button">-->
+        <!--<item name="android:fontFamily">monospace</item>-->
+    <!--</style>-->
 
 
-    <style name="rThinTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
-        <item name="android:editTextStyle">@style/rThinEditTextStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_back_button_3</item>
-        <item name="android:textViewStyle">@style/rThinTextViewStyle</item>
-        <item name="actionMenuTextColor">@color/colorPrimary</item>
-        <item name="android:actionMenuTextColor">@color/colorPrimary</item>
-    </style>
+    <!--<style name="rThinTheme" parent="Theme.AppCompat.Light.NoActionBar">-->
+        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <!--<item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>-->
+        <!--<item name="android:editTextStyle">@style/rThinEditTextStyle</item>-->
+        <!--<item name="android:homeAsUpIndicator">@drawable/ic_back_button_3</item>-->
+        <!--<item name="android:textViewStyle">@style/rThinTextViewStyle</item>-->
+        <!--<item name="actionMenuTextColor">@color/colorPrimary</item>-->
+        <!--<item name="android:actionMenuTextColor">@color/colorPrimary</item>-->
+    <!--</style>-->
 
-    <style name="rThinTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">sans-serif-thin</item>
-    </style>
+    <!--<style name="rThinTextViewStyle" parent="android:Widget.TextView">-->
+        <!--<item name="android:fontFamily">sans-serif-thin</item>-->
+    <!--</style>-->
 
-    <style name="rThinEditTextStyle" parent="android:Widget.Holo.Button">
-        <item name="android:fontFamily">sans-serif-thin</item>
-    </style>
+    <!--<style name="rThinEditTextStyle" parent="android:Widget.Holo.Button">-->
+        <!--<item name="android:fontFamily">sans-serif-thin</item>-->
+    <!--</style>-->
 
 
 </resources>
