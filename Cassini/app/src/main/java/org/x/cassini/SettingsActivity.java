@@ -57,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG, "onResume");
 
-        initOptions();
+//        initOptions();
 
     }
 
@@ -79,58 +79,58 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initOptions(){
-        editTemplate = (LinearLayout) findViewById(R.id.settings_edit_temp);
-        editTemplate.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent editTempAct = new Intent(mContext,EditTempActivity.class);
-                startActivity(editTempAct);
-            }
-        });
-
-        setFont = (LinearLayout) findViewById(R.id.settings_font);
-        setFont.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Toast myToast = Toast.makeText(
-                        getApplicationContext(),
-                        "This feature will be available in the next release. The best things are yet to come!",
-                        Toast.LENGTH_LONG
-                );
-                myToast.show();
-            }
-        });
-
-        setPassword = (LinearLayout) findViewById(R.id.settings_password);
-        setPassword.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Toast myToast = Toast.makeText(
-                        getApplicationContext(),
-                        "This feature will be available in the next release. The best things are yet to come!",
-                        Toast.LENGTH_LONG
-                );
-                myToast.show();
-            }
-        });
-
-        setWallpaper = (LinearLayout) findViewById(R.id.settings_wallpaper);
-        setWallpaper.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(intent, SELECT_PICTURE);
-            }
-
-        });
-
-
-    }
+//    private void initOptions(){
+//        editTemplate = (LinearLayout) findViewById(R.id.settings_edit_temp);
+//        editTemplate.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                Intent editTempAct = new Intent(mContext,EditTempActivity.class);
+//                startActivity(editTempAct);
+//            }
+//        });
+//
+//        setFont = (LinearLayout) findViewById(R.id.settings_font);
+//        setFont.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                Toast myToast = Toast.makeText(
+//                        getApplicationContext(),
+//                        "This feature will be available in the next release. The best things are yet to come!",
+//                        Toast.LENGTH_LONG
+//                );
+//                myToast.show();
+//            }
+//        });
+//
+//        setPassword = (LinearLayout) findViewById(R.id.settings_password);
+//        setPassword.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                Toast myToast = Toast.makeText(
+//                        getApplicationContext(),
+//                        "This feature will be available in the next release. The best things are yet to come!",
+//                        Toast.LENGTH_LONG
+//                );
+//                myToast.show();
+//            }
+//        });
+//
+//        setWallpaper = (LinearLayout) findViewById(R.id.settings_wallpaper);
+//        setWallpaper.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View arg0) {
+//                // TODO Auto-generated method stub
+//                Intent intent = new Intent();
+//                intent.setType("image/*");
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                startActivityForResult(intent, SELECT_PICTURE);
+//            }
+//
+//        });
+//
+//
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
